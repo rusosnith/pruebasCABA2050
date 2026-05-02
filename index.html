@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Street View – Comparador de épocas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.3rem;
+      color: #e0e0ff;
+    }
+    p.subtitle {
+      color: #aaa;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .card {
+      background: #16213e;
+      border: 1px solid #2a2a5a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 760px;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: #aab;
+      margin-bottom: 0.3rem;
+      margin-top: 0.9rem;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 7px;
+      border: 1px solid #3a3a6a;
+      background: #0f0f2e;
+      color: #ddf;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    input:focus { border-color: #5a7fff; }
+
+    button {
+      margin-top: 1.2rem;
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      background: #4a6fff;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    button:hover { background: #6a8fff; }
+    button:disabled { background: #333; color: #666; cursor: default; }
+
+    #status {
+      min-height: 1.4rem;
+      font-size: 0.88rem;
+      color: #ff9966;
+      margin-top: 0.7rem;
+      text-align: center;
+    }
+    #status.ok { color: #66ffaa; }
+
+    /* ── Comparador ── */
+    #comparator-wrap {
+      width: 100%;
+      max-width: 900px;
+      display: none;
+    }
+
+    .labels-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #aab;
+      margin-bottom: 0.4rem;
+      padding: 0 4px;
+    }
+    .labels-row span { font-weight: 600; color: #e0e0ff; }
+
+    .comparator {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/2;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: ew-resize;
+      user-select: none;
+      border: 2px solid #2a2a5a;
+    }
+
+    .comparator img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #img-new {
+      z-index: 1;
+    }
+
+    #img-old {
+      z-index: 2;
+      clip-path: inset(0 50% 0 0);
+    }
+
+    .divider {
+      position: absolute;
+      top: 0; left: 50%;
+      width: 3px;
+      height: 100%;
+      background: #fff;
+      z-index: 10;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .divider-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      font-size: 1rem;
+      color: #333;
+      pointer-events: none;
+    }
+
+    .timeline-info {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      font-size: 0.82rem;
+      color: #aaa;
+      flex-wrap: wrap;
+    }
+    .timeline-info .badge {
+      background: #1a1a4e;
+      border: 1px solid #3a3a7a;
+      border-radius: 6px;
+      padding: 0.4rem 0.8rem;
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+    }
+    .timeline-info .badge strong { display: block; color: #e0e0ff; font-size: 1rem; }
+
+    #hint {
+      text-align: center;
+      font-size: 0.78rem;
+      color: #666;
+      margin-top: 0.6rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🕐 Street View – Comparador de épocas</h1>
+  <p class="subtitle">Pegá una URL de Google Street View y compará la imagen más vieja con la más nueva</p>
+
+  <div class="card">
+    <label for="sv-url">URL de Google Street View</label>
+    <input type="text" id="sv-url"
+      placeholder="https://www.google.com/maps/@-34.5706263,-58.4757463,3a,90y,172.4h,92.43t/data=…" />
+
+    <label for="api-key">
+      Google Maps API Key
+      <small style="color:#777"> — necesitás habilitar <em>Maps JavaScript API</em> y <em>Street View Static API</em></small>
+    </label>
+    <input type="password" id="api-key" placeholder="AIza…" />
+
+    <button id="btn-compare" onclick="startComparison()">Comparar</button>
+    <div id="status"></div>
+  </div>
+
+  <div id="comparator-wrap">
+    <div class="labels-row">
+      <div>⬅ MÁS VIEJA &nbsp;<span id="lbl-old">—</span></div>
+      <div><span id="lbl-new">—</span>&nbsp; MÁS NUEVA ➡</div>
+    </div>
+    <div class="comparator" id="comparator"
+         onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+      <img id="img-new" src="" alt="imagen nueva" />
+      <img id="img-old" src="" alt="imagen vieja" />
+      <div class="divider" id="divider">
+        <div class="divider-handle">↔</div>
+      </div>
+    </div>
+    <p id="hint">Arrastrá el divisor para comparar</p>
+    <div class="timeline-info">
+      <div class="badge">📅 Más vieja<strong id="info-old">—</strong></div>
+      <div class="badge">📅 Más nueva<strong id="info-new">—</strong></div>
+      <div class="badge">🗺 Imágenes históricas<strong id="info-count">—</strong></div>
+    </div>
+  </div>
+
+  <!-- Google Maps JS API se carga dinámicamente cuando el usuario ingresa su key -->
+  <script>
+    // ── Drag logic ──────────────────────────────────────────────────────────
+    let dragging = false;
+
+    function startDrag(e) {
+      dragging = true;
+      e.preventDefault();
+      updateSlider(e);
+    }
+    document.addEventListener('mousemove', e => { if (dragging) updateSlider(e); });
+    document.addEventListener('touchmove', e => { if (dragging) updateSlider(e.touches[0]); });
+    document.addEventListener('mouseup',   () => { dragging = false; });
+    document.addEventListener('touchend',  () => { dragging = false; });
+
+    function updateSlider(e) {
+      const comp = document.getElementById('comparator');
+      const rect = comp.getBoundingClientRect();
+      let x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+      const pct = (x / rect.width) * 100;
+      document.getElementById('img-old').style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+      document.getElementById('divider').style.left = pct + '%';
+    }
+
+    // ── URL parser ───────────────────────────────────────────────────────────
+    function parseStreetViewURL(url) {
+      const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (!coordMatch) return null;
+
+      const lat = parseFloat(coordMatch[1]);
+      const lng = parseFloat(coordMatch[2]);
+
+      const headingMatch = url.match(/,(\d+(?:\.\d+)?)h[,\/]/);
+      const heading = headingMatch ? parseFloat(headingMatch[1]) : 0;
+
+      const tiltMatch = url.match(/,(\d+(?:\.\d+)?)t[,\/]/);
+      const tilt = tiltMatch ? parseFloat(tiltMatch[1]) : 90;
+      const pitch = 90 - tilt;
+
+      // panoid embebido en el data (primer !1sXXX)
+      const panoMatch = url.match(/!1s([^!&]+)/);
+      const panoid = panoMatch ? decodeURIComponent(panoMatch[1]) : null;
+
+      return { lat, lng, heading, pitch, panoid };
+    }
+
+    // ── Main ─────────────────────────────────────────────────────────────────
+    let mapsApiLoaded = false;
+    let pendingKey = null;
+
+    function loadMapsAPI(key) {
+      return new Promise((resolve, reject) => {
+        if (mapsApiLoaded) { resolve(); return; }
+        window.__mapsReady = () => { mapsApiLoaded = true; resolve(); };
+        const s = document.createElement('script');
+        s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=__mapsReady`;
+        s.onerror = () => reject(new Error('No se pudo cargar la API de Google Maps. Verificá tu API key.'));
+        document.head.appendChild(s);
+      });
+    }
+
+    function setStatus(msg, ok = false) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = ok ? 'ok' : '';
+    }
+
+    function staticURL(panoid, heading, pitch, key, w = 900, h = 600) {
+      return `https://maps.googleapis.com/maps/api/streetview?size=${w}x${h}&pano=${encodeURIComponent(panoid)}&heading=${heading}&pitch=${pitch}&key=${encodeURIComponent(key)}`;
+    }
+
+    function formatDate(svTime) {
+      // svTime.description es algo como "octubre de 2015"
+      if (svTime.description) return svTime.description;
+      // fallback: año del panoid timestamp si está disponible
+      return '?';
+    }
+
+    async function startComparison() {
+      const url = document.getElementById('sv-url').value.trim();
+      const key = document.getElementById('api-key').value.trim();
+
+      if (!url) { setStatus('Pegá una URL de Street View.'); return; }
+      if (!key) { setStatus('Ingresá tu Google Maps API Key.'); return; }
+
+      const parsed = parseStreetViewURL(url);
+      if (!parsed) { setStatus('No se pudo leer la URL. Asegurate que sea una URL de Street View de Google Maps.'); return; }
+
+      const btn = document.getElementById('btn-compare');
+      btn.disabled = true;
+      setStatus('Cargando API de Google Maps…');
+
+      try {
+        await loadMapsAPI(key);
+      } catch(err) {
+        setStatus(err.message);
+        btn.disabled = false;
+        return;
+      }
+
+      setStatus('Buscando panoramas históricos…');
+
+      const svc = new google.maps.StreetViewService();
+
+      svc.getPanorama(
+        { location: { lat: parsed.lat, lng: parsed.lng }, radius: 80, preference: google.maps.StreetViewPreference.NEAREST },
+        (data, status) => {
+          btn.disabled = false;
+
+          if (status !== 'OK') {
+            setStatus(`No se encontró Street View para esa ubicación (status: ${status})`);
+            return;
+          }
+
+          const times = data.time;
+
+          if (!times || times.length === 0) {
+            // Sin historial: solo mostramos la imagen actual
+            setStatus('Solo hay una imagen disponible para este lugar (sin historial).', true);
+            showComparison(
+              data.location.pano, data.location.pano,
+              'actual', 'actual', 1,
+              parsed.heading, parsed.pitch, key
+            );
+            return;
+          }
+
+          const oldest = times[0];
+          const newest = times[times.length - 1];
+
+          setStatus(`✓ Se encontraron ${times.length} imágenes históricas.`, true);
+
+          showComparison(
+            oldest.pano, newest.pano,
+            formatDate(oldest), formatDate(newest), times.length,
+            parsed.heading, parsed.pitch, key
+          );
+        }
+      );
+    }
+
+    function showComparison(oldPano, newPano, oldDate, newDate, count, heading, pitch, key) {
+      document.getElementById('img-old').src = staticURL(oldPano, heading, pitch, key);
+      document.getElementById('img-new').src = staticURL(newPano, heading, pitch, key);
+
+      document.getElementById('lbl-old').textContent = oldDate;
+      document.getElementById('lbl-new').textContent  = newDate;
+      document.getElementById('info-old').textContent = oldDate;
+      document.getElementById('info-new').textContent = newDate;
+      document.getElementById('info-count').textContent = count;
+
+      // Reset slider al centro
+      document.getElementById('img-old').style.clipPath = 'inset(0 50% 0 0)';
+      document.getElementById('divider').style.left = '50%';
+
+      document.getElementById('comparator-wrap').style.display = 'block';
+      document.getElementById('comparator-wrap').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
