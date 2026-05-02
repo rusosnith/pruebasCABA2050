@@ -6,7 +6,6 @@
   <title>Street View – Comparador de épocas</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #1a1a2e;
@@ -17,19 +16,8 @@
       align-items: center;
       padding: 2rem 1rem;
     }
-
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 0.3rem;
-      color: #e0e0ff;
-    }
-    p.subtitle {
-      color: #aaa;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-      text-align: center;
-    }
-
+    h1 { font-size: 1.6rem; margin-bottom: 0.3rem; color: #e0e0ff; }
+    p.subtitle { color: #aaa; margin-bottom: 1.5rem; font-size: 0.9rem; text-align: center; }
     .card {
       background: #16213e;
       border: 1px solid #2a2a5a;
@@ -39,15 +27,7 @@
       max-width: 760px;
       margin-bottom: 1.5rem;
     }
-
-    label {
-      display: block;
-      font-size: 0.82rem;
-      color: #aab;
-      margin-bottom: 0.3rem;
-      margin-top: 0.9rem;
-    }
-
+    label { display: block; font-size: 0.82rem; color: #aab; margin-bottom: 0.3rem; margin-top: 0.9rem; }
     input[type="text"], input[type="password"] {
       width: 100%;
       padding: 0.6rem 0.8rem;
@@ -59,7 +39,6 @@
       outline: none;
     }
     input:focus { border-color: #5a7fff; }
-
     button {
       margin-top: 1.2rem;
       width: 100%;
@@ -75,23 +54,36 @@
     }
     button:hover { background: #6a8fff; }
     button:disabled { background: #333; color: #666; cursor: default; }
-
-    #status {
-      min-height: 1.4rem;
-      font-size: 0.88rem;
-      color: #ff9966;
-      margin-top: 0.7rem;
-      text-align: center;
-    }
+    #status { min-height: 1.4rem; font-size: 0.88rem; color: #ff9966; margin-top: 0.7rem; text-align: center; }
     #status.ok { color: #66ffaa; }
 
-    /* ── Comparador ── */
-    #comparator-wrap {
-      width: 100%;
-      max-width: 900px;
-      display: none;
+    /* Selector de modo */
+    .mode-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      background: #0f0f2e;
+      border-radius: 10px;
+      padding: 0.4rem;
     }
+    .mode-tab {
+      flex: 1;
+      padding: 0.5rem 0.3rem;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: #778;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+      margin-top: 0;
+    }
+    .mode-tab:hover { background: #1a1a4e; color: #aaf; }
+    .mode-tab.active { background: #4a6fff; color: #fff; }
 
+    /* Comparador */
+    #comparator-wrap { width: 100%; max-width: 900px; display: none; }
     .labels-row {
       display: flex;
       justify-content: space-between;
@@ -101,18 +93,16 @@
       padding: 0 4px;
     }
     .labels-row span { font-weight: 600; color: #e0e0ff; }
-
     .comparator {
       position: relative;
       width: 100%;
       aspect-ratio: 3/2;
       border-radius: 10px;
       overflow: hidden;
-      cursor: ew-resize;
       user-select: none;
       border: 2px solid #2a2a5a;
     }
-
+    .comparator.mode-split { cursor: ew-resize; }
     .comparator img {
       position: absolute;
       top: 0; left: 0;
@@ -120,70 +110,72 @@
       object-fit: cover;
       display: block;
     }
-
-    #img-new {
-      z-index: 1;
-    }
-
-    #img-old {
-      z-index: 2;
-      clip-path: inset(0 50% 0 0);
-    }
+    #img-base { z-index: 1; }
+    #img-overlay { z-index: 2; }
+    /* split mode */
+    .mode-split #img-overlay { clip-path: inset(0 50% 0 0); opacity: 1; }
+    /* opacity mode: overlay encima con opacidad controlada */
+    .mode-opacity #img-overlay { clip-path: none; opacity: 1; }
+    /* timeline: solo img-overlay visible */
+    .mode-timeline #img-overlay { clip-path: none; opacity: 1; }
 
     .divider {
       position: absolute;
       top: 0; left: 50%;
-      width: 3px;
-      height: 100%;
+      width: 3px; height: 100%;
       background: #fff;
       z-index: 10;
       transform: translateX(-50%);
       pointer-events: none;
+      display: none;
     }
-
+    .mode-split .divider { display: block; }
     .divider-handle {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       background: #fff;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      font-size: 1rem;
-      color: #333;
+      font-size: 1rem; color: #333;
       pointer-events: none;
     }
 
-    .timeline-info {
+    /* Controles */
+    .controls { margin-top: 0.8rem; display: none; }
+    .controls.visible { display: block; }
+    .slider-row {
       display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-      font-size: 0.82rem;
-      color: #aaa;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.8rem;
+      color: #aab;
+    }
+    .slider-row input[type=range] { flex: 1; accent-color: #4a6fff; cursor: pointer; }
+    .slider-label-left { min-width: 90px; font-weight: 600; color: #e0e0ff; font-size: 0.78rem; }
+    .slider-label-right { min-width: 90px; text-align: right; font-weight: 600; color: #e0e0ff; font-size: 0.78rem; }
+    .timeline-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: #556;
+      margin-top: 0.3rem;
+      padding: 0 2px;
+    }
+    #tl-current-label { text-align: center; font-size: 0.9rem; color: #e0e0ff; margin-top: 0.5rem; font-weight: 600; }
+    #hint { text-align: center; font-size: 0.78rem; color: #666; margin-top: 0.5rem; }
+    .timeline-info {
+      display: flex; gap: 1rem; margin-top: 1rem;
+      font-size: 0.82rem; color: #aaa; flex-wrap: wrap;
     }
     .timeline-info .badge {
-      background: #1a1a4e;
-      border: 1px solid #3a3a7a;
-      border-radius: 6px;
-      padding: 0.4rem 0.8rem;
-      flex: 1;
-      min-width: 120px;
-      text-align: center;
+      background: #1a1a4e; border: 1px solid #3a3a7a;
+      border-radius: 6px; padding: 0.4rem 0.8rem;
+      flex: 1; min-width: 120px; text-align: center;
     }
     .timeline-info .badge strong { display: block; color: #e0e0ff; font-size: 1rem; }
-
-    #hint {
-      text-align: center;
-      font-size: 0.78rem;
-      color: #666;
-      margin-top: 0.6rem;
-    }
   </style>
 </head>
 <body>
@@ -194,7 +186,7 @@
   <div class="card">
     <label for="sv-url">URL de Google Street View</label>
     <input type="text" id="sv-url"
-      placeholder="https://www.google.com/maps/@-34.5706263,-58.4757463,3a,90y,172.4h,92.43t/data=…" />
+      value="https://www.google.com/maps/@-34.5706263,-58.4757463,3a,90y,172.4h,92.43t/data=!3m8!1e1!3m6!1s_nnYC8_I-qxBMA3qY6Xy3A!2e0!5s20151001T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-2.434849756316609%26panoid%3D_nnYC8_I-qxBMA3qY6Xy3A%26yaw%3D172.40459482211702!7i13312!8i6656?entry=ttu&g_ep=EgoyMDI2MDQyOS4wIKXMDSoASAFQAw%3D%3D" />
 
     <label for="api-key">
       Google Maps API Key
@@ -207,19 +199,51 @@
   </div>
 
   <div id="comparator-wrap">
-    <div class="labels-row">
+
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setMode('split', this)">✂️ Divisor</button>
+      <button class="mode-tab"        onclick="setMode('opacity', this)">🌫️ Opacidad</button>
+      <button class="mode-tab"        onclick="setMode('timeline', this)">🎞️ Timeline</button>
+    </div>
+
+    <div class="labels-row" id="main-labels">
       <div>⬅ MÁS VIEJA &nbsp;<span id="lbl-old">—</span></div>
       <div><span id="lbl-new">—</span>&nbsp; MÁS NUEVA ➡</div>
     </div>
-    <div class="comparator" id="comparator"
-         onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
-      <img id="img-new" src="" alt="imagen nueva" />
-      <img id="img-old" src="" alt="imagen vieja" />
+
+    <div class="comparator mode-split" id="comparator"
+         onmousedown="onCompMouseDown(event)" ontouchstart="onCompMouseDown(event)">
+      <img id="img-base"    src="" alt="imagen base" />
+      <img id="img-overlay" src="" alt="imagen overlay" />
       <div class="divider" id="divider">
         <div class="divider-handle">↔</div>
       </div>
     </div>
+
     <p id="hint">Arrastrá el divisor para comparar</p>
+
+    <!-- Opacidad -->
+    <div class="controls" id="ctrl-opacity">
+      <div class="slider-row">
+        <span class="slider-label-left"  id="op-lbl-old">vieja</span>
+        <input type="range" id="opacity-slider" min="0" max="100" value="50"
+               oninput="onOpacityInput(this.value)" />
+        <span class="slider-label-right" id="op-lbl-new">nueva</span>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="controls" id="ctrl-timeline">
+      <div class="slider-row">
+        <span class="slider-label-left"  id="tl-lbl-left">—</span>
+        <input type="range" id="timeline-slider" min="0" max="100" value="0"
+               oninput="onTimelineInput(this.value)" />
+        <span class="slider-label-right" id="tl-lbl-right">—</span>
+      </div>
+      <div class="timeline-ticks" id="tl-ticks"></div>
+      <div id="tl-current-label">—</div>
+    </div>
+
     <div class="timeline-info">
       <div class="badge">📅 Más vieja<strong id="info-old">—</strong></div>
       <div class="badge">📅 Más nueva<strong id="info-new">—</strong></div>
@@ -227,55 +251,115 @@
     </div>
   </div>
 
-  <!-- Google Maps JS API se carga dinámicamente cuando el usuario ingresa su key -->
   <script>
-    // ── Drag logic ──────────────────────────────────────────────────────────
+    // ── Estado global ────────────────────────────────────────────────────────
+    let currentMode  = 'split';
+    let allPanos     = [];   // [{pano, label}] viejo→nuevo
+    let currentHead  = 0, currentPitch = 0, currentKey = '';
+    let oldPanoId = '', newPanoId = '';
+
+    // ── Modos ────────────────────────────────────────────────────────────────
+    function setMode(mode, tabBtn) {
+      currentMode = mode;
+      const comp = document.getElementById('comparator');
+      comp.className = 'comparator mode-' + mode;
+
+      document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+      if (tabBtn) tabBtn.classList.add('active');
+
+      document.getElementById('hint').style.display = mode === 'split' ? 'block' : 'none';
+      document.getElementById('ctrl-opacity').classList.toggle('visible', mode === 'opacity');
+      document.getElementById('ctrl-timeline').classList.toggle('visible', mode === 'timeline');
+      document.getElementById('main-labels').style.display = mode === 'timeline' ? 'none' : 'flex';
+
+      const base    = document.getElementById('img-base');
+      const overlay = document.getElementById('img-overlay');
+
+      if (mode === 'split') {
+        base.src    = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
+        overlay.src = staticURL(newPanoId, currentHead, currentPitch, currentKey);
+        overlay.style.clipPath = 'inset(0 50% 0 0)';
+        overlay.style.opacity  = '1';
+        document.getElementById('divider').style.left = '50%';
+      }
+
+      if (mode === 'opacity') {
+        // base = vieja (fija), overlay = nueva (con opacidad variable)
+        base.src    = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
+        overlay.src = staticURL(newPanoId, currentHead, currentPitch, currentKey);
+        overlay.style.clipPath = 'none';
+        const val = document.getElementById('opacity-slider').value;
+        overlay.style.opacity  = val / 100;
+      }
+
+      if (mode === 'timeline') {
+        base.src = '';
+        onTimelineInput(document.getElementById('timeline-slider').value);
+      }
+    }
+
+    // ── Split drag ───────────────────────────────────────────────────────────
     let dragging = false;
 
-    function startDrag(e) {
+    function onCompMouseDown(e) {
+      if (currentMode !== 'split') return;
       dragging = true;
       e.preventDefault();
-      updateSlider(e);
+      updateSplitSlider(e);
     }
-    document.addEventListener('mousemove', e => { if (dragging) updateSlider(e); });
-    document.addEventListener('touchmove', e => { if (dragging) updateSlider(e.touches[0]); });
-    document.addEventListener('mouseup',   () => { dragging = false; });
-    document.addEventListener('touchend',  () => { dragging = false; });
+    document.addEventListener('mousemove', e => { if (dragging) updateSplitSlider(e); });
+    document.addEventListener('touchmove', e => { if (dragging) updateSplitSlider(e.touches[0]); });
+    document.addEventListener('mouseup',  () => { dragging = false; });
+    document.addEventListener('touchend', () => { dragging = false; });
 
-    function updateSlider(e) {
+    function updateSplitSlider(e) {
       const comp = document.getElementById('comparator');
       const rect = comp.getBoundingClientRect();
-      let x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      const pct = (x / rect.width) * 100;
-      document.getElementById('img-old').style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+      const x    = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+      const pct  = (x / rect.width) * 100;
+      document.getElementById('img-overlay').style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
       document.getElementById('divider').style.left = pct + '%';
+    }
+
+    // ── Opacity control ──────────────────────────────────────────────────────
+    function onOpacityInput(val) {
+      // 0 = solo vieja, 100 = solo nueva
+      document.getElementById('img-overlay').style.opacity = val / 100;
+    }
+
+    // ── Timeline control ─────────────────────────────────────────────────────
+
+    function onTimelineInput(val) {
+      if (!allPanos.length) return;
+      const idx = Math.round((val / 100) * (allPanos.length - 1));
+      const p   = allPanos[idx];
+
+      const overlay = document.getElementById('img-overlay');
+      const src = staticURL(p.pano, currentHead, currentPitch, currentKey);
+      if (overlay.src !== src) overlay.src = src;
+      overlay.style.clipPath = 'none';
+      overlay.style.opacity  = '1';
+      document.getElementById('img-base').src = '';
+
+      document.getElementById('tl-current-label').textContent = p.label;
     }
 
     // ── URL parser ───────────────────────────────────────────────────────────
     function parseStreetViewURL(url) {
       const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
       if (!coordMatch) return null;
-
       const lat = parseFloat(coordMatch[1]);
       const lng = parseFloat(coordMatch[2]);
-
       const headingMatch = url.match(/,(\d+(?:\.\d+)?)h[,\/]/);
       const heading = headingMatch ? parseFloat(headingMatch[1]) : 0;
-
       const tiltMatch = url.match(/,(\d+(?:\.\d+)?)t[,\/]/);
-      const tilt = tiltMatch ? parseFloat(tiltMatch[1]) : 90;
+      const tilt  = tiltMatch ? parseFloat(tiltMatch[1]) : 90;
       const pitch = 90 - tilt;
-
-      // panoid embebido en el data (primer !1sXXX)
-      const panoMatch = url.match(/!1s([^!&]+)/);
-      const panoid = panoMatch ? decodeURIComponent(panoMatch[1]) : null;
-
-      return { lat, lng, heading, pitch, panoid };
+      return { lat, lng, heading, pitch };
     }
 
-    // ── Main ─────────────────────────────────────────────────────────────────
+    // ── API ──────────────────────────────────────────────────────────────────
     let mapsApiLoaded = false;
-    let pendingKey = null;
 
     function loadMapsAPI(key) {
       return new Promise((resolve, reject) => {
@@ -291,7 +375,7 @@
     function setStatus(msg, ok = false) {
       const el = document.getElementById('status');
       el.textContent = msg;
-      el.className = ok ? 'ok' : '';
+      el.className   = ok ? 'ok' : '';
     }
 
     function staticURL(panoid, heading, pitch, key, w = 900, h = 600) {
@@ -299,12 +383,39 @@
     }
 
     function formatDate(svTime) {
-      // svTime.description es algo como "octubre de 2015"
-      if (svTime.description) return svTime.description;
-      // fallback: año del panoid timestamp si está disponible
-      return '?';
+      if (typeof svTime === 'string') return svTime;
+      return svTime?.description || svTime?.date || '?';
     }
 
+    async function fetchPanoramaMetadata(panoId, key) {
+      const url = `https://maps.googleapis.com/maps/api/streetview/metadata?pano=${encodeURIComponent(panoId)}&key=${encodeURIComponent(key)}`;
+      const response = await fetch(url);
+      if (!response.ok) return null;
+
+      const metadata = await response.json();
+      if (metadata.status !== 'OK') return null;
+
+      return {
+        pano: panoId,
+        label: metadata.date || 'sin fecha'
+      };
+    }
+
+    async function buildTimelineEntries(data, key) {
+      const panoIds = [];
+
+      if (data.location?.pano) panoIds.push(data.location.pano);
+      (data.time || []).forEach(item => {
+        if (item?.pano) panoIds.push(item.pano);
+      });
+
+      const uniquePanoIds = [...new Set(panoIds)];
+      const entries = await Promise.all(uniquePanoIds.map(panoId => fetchPanoramaMetadata(panoId, key)));
+
+      return entries.filter(Boolean).sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    // ── Main ─────────────────────────────────────────────────────────────────
     async function startComparison() {
       const url = document.getElementById('sv-url').value.trim();
       const key = document.getElementById('api-key').value.trim();
@@ -319,68 +430,87 @@
       btn.disabled = true;
       setStatus('Cargando API de Google Maps…');
 
-      try {
-        await loadMapsAPI(key);
-      } catch(err) {
-        setStatus(err.message);
-        btn.disabled = false;
-        return;
-      }
+      try { await loadMapsAPI(key); }
+      catch(err) { setStatus(err.message); btn.disabled = false; return; }
 
       setStatus('Buscando panoramas históricos…');
+      currentHead  = parsed.heading;
+      currentPitch = parsed.pitch;
+      currentKey   = key;
 
       const svc = new google.maps.StreetViewService();
-
       svc.getPanorama(
-        { location: { lat: parsed.lat, lng: parsed.lng }, radius: 80, preference: google.maps.StreetViewPreference.NEAREST },
-        (data, status) => {
+        { location: { lat: parsed.lat, lng: parsed.lng }, radius: 80,
+          preference: google.maps.StreetViewPreference.NEAREST },
+        async (data, status) => {
           btn.disabled = false;
-
           if (status !== 'OK') {
-            setStatus(`No se encontró Street View para esa ubicación (status: ${status})`);
+            setStatus(`No se encontró Street View (status: ${status})`);
             return;
           }
 
-          const times = data.time;
-
-          if (!times || times.length === 0) {
-            // Sin historial: solo mostramos la imagen actual
-            setStatus('Solo hay una imagen disponible para este lugar (sin historial).', true);
-            showComparison(
-              data.location.pano, data.location.pano,
-              'actual', 'actual', 1,
-              parsed.heading, parsed.pitch, key
-            );
+          const timelineEntries = await buildTimelineEntries(data, key);
+          if (!timelineEntries.length) {
+            const pano = data.location.pano;
+            allPanos   = [{ pano, label: 'actual' }];
+            oldPanoId  = newPanoId = pano;
+            setStatus('Solo hay una imagen disponible (sin historial).', true);
+            showComparison('actual', 'actual', 1);
             return;
           }
 
-          const oldest = times[0];
-          const newest = times[times.length - 1];
+          allPanos  = timelineEntries;
+          oldPanoId = allPanos[0].pano;
+          newPanoId = allPanos[allPanos.length - 1].pano;
 
-          setStatus(`✓ Se encontraron ${times.length} imágenes históricas.`, true);
-
-          showComparison(
-            oldest.pano, newest.pano,
-            formatDate(oldest), formatDate(newest), times.length,
-            parsed.heading, parsed.pitch, key
-          );
+          setStatus(`✓ Se encontraron ${allPanos.length} imágenes históricas.`, true);
+          showComparison(allPanos[0].label, allPanos[allPanos.length - 1].label, allPanos.length);
         }
       );
     }
 
-    function showComparison(oldPano, newPano, oldDate, newDate, count, heading, pitch, key) {
-      document.getElementById('img-old').src = staticURL(oldPano, heading, pitch, key);
-      document.getElementById('img-new').src = staticURL(newPano, heading, pitch, key);
-
-      document.getElementById('lbl-old').textContent = oldDate;
+    function showComparison(oldDate, newDate, count) {
+      // Labels
+      document.getElementById('lbl-old').textContent  = oldDate;
       document.getElementById('lbl-new').textContent  = newDate;
       document.getElementById('info-old').textContent = oldDate;
       document.getElementById('info-new').textContent = newDate;
       document.getElementById('info-count').textContent = count;
+      document.getElementById('op-lbl-old').textContent = oldDate;
+      document.getElementById('op-lbl-new').textContent = newDate;
+      document.getElementById('tl-lbl-left').textContent  = allPanos[0].label;
+      document.getElementById('tl-lbl-right').textContent = allPanos[allPanos.length - 1].label;
 
-      // Reset slider al centro
-      document.getElementById('img-old').style.clipPath = 'inset(0 50% 0 0)';
+      // Ticks timeline (solo si caben)
+      const ticks = document.getElementById('tl-ticks');
+      ticks.innerHTML = '';
+      if (allPanos.length <= 12) {
+        allPanos.forEach(p => {
+          const span = document.createElement('span');
+          span.textContent = p.label;
+          ticks.appendChild(span);
+        });
+      }
+
+      // Reset sliders
+      document.getElementById('opacity-slider').value  = 50;
+      document.getElementById('timeline-slider').value = 0;
+
+      // Imágenes iniciales (modo split)
+      document.getElementById('img-base').src    = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
+      document.getElementById('img-overlay').src = staticURL(newPanoId, currentHead, currentPitch, currentKey);
+      document.getElementById('img-overlay').style.clipPath = 'inset(0 50% 0 0)';
+      document.getElementById('img-overlay').style.opacity  = '1';
       document.getElementById('divider').style.left = '50%';
+
+      // Forzar tab split
+      currentMode = 'split';
+      document.getElementById('comparator').className = 'comparator mode-split';
+      document.querySelectorAll('.mode-tab').forEach((b, i) => b.classList.toggle('active', i === 0));
+      document.getElementById('hint').style.display = 'block';
+      document.getElementById('ctrl-opacity').classList.remove('visible');
+      document.getElementById('ctrl-timeline').classList.remove('visible');
+      document.getElementById('main-labels').style.display = 'flex';
 
       document.getElementById('comparator-wrap').style.display = 'block';
       document.getElementById('comparator-wrap').scrollIntoView({ behavior: 'smooth' });
