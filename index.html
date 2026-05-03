@@ -156,13 +156,61 @@
     .slider-row input[type=range] { flex: 1; accent-color: #4a6fff; cursor: pointer; }
     .slider-label-left { min-width: 90px; font-weight: 600; color: #e0e0ff; font-size: 0.78rem; }
     .slider-label-right { min-width: 90px; text-align: right; font-weight: 600; color: #e0e0ff; font-size: 0.78rem; }
+    .control-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .mini-button {
+      width: auto;
+      margin-top: 0;
+      padding: 0.55rem 1rem;
+      font-size: 0.82rem;
+      background: #22315d;
+      border: 1px solid #3a4a7a;
+    }
+    .mini-button:hover { background: #31457f; }
+    .mini-button.active { background: #4a6fff; border-color: #6a8fff; }
     .timeline-ticks {
+      position: relative;
+      height: 2.25rem;
+      margin-top: 0.45rem;
+      padding: 0 2px;
+    }
+    .timeline-tick {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      font-size: 0.68rem;
+      color: #7d87ac;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .timeline-tick::before {
+      content: '';
+      display: block;
+      width: 2px;
+      height: 10px;
+      margin: 0 auto 0.25rem;
+      background: #4a6fff;
+      opacity: 0.7;
+    }
+    .timeline-tick.compact span { display: none; }
+    .timeline-tick.compact::before { opacity: 0.35; height: 7px; }
+    .timeline-tick.edge-left { transform: translateX(0); text-align: left; }
+    .timeline-tick.edge-right { transform: translateX(-100%); text-align: right; }
+    .timeline-tick.edge-left::before,
+    .timeline-tick.edge-right::before { margin-left: 0; margin-right: 0; }
+    .timeline-tick.edge-right::before { margin-left: auto; }
+    .timeline-tick.edge-left::before { margin-right: auto; }
+    .timeline-track-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.68rem;
-      color: #556;
-      margin-top: 0.3rem;
-      padding: 0 2px;
+      font-size: 0.72rem;
+      color: #6f78a0;
+      margin-top: 0.15rem;
     }
     #tl-current-label { text-align: center; font-size: 0.9rem; color: #e0e0ff; margin-top: 0.5rem; font-weight: 600; }
     #hint { text-align: center; font-size: 0.78rem; color: #666; margin-top: 0.5rem; }
@@ -201,9 +249,9 @@
   <div id="comparator-wrap">
 
     <div class="mode-tabs">
-      <button class="mode-tab active" onclick="setMode('split', this)">✂️ Divisor</button>
-      <button class="mode-tab"        onclick="setMode('opacity', this)">🌫️ Opacidad</button>
-      <button class="mode-tab"        onclick="setMode('timeline', this)">🎞️ Timeline</button>
+      <button class="mode-tab active" id="tab-split" onclick="setMode('split', this)">✂️ Divisor</button>
+      <button class="mode-tab" id="tab-opacity" onclick="setMode('opacity', this)">🌫️ Opacidad</button>
+      <button class="mode-tab" id="tab-timeline" onclick="setMode('timeline', this)">🎞️ Timeline</button>
     </div>
 
     <div class="labels-row" id="main-labels">
@@ -230,17 +278,29 @@
                oninput="onOpacityInput(this.value)" />
         <span class="slider-label-right" id="op-lbl-new">nueva</span>
       </div>
+      <div class="control-actions">
+        <button class="mini-button" id="opacity-play" onclick="toggleOpacityAutoplay()">Play</button>
+      </div>
     </div>
 
     <!-- Timeline -->
     <div class="controls" id="ctrl-timeline">
       <div class="slider-row">
         <span class="slider-label-left"  id="tl-lbl-left">—</span>
-        <input type="range" id="timeline-slider" min="0" max="100" value="0"
+        <input type="range" id="timeline-slider" min="0" max="1" step="1" value="0"
                oninput="onTimelineInput(this.value)" />
         <span class="slider-label-right" id="tl-lbl-right">—</span>
       </div>
       <div class="timeline-ticks" id="tl-ticks"></div>
+      <div class="timeline-track-meta">
+        <span id="tl-range-start">—</span>
+        <span id="tl-range-end">—</span>
+      </div>
+      <div class="control-actions">
+        <button class="mini-button" id="timeline-prev" onclick="stepTimeline(-1)">Prev</button>
+        <button class="mini-button" id="timeline-play" onclick="toggleTimelineAutoplay()">Play</button>
+        <button class="mini-button" id="timeline-next" onclick="stepTimeline(1)">Next</button>
+      </div>
       <div id="tl-current-label">—</div>
     </div>
 
@@ -254,12 +314,89 @@
   <script>
     // ── Estado global ────────────────────────────────────────────────────────
     let currentMode  = 'split';
-    let allPanos     = [];   // [{pano, label}] viejo→nuevo
+    let allPanos     = [];   // [{pano, label, rawDate, timestamp}] viejo→nuevo
     let currentHead  = 0, currentPitch = 0, currentKey = '';
     let oldPanoId = '', newPanoId = '';
+    let timelineOffsets = [];
+    let timelineRangeMax = 1;
+    let currentTimelineIndex = 0;
+    let autoplayMode = null;
+    let autoplayToken = 0;
+    let autoplayFrameId = null;
+    let autoplayTimeoutId = null;
+
+    function updatePlayButtons() {
+      const opacityButton = document.getElementById('opacity-play');
+      const timelineButton = document.getElementById('timeline-play');
+
+      opacityButton.textContent = autoplayMode === 'opacity' ? 'Detener' : 'Play';
+      timelineButton.textContent = autoplayMode === 'timeline' ? 'Detener' : 'Play';
+      opacityButton.classList.toggle('active', autoplayMode === 'opacity');
+      timelineButton.classList.toggle('active', autoplayMode === 'timeline');
+    }
+
+    function clearAutoplayHandles() {
+      if (autoplayFrameId) cancelAnimationFrame(autoplayFrameId);
+      if (autoplayTimeoutId) clearTimeout(autoplayTimeoutId);
+      autoplayFrameId = null;
+      autoplayTimeoutId = null;
+    }
+
+    function stopAutoplay() {
+      autoplayToken += 1;
+      autoplayMode = null;
+      clearAutoplayHandles();
+      updatePlayButtons();
+    }
+
+    function startAutoplay(mode, applyValue, fromValue, toValue) {
+      stopAutoplay();
+      if (fromValue === toValue) return;
+
+      autoplayMode = mode;
+      const token = autoplayToken;
+      updatePlayButtons();
+
+      const phases = [
+        { from: fromValue, to: toValue, duration: 2000 },
+        { wait: 2000 },
+        { from: toValue, to: fromValue, duration: 2000 },
+        { wait: 2000 }
+      ];
+
+      const runPhase = (phaseIndex) => {
+        if (token !== autoplayToken || autoplayMode !== mode) return;
+        const phase = phases[phaseIndex % phases.length];
+
+        if (phase.wait) {
+          autoplayTimeoutId = setTimeout(() => runPhase(phaseIndex + 1), phase.wait);
+          return;
+        }
+
+        const startTime = performance.now();
+        const animate = (now) => {
+          if (token !== autoplayToken || autoplayMode !== mode) return;
+          const progress = Math.min((now - startTime) / phase.duration, 1);
+          const value = phase.from + ((phase.to - phase.from) * progress);
+          applyValue(value, false);
+
+          if (progress < 1) {
+            autoplayFrameId = requestAnimationFrame(animate);
+            return;
+          }
+
+          runPhase(phaseIndex + 1);
+        };
+
+        autoplayFrameId = requestAnimationFrame(animate);
+      };
+
+      runPhase(0);
+    }
 
     // ── Modos ────────────────────────────────────────────────────────────────
     function setMode(mode, tabBtn) {
+      stopAutoplay();
       currentMode = mode;
       const comp = document.getElementById('comparator');
       comp.className = 'comparator mode-' + mode;
@@ -276,8 +413,8 @@
       const overlay = document.getElementById('img-overlay');
 
       if (mode === 'split') {
-        base.src    = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
-        overlay.src = staticURL(newPanoId, currentHead, currentPitch, currentKey);
+        base.src    = staticURL(newPanoId, currentHead, currentPitch, currentKey);
+        overlay.src = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
         overlay.style.clipPath = 'inset(0 50% 0 0)';
         overlay.style.opacity  = '1';
         document.getElementById('divider').style.left = '50%';
@@ -288,13 +425,12 @@
         base.src    = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
         overlay.src = staticURL(newPanoId, currentHead, currentPitch, currentKey);
         overlay.style.clipPath = 'none';
-        const val = document.getElementById('opacity-slider').value;
-        overlay.style.opacity  = val / 100;
+        setOpacityValue(document.getElementById('opacity-slider').value);
       }
 
       if (mode === 'timeline') {
         base.src = '';
-        onTimelineInput(document.getElementById('timeline-slider').value);
+        applyTimelineIndex(currentTimelineIndex, false);
       }
     }
 
@@ -303,6 +439,7 @@
 
     function onCompMouseDown(e) {
       if (currentMode !== 'split') return;
+      stopAutoplay();
       dragging = true;
       e.preventDefault();
       updateSplitSlider(e);
@@ -322,17 +459,56 @@
     }
 
     // ── Opacity control ──────────────────────────────────────────────────────
-    function onOpacityInput(val) {
-      // 0 = solo vieja, 100 = solo nueva
-      document.getElementById('img-overlay').style.opacity = val / 100;
+    function setOpacityValue(val) {
+      const safeValue = Math.max(0, Math.min(100, Number(val)));
+      document.getElementById('opacity-slider').value = safeValue;
+      document.getElementById('img-overlay').style.opacity = safeValue / 100;
+    }
+
+    function onOpacityInput(val, fromUser = true) {
+      if (fromUser) stopAutoplay();
+      setOpacityValue(val);
+    }
+
+    function toggleOpacityAutoplay() {
+      if (autoplayMode === 'opacity') {
+        stopAutoplay();
+        return;
+      }
+
+      setMode('opacity', document.getElementById('tab-opacity'));
+      startAutoplay('opacity', onOpacityInput, 0, 100);
     }
 
     // ── Timeline control ─────────────────────────────────────────────────────
 
-    function onTimelineInput(val) {
+    function getNearestTimelineIndex(targetOffset) {
+      let nearestIndex = 0;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      timelineOffsets.forEach((offset, index) => {
+        const distance = Math.abs(offset - targetOffset);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = index;
+        }
+      });
+
+      return nearestIndex;
+    }
+
+    function updateTimelineButtons() {
+      document.getElementById('timeline-prev').disabled = currentTimelineIndex <= 0;
+      document.getElementById('timeline-next').disabled = currentTimelineIndex >= allPanos.length - 1;
+    }
+
+    function applyTimelineIndex(index, fromUser = true) {
       if (!allPanos.length) return;
-      const idx = Math.round((val / 100) * (allPanos.length - 1));
-      const p   = allPanos[idx];
+      if (fromUser) stopAutoplay();
+
+      currentTimelineIndex = Math.max(0, Math.min(index, allPanos.length - 1));
+      const p = allPanos[currentTimelineIndex];
+      const offset = timelineOffsets[currentTimelineIndex] || 0;
 
       const overlay = document.getElementById('img-overlay');
       const src = staticURL(p.pano, currentHead, currentPitch, currentKey);
@@ -340,8 +516,31 @@
       overlay.style.clipPath = 'none';
       overlay.style.opacity  = '1';
       document.getElementById('img-base').src = '';
+      document.getElementById('timeline-slider').value = String(offset);
 
       document.getElementById('tl-current-label').textContent = p.label;
+      updateTimelineButtons();
+    }
+
+    function onTimelineInput(val, fromUser = true) {
+      if (!allPanos.length) return;
+      const idx = getNearestTimelineIndex(Number(val));
+      applyTimelineIndex(idx, fromUser);
+    }
+
+    function stepTimeline(direction) {
+      stopAutoplay();
+      applyTimelineIndex(currentTimelineIndex + direction, false);
+    }
+
+    function toggleTimelineAutoplay() {
+      if (autoplayMode === 'timeline') {
+        stopAutoplay();
+        return;
+      }
+
+      setMode('timeline', document.getElementById('tab-timeline'));
+      startAutoplay('timeline', onTimelineInput, timelineOffsets[0] || 0, timelineRangeMax);
     }
 
     // ── URL parser ───────────────────────────────────────────────────────────
@@ -382,12 +581,35 @@
       return `https://maps.googleapis.com/maps/api/streetview?size=${w}x${h}&pano=${encodeURIComponent(panoid)}&heading=${heading}&pitch=${pitch}&key=${encodeURIComponent(key)}`;
     }
 
-    function formatDate(svTime) {
-      if (typeof svTime === 'string') return svTime;
-      return svTime?.description || svTime?.date || '?';
+    function parseStreetViewDate(rawDate) {
+      if (!rawDate) return null;
+      if (/^\d{4}$/.test(rawDate)) return Date.UTC(Number(rawDate), 0, 1);
+
+      if (/^\d{4}-\d{2}$/.test(rawDate)) {
+        const [year, month] = rawDate.split('-').map(Number);
+        return Date.UTC(year, month - 1, 1);
+      }
+
+      const parsed = Date.parse(rawDate);
+      return Number.isNaN(parsed) ? null : parsed;
     }
 
-    async function fetchPanoramaMetadata(panoId, key) {
+    function formatDate(svTime) {
+      const rawDate = typeof svTime === 'string' ? svTime : svTime?.description || svTime?.date || '';
+      if (!rawDate) return '?';
+      if (/^\d{4}$/.test(rawDate)) return rawDate;
+
+      const timestamp = parseStreetViewDate(rawDate);
+      if (timestamp === null) return rawDate;
+
+      return new Intl.DateTimeFormat('es-AR', {
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC'
+      }).format(timestamp);
+    }
+
+    async function fetchPanoramaMetadata(panoId, key, fallbackDate, sourceIndex) {
       const url = `https://maps.googleapis.com/maps/api/streetview/metadata?pano=${encodeURIComponent(panoId)}&key=${encodeURIComponent(key)}`;
       const response = await fetch(url);
       if (!response.ok) return null;
@@ -395,28 +617,130 @@
       const metadata = await response.json();
       if (metadata.status !== 'OK') return null;
 
+      const rawDate = metadata.date || fallbackDate || '';
+
       return {
         pano: panoId,
-        label: metadata.date || 'sin fecha'
+        rawDate,
+        label: formatDate(rawDate || 'sin fecha'),
+        timestamp: parseStreetViewDate(rawDate),
+        sourceIndex
       };
     }
 
     async function buildTimelineEntries(data, key) {
-      const panoIds = [];
+      const panoEntries = [];
 
-      if (data.location?.pano) panoIds.push(data.location.pano);
-      (data.time || []).forEach(item => {
-        if (item?.pano) panoIds.push(item.pano);
+      (data.time || []).forEach((item, index) => {
+        if (item?.pano) {
+          panoEntries.push({
+            pano: item.pano,
+            fallbackDate: item.description || item.date || '',
+            sourceIndex: index
+          });
+        }
       });
 
-      const uniquePanoIds = [...new Set(panoIds)];
-      const entries = await Promise.all(uniquePanoIds.map(panoId => fetchPanoramaMetadata(panoId, key)));
+      if (data.location?.pano) {
+        panoEntries.push({
+          pano: data.location.pano,
+          fallbackDate: panoEntries[panoEntries.length - 1]?.fallbackDate || '',
+          sourceIndex: panoEntries.length
+        });
+      }
 
-      return entries.filter(Boolean).sort((a, b) => a.label.localeCompare(b.label));
+      const uniqueEntries = [];
+      const seenPanos = new Set();
+      panoEntries.forEach((entry) => {
+        if (!seenPanos.has(entry.pano)) {
+          seenPanos.add(entry.pano);
+          uniqueEntries.push(entry);
+        }
+      });
+
+      const entries = await Promise.all(
+        uniqueEntries.map(entry => fetchPanoramaMetadata(entry.pano, key, entry.fallbackDate, entry.sourceIndex))
+      );
+
+      return entries.filter(Boolean).sort((a, b) => {
+        if (Number.isFinite(a.timestamp) && Number.isFinite(b.timestamp) && a.timestamp !== b.timestamp) {
+          return a.timestamp - b.timestamp;
+        }
+
+        if (Number.isFinite(a.timestamp) && !Number.isFinite(b.timestamp)) return -1;
+        if (!Number.isFinite(a.timestamp) && Number.isFinite(b.timestamp)) return 1;
+        return a.sourceIndex - b.sourceIndex;
+      });
+    }
+
+    function rebuildTimelineScale() {
+      const slider = document.getElementById('timeline-slider');
+      const ticks = document.getElementById('tl-ticks');
+      const rangeStart = document.getElementById('tl-range-start');
+      const rangeEnd = document.getElementById('tl-range-end');
+
+      if (!allPanos.length) {
+        slider.min = '0';
+        slider.max = '1';
+        slider.value = '0';
+        timelineOffsets = [];
+        timelineRangeMax = 1;
+        ticks.innerHTML = '';
+        rangeStart.textContent = '—';
+        rangeEnd.textContent = '—';
+        return;
+      }
+
+      const firstTimestamp = allPanos.find(entry => Number.isFinite(entry.timestamp))?.timestamp ?? 0;
+      timelineOffsets = allPanos.map((entry, index) => {
+        if (Number.isFinite(entry.timestamp)) return entry.timestamp - firstTimestamp;
+        return index === 0 ? 0 : timelineOffsets[index - 1] + 1;
+      });
+      timelineRangeMax = Math.max(timelineOffsets[timelineOffsets.length - 1] || 0, 1);
+
+      slider.min = '0';
+      slider.max = String(timelineRangeMax);
+      slider.step = '1';
+      slider.value = String(timelineOffsets[0] || 0);
+
+      ticks.innerHTML = '';
+      const total = allPanos.length;
+      const labeledIndexes = new Set([0, total - 1]);
+      if (total <= 8) {
+        allPanos.forEach((_, index) => labeledIndexes.add(index));
+      } else {
+        for (let step = 1; step < 4; step += 1) {
+          labeledIndexes.add(Math.round((step * (total - 1)) / 4));
+        }
+      }
+
+      allPanos.forEach((entry, index) => {
+        const tick = document.createElement('div');
+        tick.className = 'timeline-tick';
+        const left = timelineRangeMax === 0 ? 0 : (timelineOffsets[index] / timelineRangeMax) * 100;
+        tick.style.left = `${left}%`;
+
+        if (!labeledIndexes.has(index)) {
+          tick.classList.add('compact');
+        } else if (index === 0) {
+          tick.classList.add('edge-left');
+        } else if (index === total - 1) {
+          tick.classList.add('edge-right');
+        }
+
+        const label = document.createElement('span');
+        label.textContent = entry.label;
+        tick.appendChild(label);
+        ticks.appendChild(tick);
+      });
+
+      rangeStart.textContent = allPanos[0].label;
+      rangeEnd.textContent = allPanos[allPanos.length - 1].label;
     }
 
     // ── Main ─────────────────────────────────────────────────────────────────
     async function startComparison() {
+      stopAutoplay();
       const url = document.getElementById('sv-url').value.trim();
       const key = document.getElementById('api-key').value.trim();
 
@@ -452,7 +776,7 @@
           const timelineEntries = await buildTimelineEntries(data, key);
           if (!timelineEntries.length) {
             const pano = data.location.pano;
-            allPanos   = [{ pano, label: 'actual' }];
+            allPanos   = [{ pano, label: 'actual', rawDate: 'actual', timestamp: null, sourceIndex: 0 }];
             oldPanoId  = newPanoId = pano;
             setStatus('Solo hay una imagen disponible (sin historial).', true);
             showComparison('actual', 'actual', 1);
@@ -481,27 +805,21 @@
       document.getElementById('tl-lbl-left').textContent  = allPanos[0].label;
       document.getElementById('tl-lbl-right').textContent = allPanos[allPanos.length - 1].label;
 
-      // Ticks timeline (solo si caben)
-      const ticks = document.getElementById('tl-ticks');
-      ticks.innerHTML = '';
-      if (allPanos.length <= 12) {
-        allPanos.forEach(p => {
-          const span = document.createElement('span');
-          span.textContent = p.label;
-          ticks.appendChild(span);
-        });
-      }
+      rebuildTimelineScale();
 
       // Reset sliders
       document.getElementById('opacity-slider').value  = 50;
-      document.getElementById('timeline-slider').value = 0;
+      currentTimelineIndex = 0;
 
       // Imágenes iniciales (modo split)
-      document.getElementById('img-base').src    = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
-      document.getElementById('img-overlay').src = staticURL(newPanoId, currentHead, currentPitch, currentKey);
+      document.getElementById('img-base').src    = staticURL(newPanoId, currentHead, currentPitch, currentKey);
+      document.getElementById('img-overlay').src = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
       document.getElementById('img-overlay').style.clipPath = 'inset(0 50% 0 0)';
       document.getElementById('img-overlay').style.opacity  = '1';
       document.getElementById('divider').style.left = '50%';
+      document.getElementById('tl-current-label').textContent = allPanos[0].label;
+      updateTimelineButtons();
+      updatePlayButtons();
 
       // Forzar tab split
       currentMode = 'split';
