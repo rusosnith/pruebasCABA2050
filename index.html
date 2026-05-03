@@ -212,6 +212,38 @@
       color: #6f78a0;
       margin-top: 0.15rem;
     }
+    .timeline-preload {
+      margin-top: 0.6rem;
+      padding: 0.55rem 0.7rem;
+      border: 1px solid #2f3a67;
+      border-radius: 8px;
+      background: #121937;
+      display: none;
+      gap: 0.55rem;
+      align-items: center;
+    }
+    .timeline-preload.visible { display: flex; }
+    .timeline-preload.done { border-color: #2f6f57; }
+    .timeline-preload-bar {
+      flex: 1;
+      min-width: 90px;
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #273252;
+    }
+    .timeline-preload-bar span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #4a6fff, #66b6ff);
+      transition: width 0.2s ease;
+    }
+    .timeline-preload-text {
+      font-size: 0.72rem;
+      color: #93a3d6;
+      white-space: nowrap;
+    }
     #tl-current-label { text-align: center; font-size: 0.9rem; color: #e0e0ff; margin-top: 0.5rem; font-weight: 600; }
     #hint { text-align: center; font-size: 0.78rem; color: #666; margin-top: 0.5rem; }
     .timeline-info {
@@ -302,6 +334,10 @@
         <button class="mini-button" id="timeline-next" onclick="stepTimeline(1)">Next</button>
       </div>
       <div id="tl-current-label">—</div>
+      <div class="timeline-preload" id="tl-preload-status" aria-live="polite">
+        <div class="timeline-preload-bar"><span id="tl-preload-progress"></span></div>
+        <span class="timeline-preload-text" id="tl-preload-text">Preparando caché…</span>
+      </div>
     </div>
 
     <div class="timeline-info">
@@ -326,6 +362,13 @@
     let autoplayTimeoutId = null;
     const cachedTimelineUrls = new Set();
     const pendingTimelinePreloads = new Map();
+    let preloadSessionId = 0;
+    const preloadState = {
+      total: 0,
+      loaded: 0,
+      failed: 0,
+      active: false
+    };
 
     function updatePlayButtons() {
       const opacityButton = document.getElementById('opacity-play');
@@ -579,37 +622,151 @@
       el.className   = ok ? 'ok' : '';
     }
 
+    function updateTimelinePreloadStatus() {
+      const status = document.getElementById('tl-preload-status');
+      const progress = document.getElementById('tl-preload-progress');
+      const text = document.getElementById('tl-preload-text');
+
+      if (!preloadState.active || preloadState.total === 0) {
+        status.classList.remove('visible', 'done');
+        progress.style.width = '0%';
+        text.textContent = 'Preparando caché…';
+        return;
+      }
+
+      const completed = preloadState.loaded + preloadState.failed;
+      const percent = Math.round((completed / preloadState.total) * 100);
+      status.classList.add('visible');
+      status.classList.toggle('done', completed >= preloadState.total && preloadState.failed === 0);
+      progress.style.width = `${percent}%`;
+
+      if (completed >= preloadState.total) {
+        text.textContent = preloadState.failed
+          ? `Caché lista con ${preloadState.failed} carga${preloadState.failed === 1 ? '' : 's'} pendiente${preloadState.failed === 1 ? '' : 's'}`
+          : 'Todas las imágenes del timeline ya están cacheadas';
+        return;
+      }
+
+      text.textContent = `Precargando timeline ${completed}/${preloadState.total}`;
+    }
+
+    function resetTimelinePreloadStatus() {
+      preloadSessionId += 1;
+      preloadState.total = 0;
+      preloadState.loaded = 0;
+      preloadState.failed = 0;
+      preloadState.active = false;
+      updateTimelinePreloadStatus();
+    }
+
     function staticURL(panoid, heading, pitch, key, w = 900, h = 600) {
       return `https://maps.googleapis.com/maps/api/streetview?size=${w}x${h}&pano=${encodeURIComponent(panoid)}&heading=${heading}&pitch=${pitch}&key=${encodeURIComponent(key)}`;
     }
 
     function preloadImage(src) {
-      if (!src || cachedTimelineUrls.has(src) || pendingTimelinePreloads.has(src)) return;
+      if (!src) return Promise.resolve('skipped');
+      if (cachedTimelineUrls.has(src)) return Promise.resolve('cached');
+      if (pendingTimelinePreloads.has(src)) return pendingTimelinePreloads.get(src);
 
       const image = new Image();
-      pendingTimelinePreloads.set(src, image);
+      let resolvePreload;
+      const preloadPromise = new Promise((resolve) => {
+        resolvePreload = resolve;
+      });
+      pendingTimelinePreloads.set(src, preloadPromise);
 
       const finalize = (loaded) => {
         pendingTimelinePreloads.delete(src);
         image.onload = null;
         image.onerror = null;
         if (loaded) cachedTimelineUrls.add(src);
+        resolvePreload(loaded ? 'loaded' : 'failed');
       };
 
       image.onload = () => finalize(true);
       image.onerror = () => finalize(false);
       image.decoding = 'async';
       image.src = src;
+      return preloadPromise;
     }
 
-    function preloadTimelineImages() {
+    function buildTimelinePreloadUrls(centerIndex = 0) {
+      const uniqueUrls = new Set();
+      const orderedEntries = [];
+
+      for (let distance = 0; distance < allPanos.length; distance += 1) {
+        const leftIndex = centerIndex - distance;
+        const rightIndex = centerIndex + distance;
+
+        if (leftIndex >= 0) orderedEntries.push(allPanos[leftIndex]);
+        if (distance !== 0 && rightIndex < allPanos.length) orderedEntries.push(allPanos[rightIndex]);
+      }
+
+      orderedEntries.forEach((entry) => {
+        uniqueUrls.add(staticURL(entry.pano, currentHead, currentPitch, currentKey));
+      });
+
+      return Array.from(uniqueUrls);
+    }
+
+    function scheduleBackgroundPreload(task) {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(task, { timeout: 500 });
+        return;
+      }
+
+      window.setTimeout(task, 80);
+    }
+
+    async function preloadQueue(urls, sessionId, background = false) {
+      for (const src of urls) {
+        if (sessionId !== preloadSessionId) return;
+
+        const result = await preloadImage(src);
+        if (sessionId !== preloadSessionId) return;
+
+        if (result === 'loaded' || result === 'cached') {
+          preloadState.loaded += 1;
+        } else if (result === 'failed') {
+          preloadState.failed += 1;
+        }
+
+        updateTimelinePreloadStatus();
+
+        if (background) {
+          await new Promise((resolve) => scheduleBackgroundPreload(resolve));
+        }
+      }
+    }
+
+    function preloadTimelineImages(centerIndex = currentTimelineIndex) {
       if (!allPanos.length || !currentKey) return;
 
-      const urls = new Set(
-        allPanos.map((entry) => staticURL(entry.pano, currentHead, currentPitch, currentKey))
-      );
+      const urls = buildTimelinePreloadUrls(centerIndex);
+      const readyCount = urls.filter((src) => cachedTimelineUrls.has(src)).length;
+      const queuedUrls = urls.filter((src) => !cachedTimelineUrls.has(src));
+      const immediateCount = Math.min(3, queuedUrls.length);
+      const immediateUrls = queuedUrls.slice(0, immediateCount);
+      const backgroundUrls = queuedUrls.slice(immediateCount);
 
-      urls.forEach((src) => preloadImage(src));
+      preloadSessionId += 1;
+      const sessionId = preloadSessionId;
+      preloadState.total = urls.length;
+      preloadState.loaded = readyCount;
+      preloadState.failed = 0;
+      preloadState.active = urls.length > 0;
+      updateTimelinePreloadStatus();
+
+      void preloadQueue(immediateUrls, sessionId).then(() => {
+        if (sessionId !== preloadSessionId || backgroundUrls.length === 0) {
+          updateTimelinePreloadStatus();
+          return;
+        }
+
+        scheduleBackgroundPreload(() => {
+          void preloadQueue(backgroundUrls, sessionId, true);
+        });
+      });
     }
 
     function parseStreetViewDate(rawDate) {
@@ -772,6 +929,7 @@
     // ── Main ─────────────────────────────────────────────────────────────────
     async function startComparison() {
       stopAutoplay();
+      resetTimelinePreloadStatus();
       const url = document.getElementById('sv-url').value.trim();
       const key = document.getElementById('api-key').value.trim();
 
@@ -809,6 +967,7 @@
             const pano = data.location.pano;
             allPanos   = [{ pano, label: 'actual', rawDate: 'actual', timestamp: null, sourceIndex: 0 }];
             oldPanoId  = newPanoId = pano;
+            resetTimelinePreloadStatus();
             setStatus('Solo hay una imagen disponible (sin historial).', true);
             showComparison('actual', 'actual', 1);
             return;
