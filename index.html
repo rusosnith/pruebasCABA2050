@@ -324,6 +324,8 @@
     let autoplayToken = 0;
     let autoplayFrameId = null;
     let autoplayTimeoutId = null;
+    const cachedTimelineUrls = new Set();
+    const pendingTimelinePreloads = new Map();
 
     function updatePlayButtons() {
       const opacityButton = document.getElementById('opacity-play');
@@ -581,6 +583,35 @@
       return `https://maps.googleapis.com/maps/api/streetview?size=${w}x${h}&pano=${encodeURIComponent(panoid)}&heading=${heading}&pitch=${pitch}&key=${encodeURIComponent(key)}`;
     }
 
+    function preloadImage(src) {
+      if (!src || cachedTimelineUrls.has(src) || pendingTimelinePreloads.has(src)) return;
+
+      const image = new Image();
+      pendingTimelinePreloads.set(src, image);
+
+      const finalize = (loaded) => {
+        pendingTimelinePreloads.delete(src);
+        image.onload = null;
+        image.onerror = null;
+        if (loaded) cachedTimelineUrls.add(src);
+      };
+
+      image.onload = () => finalize(true);
+      image.onerror = () => finalize(false);
+      image.decoding = 'async';
+      image.src = src;
+    }
+
+    function preloadTimelineImages() {
+      if (!allPanos.length || !currentKey) return;
+
+      const urls = new Set(
+        allPanos.map((entry) => staticURL(entry.pano, currentHead, currentPitch, currentKey))
+      );
+
+      urls.forEach((src) => preloadImage(src));
+    }
+
     function parseStreetViewDate(rawDate) {
       if (!rawDate) return null;
       if (/^\d{4}$/.test(rawDate)) return Date.UTC(Number(rawDate), 0, 1);
@@ -818,6 +849,7 @@
       document.getElementById('img-overlay').style.opacity  = '1';
       document.getElementById('divider').style.left = '50%';
       document.getElementById('tl-current-label').textContent = allPanos[0].label;
+      preloadTimelineImages();
       updateTimelineButtons();
       updatePlayButtons();
 
