@@ -28,7 +28,7 @@
       margin-bottom: 1.5rem;
     }
     label { display: block; font-size: 0.82rem; color: #aab; margin-bottom: 0.3rem; margin-top: 0.9rem; }
-    input[type="text"], input[type="password"] {
+    input[type="text"], input[type="password"], select {
       width: 100%;
       padding: 0.6rem 0.8rem;
       border-radius: 7px;
@@ -38,7 +38,8 @@
       font-size: 0.9rem;
       outline: none;
     }
-    input:focus { border-color: #5a7fff; }
+    input:focus, select:focus { border-color: #5a7fff; }
+    select { appearance: none; }
     button {
       margin-top: 1.2rem;
       width: 100%;
@@ -256,14 +257,38 @@
       flex: 1; min-width: 120px; text-align: center;
     }
     .timeline-info .badge strong { display: block; color: #e0e0ff; font-size: 1rem; }
+    .helper-text {
+      font-size: 0.8rem;
+      color: #92a0c8;
+      margin-top: 0.7rem;
+      line-height: 1.4;
+    }
+    .manual-panel summary {
+      cursor: pointer;
+      list-style: none;
+      font-weight: 700;
+      color: #e0e0ff;
+    }
+    .manual-panel summary::-webkit-details-marker { display: none; }
+    .manual-panel[open] summary { margin-bottom: 1rem; }
   </style>
 </head>
 <body>
 
   <h1>🕐 Street View – Comparador de épocas</h1>
-  <p class="subtitle">Pegá una URL de Google Street View y compará la imagen más vieja con la más nueva</p>
+  <p class="subtitle">Elegí una ubicación precargada y compará la imagen más vieja con la más nueva desde archivos servidos por GitHub Pages</p>
 
   <div class="card">
+    <label for="preloaded-location">Ubicación precargada</label>
+    <select id="preloaded-location">
+      <option value="">Cargando ubicaciones...</option>
+    </select>
+    <button id="btn-load-preloaded" onclick="loadSelectedLocation()">Abrir ubicación</button>
+    <div class="helper-text" id="preloaded-meta">Buscando manifiesto local...</div>
+  </div>
+
+  <details class="card manual-panel">
+    <summary>Modo manual con API Key</summary>
     <label for="sv-url">URL de Google Street View</label>
     <input type="text" id="sv-url"
       value="https://www.google.com/maps/@-34.5706263,-58.4757463,3a,90y,172.4h,92.43t/data=!3m8!1e1!3m6!1s_nnYC8_I-qxBMA3qY6Xy3A!2e0!5s20151001T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-2.434849756316609%26panoid%3D_nnYC8_I-qxBMA3qY6Xy3A%26yaw%3D172.40459482211702!7i13312!8i6656?entry=ttu&g_ep=EgoyMDI2MDQyOS4wIKXMDSoASAFQAw%3D%3D" />
@@ -276,7 +301,7 @@
 
     <button id="btn-compare" onclick="startComparison()">Comparar</button>
     <div id="status"></div>
-  </div>
+  </details>
 
   <div id="comparator-wrap">
 
@@ -360,6 +385,7 @@
     let autoplayToken = 0;
     let autoplayFrameId = null;
     let autoplayTimeoutId = null;
+    let preloadedLocations = [];
     const cachedTimelineUrls = new Set();
     const pendingTimelinePreloads = new Map();
     let preloadSessionId = 0;
@@ -458,8 +484,8 @@
       const overlay = document.getElementById('img-overlay');
 
       if (mode === 'split') {
-        base.src    = staticURL(newPanoId, currentHead, currentPitch, currentKey);
-        overlay.src = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
+        base.src    = getImageSrc(allPanos[allPanos.length - 1]);
+        overlay.src = getImageSrc(allPanos[0]);
         overlay.style.clipPath = 'inset(0 50% 0 0)';
         overlay.style.opacity  = '1';
         document.getElementById('divider').style.left = '50%';
@@ -467,8 +493,8 @@
 
       if (mode === 'opacity') {
         // base = vieja (fija), overlay = nueva (con opacidad variable)
-        base.src    = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
-        overlay.src = staticURL(newPanoId, currentHead, currentPitch, currentKey);
+        base.src    = getImageSrc(allPanos[0]);
+        overlay.src = getImageSrc(allPanos[allPanos.length - 1]);
         overlay.style.clipPath = 'none';
         setOpacityValue(document.getElementById('opacity-slider').value);
       }
@@ -556,8 +582,8 @@
       const offset = timelineOffsets[currentTimelineIndex] || 0;
 
       const overlay = document.getElementById('img-overlay');
-      const src = staticURL(p.pano, currentHead, currentPitch, currentKey);
-      if (overlay.src !== src) overlay.src = src;
+      const src = getImageSrc(p);
+      if (overlay.getAttribute('src') !== src) overlay.src = src;
       overlay.style.clipPath = 'none';
       overlay.style.opacity  = '1';
       document.getElementById('img-base').src = '';
@@ -659,6 +685,107 @@
       updateTimelinePreloadStatus();
     }
 
+    function getImageSrc(entry) {
+      if (!entry) return '';
+      if (entry.image) return entry.image;
+      return staticURL(entry.pano, currentHead, currentPitch, currentKey);
+    }
+
+    function setPreloadedMeta(message) {
+      document.getElementById('preloaded-meta').textContent = message;
+    }
+
+    function populatePreloadedSelect() {
+      const select = document.getElementById('preloaded-location');
+      select.innerHTML = '';
+
+      if (!preloadedLocations.length) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'No hay ubicaciones precargadas todavia';
+        select.appendChild(option);
+        select.disabled = true;
+        document.getElementById('btn-load-preloaded').disabled = true;
+        return;
+      }
+
+      preloadedLocations.forEach((location, index) => {
+        const option = document.createElement('option');
+        option.value = location.slug;
+        option.textContent = location.label;
+        if (index === 0) option.selected = true;
+        select.appendChild(option);
+      });
+
+      select.disabled = false;
+      document.getElementById('btn-load-preloaded').disabled = false;
+    }
+
+    function loadLocationFromManifest(location) {
+      stopAutoplay();
+      resetTimelinePreloadStatus();
+
+      allPanos = (location.panos || []).map((entry, index) => ({
+        pano: entry.pano,
+        rawDate: entry.rawDate,
+        label: entry.label || formatDate(entry.rawDate || 'sin fecha'),
+        timestamp: Number.isFinite(entry.timestamp) ? entry.timestamp : parseStreetViewDate(entry.rawDate),
+        sourceIndex: index,
+        image: entry.image
+      }));
+
+      if (!allPanos.length) {
+        setStatus('La ubicacion seleccionada no tiene imagenes precargadas.');
+        return;
+      }
+
+      currentHead = location.heading || 0;
+      currentPitch = location.pitch || 0;
+      currentKey = '';
+      oldPanoId = allPanos[0].pano || '';
+      newPanoId = allPanos[allPanos.length - 1].pano || '';
+      setStatus(`Mostrando ${location.label}.`, true);
+      showComparison(allPanos[0].label, allPanos[allPanos.length - 1].label, allPanos.length);
+    }
+
+    function loadSelectedLocation() {
+      const selectedSlug = document.getElementById('preloaded-location').value;
+      const location = preloadedLocations.find((entry) => entry.slug === selectedSlug);
+
+      if (!location) {
+        setStatus('Elegi una ubicacion precargada.');
+        return;
+      }
+
+      loadLocationFromManifest(location);
+    }
+
+    async function loadPreloadedLocations() {
+      try {
+        const response = await fetch(`data/manifest.json?v=${Date.now()}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const manifest = await response.json();
+        preloadedLocations = Array.isArray(manifest.locations) ? manifest.locations : [];
+        populatePreloadedSelect();
+
+        if (!preloadedLocations.length) {
+          setPreloadedMeta('No hay ubicaciones generadas todavia. Ejecuta el workflow de GitHub Actions para poblar este selector.');
+          return;
+        }
+
+        const generatedLabel = manifest.generatedAt
+          ? new Date(manifest.generatedAt).toLocaleString('es-AR')
+          : 'fecha desconocida';
+        setPreloadedMeta(`${preloadedLocations.length} ubicacion(es) disponibles. Ultima generacion: ${generatedLabel}.`);
+        loadLocationFromManifest(preloadedLocations[0]);
+      } catch (error) {
+        preloadedLocations = [];
+        populatePreloadedSelect();
+        setPreloadedMeta('No se pudo cargar data/manifest.json. Revisa que el workflow haya generado el manifiesto antes de publicar en GitHub Pages.');
+      }
+    }
+
     function staticURL(panoid, heading, pitch, key, w = 900, h = 600) {
       return `https://maps.googleapis.com/maps/api/streetview?size=${w}x${h}&pano=${encodeURIComponent(panoid)}&heading=${heading}&pitch=${pitch}&key=${encodeURIComponent(key)}`;
     }
@@ -703,7 +830,7 @@
       }
 
       orderedEntries.forEach((entry) => {
-        uniqueUrls.add(staticURL(entry.pano, currentHead, currentPitch, currentKey));
+        uniqueUrls.add(getImageSrc(entry));
       });
 
       return Array.from(uniqueUrls);
@@ -740,7 +867,7 @@
     }
 
     function preloadTimelineImages(centerIndex = currentTimelineIndex) {
-      if (!allPanos.length || !currentKey) return;
+      if (!allPanos.length) return;
 
       const urls = buildTimelinePreloadUrls(centerIndex);
       const readyCount = urls.filter((src) => cachedTimelineUrls.has(src)).length;
@@ -1002,8 +1129,8 @@
       currentTimelineIndex = 0;
 
       // Imágenes iniciales (modo split)
-      document.getElementById('img-base').src    = staticURL(newPanoId, currentHead, currentPitch, currentKey);
-      document.getElementById('img-overlay').src = staticURL(oldPanoId, currentHead, currentPitch, currentKey);
+      document.getElementById('img-base').src    = getImageSrc(allPanos[allPanos.length - 1]);
+      document.getElementById('img-overlay').src = getImageSrc(allPanos[0]);
       document.getElementById('img-overlay').style.clipPath = 'inset(0 50% 0 0)';
       document.getElementById('img-overlay').style.opacity  = '1';
       document.getElementById('divider').style.left = '50%';
@@ -1024,6 +1151,11 @@
       document.getElementById('comparator-wrap').style.display = 'block';
       document.getElementById('comparator-wrap').scrollIntoView({ behavior: 'smooth' });
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updatePlayButtons();
+      loadPreloadedLocations();
+    });
   </script>
 </body>
 </html>

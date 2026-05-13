@@ -1,0 +1,71 @@
+name: Preload Street View Assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Reprocesar todas las ubicaciones, incluso las ya marcadas como done
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches:
+      - main
+    paths:
+      - data/locations.csv
+      - scripts/preload-streetview.mjs
+      - package.json
+      - package-lock.json
+      - .github/workflows/preload-streetview.yml
+
+permissions:
+  contents: write
+
+jobs:
+  preload:
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Generate preloaded assets
+        run: |
+          if [[ -z "$GOOGLE_MAPS_API_KEY" ]]; then
+            echo "Falta configurar el secret GOOGLE_MAPS_API_KEY" >&2
+            exit 1
+          fi
+
+          if [[ "${{ github.event.inputs.force }}" == "true" ]]; then
+            npm run preload -- --all
+          else
+            npm run preload
+          fi
+
+      - name: Commit generated assets
+        run: |
+          if git diff --quiet; then
+            echo "No hubo cambios para commitear"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/locations.csv data/manifest.json assets/streetview
+          git commit -m "chore: refresh preloaded street view assets"
+          git push
