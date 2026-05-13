@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-13T20:40:49.392Z",
+  "generatedAt": "2026-05-13T20:48:03.681Z",
   "locations": [
     {
-      "slug": "cabildo-juramento",
-      "label": "Cabildo y Juramento",
+      "slug": "olazabal-exautopista",
+      "label": "Olazabal y Holmberg",
       "sourceUrl": "https://www.google.com/maps/@-34.5706263,-58.4757463,3a,90y,172.4h,92.43t/data=!3m8!1e1!3m6!1s_nnYC8_I-qxBMA3qY6Xy3A!2e0!5s20151001T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-2.434849756316609%26panoid%3D_nnYC8_I-qxBMA3qY6Xy3A%26yaw%3D172.40459482211702!7i13312!8i6656?entry=ttu&g_ep=EgoyMDI2MDQyOS4wIKXMDSoASAFQAw%3D%3D",
       "lat": -34.570631561096725,
       "lng": -58.47577472364998,
@@ -17,77 +17,77 @@
           "rawDate": "2013-11",
           "label": "nov 2013",
           "timestamp": 1383264000000,
-          "image": "assets/streetview/cabildo-juramento/000_2013-11.jpg"
+          "image": "assets/streetview/olazabal-exautopista/000_2013-11.jpg"
         },
         {
           "pano": "UX3H8EmsNtDWGPIh71ZiKw",
           "rawDate": "2014-06",
           "label": "jun 2014",
           "timestamp": 1401580800000,
-          "image": "assets/streetview/cabildo-juramento/001_2014-06.jpg"
+          "image": "assets/streetview/olazabal-exautopista/001_2014-06.jpg"
         },
         {
           "pano": "qsgnFxjSSKLJYAJ64rxrUg",
           "rawDate": "2015-06",
           "label": "jun 2015",
           "timestamp": 1433116800000,
-          "image": "assets/streetview/cabildo-juramento/002_2015-06.jpg"
+          "image": "assets/streetview/olazabal-exautopista/002_2015-06.jpg"
         },
         {
           "pano": "_nnYC8_I-qxBMA3qY6Xy3A",
           "rawDate": "2015-10",
           "label": "oct 2015",
           "timestamp": 1443657600000,
-          "image": "assets/streetview/cabildo-juramento/003_2015-10.jpg"
+          "image": "assets/streetview/olazabal-exautopista/003_2015-10.jpg"
         },
         {
           "pano": "4lT2i3JlmJ9N01s8Y_Iv9w",
           "rawDate": "2016-11",
           "label": "nov 2016",
           "timestamp": 1477958400000,
-          "image": "assets/streetview/cabildo-juramento/004_2016-11.jpg"
+          "image": "assets/streetview/olazabal-exautopista/004_2016-11.jpg"
         },
         {
           "pano": "VVPLxK7nE53mhC5yMaHCpg",
           "rawDate": "2017-09",
           "label": "sept 2017",
           "timestamp": 1504224000000,
-          "image": "assets/streetview/cabildo-juramento/005_2017-09.jpg"
+          "image": "assets/streetview/olazabal-exautopista/005_2017-09.jpg"
         },
         {
           "pano": "icMtlLo4tP-bvXl_pzQ_Bg",
           "rawDate": "2019-05",
           "label": "may 2019",
           "timestamp": 1556668800000,
-          "image": "assets/streetview/cabildo-juramento/006_2019-05.jpg"
+          "image": "assets/streetview/olazabal-exautopista/006_2019-05.jpg"
         },
         {
           "pano": "QmyT-keucdwGpmtJS2WMjQ",
           "rawDate": "2021-12",
           "label": "dic 2021",
           "timestamp": 1638316800000,
-          "image": "assets/streetview/cabildo-juramento/007_2021-12.jpg"
+          "image": "assets/streetview/olazabal-exautopista/007_2021-12.jpg"
         },
         {
           "pano": "JB8voRpNLIcOzSyrzL2iUQ",
           "rawDate": "2022-10",
           "label": "oct 2022",
           "timestamp": 1664582400000,
-          "image": "assets/streetview/cabildo-juramento/008_2022-10.jpg"
+          "image": "assets/streetview/olazabal-exautopista/008_2022-10.jpg"
         },
         {
           "pano": "dU7aXdJGZ4Wq1z4vroFF0A",
           "rawDate": "2024-09",
           "label": "sept 2024",
           "timestamp": 1725148800000,
-          "image": "assets/streetview/cabildo-juramento/009_2024-09.jpg"
+          "image": "assets/streetview/olazabal-exautopista/009_2024-09.jpg"
         },
         {
           "pano": "izbC6cf4b7xo0V229k2sSg",
           "rawDate": "2025-08",
           "label": "ago 2025",
           "timestamp": 1754006400000,
-          "image": "assets/streetview/cabildo-juramento/010_2025-08.jpg"
+          "image": "assets/streetview/olazabal-exautopista/010_2025-08.jpg"
         }
       ]
     }
