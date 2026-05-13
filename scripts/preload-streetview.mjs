@@ -85,6 +85,17 @@ async function ensureDir(targetPath) {
   await fs.mkdir(targetPath, { recursive: true });
 }
 
+async function syncAssetDirectories(activeSlugs) {
+  const entries = await fs.readdir(ASSET_DIR, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    if (activeSlugs.has(entry.name)) continue;
+
+    await fs.rm(path.join(ASSET_DIR, entry.name), { recursive: true, force: true });
+  }
+}
+
 async function readCSV() {
   const csvRaw = await fs.readFile(CSV_PATH, 'utf8');
   return parse(csvRaw, {
@@ -360,6 +371,7 @@ async function main() {
     await browser.close();
   }
 
+  await syncAssetDirectories(new Set(nextLocations.map((location) => location.slug)));
   await writeCSV(rows);
   await writeManifest(nextLocations);
 }
