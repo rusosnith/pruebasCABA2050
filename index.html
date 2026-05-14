@@ -287,22 +287,6 @@
     <div class="helper-text" id="preloaded-meta">Buscando manifiesto local...</div>
   </div>
 
-  <details class="card manual-panel">
-    <summary>Modo manual con API Key</summary>
-    <label for="sv-url">URL de Google Street View</label>
-    <input type="text" id="sv-url"
-      value="https://www.google.com/maps/@-34.5706263,-58.4757463,3a,90y,172.4h,92.43t/data=!3m8!1e1!3m6!1s_nnYC8_I-qxBMA3qY6Xy3A!2e0!5s20151001T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-2.434849756316609%26panoid%3D_nnYC8_I-qxBMA3qY6Xy3A%26yaw%3D172.40459482211702!7i13312!8i6656?entry=ttu&g_ep=EgoyMDI2MDQyOS4wIKXMDSoASAFQAw%3D%3D" />
-
-    <label for="api-key">
-      Google Maps API Key
-      <small style="color:#777"> — necesitás habilitar <em>Maps JavaScript API</em> y <em>Street View Static API</em></small>
-    </label>
-    <input type="password" id="api-key" placeholder="AIza…" />
-
-    <button id="btn-compare" onclick="startComparison()">Comparar</button>
-    <div id="status"></div>
-  </details>
-
   <div id="comparator-wrap">
 
     <div class="mode-tabs">
@@ -371,6 +355,22 @@
       <div class="badge">🗺 Imágenes históricas<strong id="info-count">—</strong></div>
     </div>
   </div>
+
+  <details class="card manual-panel">
+    <summary>Modo manual con API Key</summary>
+    <label for="sv-url">URL de Google Street View</label>
+    <input type="text" id="sv-url"
+      value="https://www.google.com/maps/@-34.5706263,-58.4757463,3a,90y,172.4h,92.43t/data=!3m8!1e1!3m6!1s_nnYC8_I-qxBMA3qY6Xy3A!2e0!5s20151001T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-2.434849756316609%26panoid%3D_nnYC8_I-qxBMA3qY6Xy3A%26yaw%3D172.40459482211702!7i13312!8i6656?entry=ttu&g_ep=EgoyMDI2MDQyOS4wIKXMDSoASAFQAw%3D%3D" />
+
+    <label for="api-key">
+      Google Maps API Key
+      <small style="color:#777"> — necesitás habilitar <em>Maps JavaScript API</em> y <em>Street View Static API</em></small>
+    </label>
+    <input type="password" id="api-key" placeholder="AIza…" />
+
+    <button id="btn-compare" onclick="startComparison()">Comparar</button>
+    <div id="status"></div>
+  </details>
 
   <script>
     // ── Estado global ────────────────────────────────────────────────────────
