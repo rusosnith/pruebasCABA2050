@@ -23,13 +23,15 @@ function parseStreetViewURL(url) {
 
   const lat = Number.parseFloat(coordMatch[1]);
   const lng = Number.parseFloat(coordMatch[2]);
+  const fovMatch = url.match(/,(\d+(?:\.\d+)?)y[,/]/);
+  const fov = fovMatch ? Number.parseFloat(fovMatch[1]) : 90;
   const headingMatch = url.match(/,(\d+(?:\.\d+)?)h[,/]/);
   const heading = headingMatch ? Number.parseFloat(headingMatch[1]) : 0;
   const tiltMatch = url.match(/,(\d+(?:\.\d+)?)t[,/]/);
   const tilt = tiltMatch ? Number.parseFloat(tiltMatch[1]) : 90;
   const pitch = 90 - tilt;
 
-  return { lat, lng, heading, pitch };
+  return { lat, lng, fov, heading, pitch };
 }
 
 function parseStreetViewDate(rawDate) {
@@ -77,8 +79,8 @@ function safeFileSegment(value) {
     .replace(/^-+|-+$/g, '') || 'sin-fecha';
 }
 
-function staticURL(panoId, heading, pitch, key, width = IMAGE_WIDTH, height = IMAGE_HEIGHT) {
-  return `https://maps.googleapis.com/maps/api/streetview?size=${width}x${height}&pano=${encodeURIComponent(panoId)}&heading=${heading}&pitch=${pitch}&key=${encodeURIComponent(key)}`;
+function staticURL(panoId, heading, pitch, fov, key, width = IMAGE_WIDTH, height = IMAGE_HEIGHT) {
+  return `https://maps.googleapis.com/maps/api/streetview?size=${width}x${height}&pano=${encodeURIComponent(panoId)}&heading=${heading}&pitch=${pitch}&fov=${fov}&key=${encodeURIComponent(key)}`;
 }
 
 async function ensureDir(targetPath) {
@@ -289,7 +291,7 @@ async function buildLocationManifestEntry(page, row, apiKey) {
   for (const [index, entry] of panos.entries()) {
     const fileName = `${String(index).padStart(3, '0')}_${safeFileSegment(entry.rawDate || entry.label)}.jpg`;
     const destinationPath = path.join(targetDir, fileName);
-    const imageURL = staticURL(entry.pano, parsedLocation.heading, parsedLocation.pitch, apiKey);
+    const imageURL = staticURL(entry.pano, parsedLocation.heading, parsedLocation.pitch, parsedLocation.fov, apiKey);
 
     await downloadImage(imageURL, destinationPath);
 
@@ -308,6 +310,7 @@ async function buildLocationManifestEntry(page, row, apiKey) {
     sourceUrl: row.street_view_url,
     lat: timelineData.location?.latLng?.lat ?? parsedLocation.lat,
     lng: timelineData.location?.latLng?.lng ?? parsedLocation.lng,
+    fov: parsedLocation.fov,
     heading: parsedLocation.heading,
     pitch: parsedLocation.pitch,
     imageWidth: IMAGE_WIDTH,
