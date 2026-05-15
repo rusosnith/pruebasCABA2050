@@ -34,6 +34,14 @@ function parseStreetViewURL(url) {
   return { lat, lng, fov, heading, pitch };
 }
 
+function hasCameraMismatch(existingLocation, parsedLocation) {
+  if (!existingLocation || !parsedLocation) return true;
+
+  return existingLocation.fov !== parsedLocation.fov ||
+    existingLocation.heading !== parsedLocation.heading ||
+    existingLocation.pitch !== parsedLocation.pitch;
+}
+
 function parseStreetViewDate(rawDate) {
   if (!rawDate) return null;
   if (/^\d{4}$/.test(rawDate)) return Date.UTC(Number(rawDate), 0, 1);
@@ -341,10 +349,15 @@ async function main() {
 
     for (const row of rows) {
       const slug = slugify(row.slug || row.label || row.street_view_url);
-      const shouldProcess = FORCE_ALL || row.status !== 'done' || !existingLocations.has(slug);
+      const existingLocation = existingLocations.get(slug);
+      const parsedLocation = parseStreetViewURL(row.street_view_url);
+      const shouldProcess = FORCE_ALL ||
+        row.status !== 'done' ||
+        !existingLocation ||
+        hasCameraMismatch(existingLocation, parsedLocation);
 
       if (!shouldProcess) {
-        nextLocations.push(existingLocations.get(slug));
+        nextLocations.push(existingLocation);
         continue;
       }
 
