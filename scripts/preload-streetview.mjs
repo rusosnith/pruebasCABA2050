@@ -17,21 +17,56 @@ const IMAGE_WIDTH = 900;
 const IMAGE_HEIGHT = 600;
 const FORCE_ALL = process.argv.includes('--all');
 
+function parseEmbeddedThumbnail(url) {
+  const thumbnailMatch = url.match(/!6s([^!]+)/);
+  if (!thumbnailMatch) return null;
+
+  try {
+    const thumbnailUrl = new URL(decodeURIComponent(thumbnailMatch[1]));
+    const yaw = Number.parseFloat(thumbnailUrl.searchParams.get('yaw') || '');
+    const pitch = Number.parseFloat(thumbnailUrl.searchParams.get('pitch') || '');
+
+    if (!Number.isFinite(yaw) || !Number.isFinite(pitch)) {
+      return null;
+    }
+
+    return {
+      yaw,
+      pitch,
+      baseUrl: `${thumbnailUrl.origin}${thumbnailUrl.pathname}`
+    };
+  } catch {
+    return null;
+  }
+}
+
 function parseStreetViewURL(url) {
   const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
   if (!coordMatch) return null;
 
   const lat = Number.parseFloat(coordMatch[1]);
   const lng = Number.parseFloat(coordMatch[2]);
+  const embeddedThumbnail = parseEmbeddedThumbnail(url);
   const fovMatch = url.match(/,(\d+(?:\.\d+)?)y[,/]/);
   const fov = fovMatch ? Number.parseFloat(fovMatch[1]) : 90;
   const headingMatch = url.match(/,(\d+(?:\.\d+)?)h[,/]/);
-  const heading = headingMatch ? Number.parseFloat(headingMatch[1]) : 0;
+  const heading = Number.isFinite(embeddedThumbnail?.yaw)
+    ? embeddedThumbnail.yaw
+    : headingMatch ? Number.parseFloat(headingMatch[1]) : 0;
   const tiltMatch = url.match(/,(\d+(?:\.\d+)?)t[,/]/);
   const tilt = tiltMatch ? Number.parseFloat(tiltMatch[1]) : 90;
-  const pitch = 90 - tilt;
+  const pitch = Number.isFinite(embeddedThumbnail?.pitch)
+    ? embeddedThumbnail.pitch
+    : 90 - tilt;
 
-  return { lat, lng, fov, heading, pitch };
+  return {
+    lat,
+    lng,
+    fov,
+    heading,
+    pitch,
+    thumbnailBaseUrl: embeddedThumbnail?.baseUrl || 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail'
+  };
 }
 
 function hasCameraMismatch(existingLocation, parsedLocation) {
@@ -87,8 +122,8 @@ function safeFileSegment(value) {
     .replace(/^-+|-+$/g, '') || 'sin-fecha';
 }
 
-function staticURL(panoId, heading, pitch, fov, key, width = IMAGE_WIDTH, height = IMAGE_HEIGHT) {
-  return `https://maps.googleapis.com/maps/api/streetview?size=${width}x${height}&pano=${encodeURIComponent(panoId)}&heading=${heading}&pitch=${pitch}&fov=${fov}&key=${encodeURIComponent(key)}`;
+function thumbnailURL(panoId, heading, pitch, width = IMAGE_WIDTH, height = IMAGE_HEIGHT, baseUrl = 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail') {
+  return `${baseUrl}?cb_client=maps_sv.tactile&w=${width}&h=${height}&pitch=${pitch}&panoid=${encodeURIComponent(panoId)}&yaw=${heading}`;
 }
 
 async function ensureDir(targetPath) {
@@ -299,7 +334,14 @@ async function buildLocationManifestEntry(page, row, apiKey) {
   for (const [index, entry] of panos.entries()) {
     const fileName = `${String(index).padStart(3, '0')}_${safeFileSegment(entry.rawDate || entry.label)}.jpg`;
     const destinationPath = path.join(targetDir, fileName);
-    const imageURL = staticURL(entry.pano, parsedLocation.heading, parsedLocation.pitch, parsedLocation.fov, apiKey);
+    const imageURL = thumbnailURL(
+      entry.pano,
+      parsedLocation.heading,
+      parsedLocation.pitch,
+      IMAGE_WIDTH,
+      IMAGE_HEIGHT,
+      parsedLocation.thumbnailBaseUrl
+    );
 
     await downloadImage(imageURL, destinationPath);
 
