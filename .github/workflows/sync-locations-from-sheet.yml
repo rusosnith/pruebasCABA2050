@@ -10,7 +10,7 @@ jobs:
   sync-locations:
     runs-on: ubuntu-latest
     env:
-      GOOGLE_SHEETS_CSV_URL: ${{ secrets.GOOGLE_SHEETS_CSV_URL }}
+      GOOGLE_SHEETS_CSV_URL: https://docs.google.com/spreadsheets/d/e/2PACX-1vRKholbrk6Rg_5H0KgaFTEBhnUcscCItkJ-gCbvmuh6QENESjCuFs1Ma4GEy0TM6hOQGg7tj1a8BV84/pub?gid=0&single=true&output=csv
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,13 +27,7 @@ jobs:
         run: npm ci
 
       - name: Sync locations CSV from Google Sheets
-        run: |
-          if [[ -z "$GOOGLE_SHEETS_CSV_URL" ]]; then
-            echo "Falta configurar el secret GOOGLE_SHEETS_CSV_URL" >&2
-            exit 1
-          fi
-
-          node scripts/sync-locations-from-sheet.mjs
+        run: node scripts/sync-locations-from-sheet.mjs
 
       - name: Commit synced CSV
         run: |

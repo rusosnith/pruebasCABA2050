@@ -37,17 +37,16 @@ Columnas esperadas:
 Configura en GitHub el secret del repositorio:
 
 - `GOOGLE_MAPS_API_KEY`
-- `GOOGLE_SHEETS_CSV_URL`
 
 La key debe tener habilitadas:
 
 - Maps JavaScript API
 - Street View Static API
 
-`GOOGLE_SHEETS_CSV_URL` debe ser la URL de exportacion CSV de Google Sheets, por ejemplo:
+La sincronizacion del CSV ya quedo apuntando a esta URL publica de Google Sheets:
 
 ```bash
-https://docs.google.com/spreadsheets/d/TU_ID/export?format=csv&gid=0
+https://docs.google.com/spreadsheets/d/e/2PACX-1vRKholbrk6Rg_5H0KgaFTEBhnUcscCItkJ-gCbvmuh6QENESjCuFs1Ma4GEy0TM6hOQGg7tj1a8BV84/pub?gid=0&single=true&output=csv
 ```
 
 ## Ejecutar localmente
@@ -69,7 +68,7 @@ npm run preload
 Sincronizar `data/locations.csv` desde Google Sheets:
 
 ```bash
-export GOOGLE_SHEETS_CSV_URL="https://docs.google.com/spreadsheets/d/TU_ID/export?format=csv&gid=0"
+export GOOGLE_SHEETS_CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRKholbrk6Rg_5H0KgaFTEBhnUcscCItkJ-gCbvmuh6QENESjCuFs1Ma4GEy0TM6hOQGg7tj1a8BV84/pub?gid=0&single=true&output=csv"
 node scripts/sync-locations-from-sheet.mjs
 ```
 
@@ -92,7 +91,7 @@ El workflow `Preload Street View Assets` se puede ejecutar de dos formas:
 - manualmente con `workflow_dispatch`
 - automaticamente cuando cambia `data/locations.csv`
 
-Tambien existe el workflow `Sync Locations From Google Sheets`, que se ejecuta manualmente desde GitHub Actions y actualiza `data/locations.csv` usando el secret `GOOGLE_SHEETS_CSV_URL`.
+Tambien existe el workflow `Sync Locations From Google Sheets`, que se ejecuta manualmente desde GitHub Actions y actualiza `data/locations.csv` usando la URL publica ya configurada en el workflow.
 
 Si hay cambios, el workflow hace commit de:
 
