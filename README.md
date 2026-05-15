@@ -37,11 +37,18 @@ Columnas esperadas:
 Configura en GitHub el secret del repositorio:
 
 - `GOOGLE_MAPS_API_KEY`
+- `GOOGLE_SHEETS_CSV_URL`
 
 La key debe tener habilitadas:
 
 - Maps JavaScript API
 - Street View Static API
+
+`GOOGLE_SHEETS_CSV_URL` debe ser la URL de exportacion CSV de Google Sheets, por ejemplo:
+
+```bash
+https://docs.google.com/spreadsheets/d/TU_ID/export?format=csv&gid=0
+```
 
 ## Ejecutar localmente
 
@@ -57,6 +64,13 @@ Generar assets pendientes:
 ```bash
 export GOOGLE_MAPS_API_KEY="tu-key"
 npm run preload
+```
+
+Sincronizar `data/locations.csv` desde Google Sheets:
+
+```bash
+export GOOGLE_SHEETS_CSV_URL="https://docs.google.com/spreadsheets/d/TU_ID/export?format=csv&gid=0"
+node scripts/sync-locations-from-sheet.mjs
 ```
 
 Reprocesar todo:
@@ -77,6 +91,8 @@ El workflow `Preload Street View Assets` se puede ejecutar de dos formas:
 
 - manualmente con `workflow_dispatch`
 - automaticamente cuando cambia `data/locations.csv`
+
+Tambien existe el workflow `Sync Locations From Google Sheets`, que se ejecuta manualmente desde GitHub Actions y actualiza `data/locations.csv` usando el secret `GOOGLE_SHEETS_CSV_URL`.
 
 Si hay cambios, el workflow hace commit de:
 

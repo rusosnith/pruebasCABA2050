@@ -1,0 +1,49 @@
+name: Sync Locations From Google Sheets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-locations:
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_SHEETS_CSV_URL: ${{ secrets.GOOGLE_SHEETS_CSV_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync locations CSV from Google Sheets
+        run: |
+          if [[ -z "$GOOGLE_SHEETS_CSV_URL" ]]; then
+            echo "Falta configurar el secret GOOGLE_SHEETS_CSV_URL" >&2
+            exit 1
+          fi
+
+          node scripts/sync-locations-from-sheet.mjs
+
+      - name: Commit synced CSV
+        run: |
+          if git diff --quiet; then
+            echo "No hubo cambios para commitear"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/locations.csv
+          git commit -m "chore: sync locations from Google Sheets"
+          git push
