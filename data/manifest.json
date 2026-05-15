@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-15T18:50:15.350Z",
+  "generatedAt": "2026-05-15T19:20:29.041Z",
   "locations": [
     {
       "slug": "olazabal-exautopista",
@@ -88,6 +88,670 @@
           "label": "ago 2025",
           "timestamp": 1754006400000,
           "image": "assets/streetview/olazabal-exautopista/010_2025-08.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "plaza-houssay",
+      "label": "Plaza Houssay",
+      "sourceUrl": "https://www.google.com/maps/@-34.5992763,-58.397252,3a,75y,30.37h,97.79t/data=!3m8!1e1!3m6!1sag6i8W5lzgu3p2n_ht2KGA!2e0!5s20131001T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-7.786025774288902%26panoid%3Dag6i8W5lzgu3p2n_ht2KGA%26yaw%3D30.371723867141753!7i13312!8i6656?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "lat": -34.59927910483771,
+      "lng": -58.39724659641945,
+      "heading": 30.37,
+      "pitch": -7.790000000000006,
+      "imageWidth": 900,
+      "imageHeight": 600,
+      "panos": [
+        {
+          "pano": "ag6i8W5lzgu3p2n_ht2KGA",
+          "rawDate": "2013-10",
+          "label": "oct 2013",
+          "timestamp": 1380585600000,
+          "image": "assets/streetview/plaza-houssay/000_2013-10.jpg"
+        },
+        {
+          "pano": "dJdNIF-h8crp1ggTzBsHuQ",
+          "rawDate": "2014-07",
+          "label": "jul 2014",
+          "timestamp": 1404172800000,
+          "image": "assets/streetview/plaza-houssay/001_2014-07.jpg"
+        },
+        {
+          "pano": "gzjyqALRrZamvTxBj3VTXw",
+          "rawDate": "2015-11",
+          "label": "nov 2015",
+          "timestamp": 1446336000000,
+          "image": "assets/streetview/plaza-houssay/002_2015-11.jpg"
+        },
+        {
+          "pano": "onPpigMLbZBmmNuTDv4Mnw",
+          "rawDate": "2016-10",
+          "label": "oct 2016",
+          "timestamp": 1475280000000,
+          "image": "assets/streetview/plaza-houssay/003_2016-10.jpg"
+        },
+        {
+          "pano": "zTvX0uvDdEU2WyGb6SX-Tg",
+          "rawDate": "2017-08",
+          "label": "ago 2017",
+          "timestamp": 1501545600000,
+          "image": "assets/streetview/plaza-houssay/004_2017-08.jpg"
+        },
+        {
+          "pano": "zj8WG8Pu08OTpQ6GqMds-Q",
+          "rawDate": "2019-04",
+          "label": "abr 2019",
+          "timestamp": 1554076800000,
+          "image": "assets/streetview/plaza-houssay/005_2019-04.jpg"
+        },
+        {
+          "pano": "yIw6heW8zkbZHHItRRwwxw",
+          "rawDate": "2021-11",
+          "label": "nov 2021",
+          "timestamp": 1635724800000,
+          "image": "assets/streetview/plaza-houssay/006_2021-11.jpg"
+        },
+        {
+          "pano": "HdPfpcA4MQs0kau74iv6KQ",
+          "rawDate": "2022-05",
+          "label": "may 2022",
+          "timestamp": 1651363200000,
+          "image": "assets/streetview/plaza-houssay/007_2022-05.jpg"
+        },
+        {
+          "pano": "8fT4fFXbhlBK93PBPiIWqw",
+          "rawDate": "2023-05",
+          "label": "may 2023",
+          "timestamp": 1682899200000,
+          "image": "assets/streetview/plaza-houssay/008_2023-05.jpg"
+        },
+        {
+          "pano": "PupFYXRpByitQf79du1Vrg",
+          "rawDate": "2024-06",
+          "label": "jun 2024",
+          "timestamp": 1717200000000,
+          "image": "assets/streetview/plaza-houssay/009_2024-06.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "aguero",
+      "label": "Aguero",
+      "sourceUrl": "https://www.google.com/maps/place/34%C2%B035'51.8%22S+58%C2%B024'36.8%22W/@-34.5979707,-58.4102913,3a,75y,41.17h,108.69t/data=!3m7!1e1!3m5!1shq041OgJg6drxcSLuedGRg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-18.68841436286624%26panoid%3Dhq041OgJg6drxcSLuedGRg%26yaw%3D41.16589690827358!7i16384!8i8192!4m4!3m3!8m2!3d-34.59772!4d-58.41023?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "lat": -34.59797069591827,
+      "lng": -58.41029130273945,
+      "heading": 41.17,
+      "pitch": -18.689999999999998,
+      "imageWidth": 900,
+      "imageHeight": 600,
+      "panos": [
+        {
+          "pano": "_fqSW1zwl5ypJ07wfwX7gA",
+          "rawDate": "2013-10",
+          "label": "oct 2013",
+          "timestamp": 1380585600000,
+          "image": "assets/streetview/aguero/000_2013-10.jpg"
+        },
+        {
+          "pano": "dlA_IfU95xyNGyrbmPzV0w",
+          "rawDate": "2014-05",
+          "label": "may 2014",
+          "timestamp": 1398902400000,
+          "image": "assets/streetview/aguero/001_2014-05.jpg"
+        },
+        {
+          "pano": "9t_GjNd_EDOw_8H_y29t8Q",
+          "rawDate": "2014-11",
+          "label": "nov 2014",
+          "timestamp": 1414800000000,
+          "image": "assets/streetview/aguero/002_2014-11.jpg"
+        },
+        {
+          "pano": "yboyt_kNrHgiu2RvIy5OBQ",
+          "rawDate": "2015-06",
+          "label": "jun 2015",
+          "timestamp": 1433116800000,
+          "image": "assets/streetview/aguero/003_2015-06.jpg"
+        },
+        {
+          "pano": "IQp4A5_Ch_BdIKmruHli3A",
+          "rawDate": "2016-10",
+          "label": "oct 2016",
+          "timestamp": 1475280000000,
+          "image": "assets/streetview/aguero/004_2016-10.jpg"
+        },
+        {
+          "pano": "kerST-Vne7K5G3zIm8L-dg",
+          "rawDate": "2017-09",
+          "label": "sept 2017",
+          "timestamp": 1504224000000,
+          "image": "assets/streetview/aguero/005_2017-09.jpg"
+        },
+        {
+          "pano": "74dKZzu5WaMdk9bjadDbHA",
+          "rawDate": "2019-04",
+          "label": "abr 2019",
+          "timestamp": 1554076800000,
+          "image": "assets/streetview/aguero/006_2019-04.jpg"
+        },
+        {
+          "pano": "ZebBKJi-N3cpT-5Sdkutzw",
+          "rawDate": "2021-06",
+          "label": "jun 2021",
+          "timestamp": 1622505600000,
+          "image": "assets/streetview/aguero/007_2021-06.jpg"
+        },
+        {
+          "pano": "vh9yAgJeveSUVvLjQyLYMw",
+          "rawDate": "2022-06",
+          "label": "jun 2022",
+          "timestamp": 1654041600000,
+          "image": "assets/streetview/aguero/008_2022-06.jpg"
+        },
+        {
+          "pano": "5JeLVPC0K8pb82lVDEwnXg",
+          "rawDate": "2023-05",
+          "label": "may 2023",
+          "timestamp": 1682899200000,
+          "image": "assets/streetview/aguero/009_2023-05.jpg"
+        },
+        {
+          "pano": "hq041OgJg6drxcSLuedGRg",
+          "rawDate": "2024-06",
+          "label": "jun 2024",
+          "timestamp": 1717200000000,
+          "image": "assets/streetview/aguero/010_2024-06.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "anchorena",
+      "label": "Anchorena y Cordoba",
+      "sourceUrl": "https://www.google.com/maps/place/34%C2%B035'52.0%22S+58%C2%B024'29.0%22W/@-34.5980874,-58.4081709,3a,89.9y,338.62h,114.8t/data=!3m7!1e1!3m5!1s0ILbxh7upTxXoIT1O-US6Q!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-24.79585963694751%26panoid%3D0ILbxh7upTxXoIT1O-US6Q%26yaw%3D338.6201425092135!7i16384!8i8192!4m4!3m3!8m2!3d-34.5977751!4d-58.4080576?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "lat": -34.59804783541725,
+      "lng": -58.40819527231952,
+      "heading": 338.62,
+      "pitch": -24.799999999999997,
+      "imageWidth": 900,
+      "imageHeight": 600,
+      "panos": [
+        {
+          "pano": "vSv3ZQhWYkTTUgQdDOUS4g",
+          "rawDate": "2013-10",
+          "label": "oct 2013",
+          "timestamp": 1380585600000,
+          "image": "assets/streetview/anchorena/000_2013-10.jpg"
+        },
+        {
+          "pano": "ZaZCWoZmeyZ8oxKIT4j6cw",
+          "rawDate": "2014-02",
+          "label": "feb 2014",
+          "timestamp": 1391212800000,
+          "image": "assets/streetview/anchorena/001_2014-02.jpg"
+        },
+        {
+          "pano": "9IsCbCZXXyFLrn_5nUxhYQ",
+          "rawDate": "2014-07",
+          "label": "jul 2014",
+          "timestamp": 1404172800000,
+          "image": "assets/streetview/anchorena/002_2014-07.jpg"
+        },
+        {
+          "pano": "4IXi7eEnnMva9RJg9rtecg",
+          "rawDate": "2015-06",
+          "label": "jun 2015",
+          "timestamp": 1433116800000,
+          "image": "assets/streetview/anchorena/003_2015-06.jpg"
+        },
+        {
+          "pano": "MTjKKt6ZjhC6_bDq6e8-MA",
+          "rawDate": "2015-11",
+          "label": "nov 2015",
+          "timestamp": 1446336000000,
+          "image": "assets/streetview/anchorena/004_2015-11.jpg"
+        },
+        {
+          "pano": "fXd_Aut6H6P0_PUXId8EyA",
+          "rawDate": "2016-10",
+          "label": "oct 2016",
+          "timestamp": 1475280000000,
+          "image": "assets/streetview/anchorena/005_2016-10.jpg"
+        },
+        {
+          "pano": "CHarSFVc-3TypMBjQmkT0A",
+          "rawDate": "2017-09",
+          "label": "sept 2017",
+          "timestamp": 1504224000000,
+          "image": "assets/streetview/anchorena/006_2017-09.jpg"
+        },
+        {
+          "pano": "J5VCK_EXD_unEX4gv8hHew",
+          "rawDate": "2019-05",
+          "label": "may 2019",
+          "timestamp": 1556668800000,
+          "image": "assets/streetview/anchorena/007_2019-05.jpg"
+        },
+        {
+          "pano": "1O6zq6P5uqlQBInyn3ahZQ",
+          "rawDate": "2021-11",
+          "label": "nov 2021",
+          "timestamp": 1635724800000,
+          "image": "assets/streetview/anchorena/008_2021-11.jpg"
+        },
+        {
+          "pano": "2gUGUf3_6WutybdTQdWg_g",
+          "rawDate": "2022-07",
+          "label": "jul 2022",
+          "timestamp": 1656633600000,
+          "image": "assets/streetview/anchorena/009_2022-07.jpg"
+        },
+        {
+          "pano": "0ILbxh7upTxXoIT1O-US6Q",
+          "rawDate": "2023-01",
+          "label": "ene 2023",
+          "timestamp": 1672531200000,
+          "image": "assets/streetview/anchorena/010_2023-01.jpg"
+        },
+        {
+          "pano": "7xkLNM-53iuwbvl_5oOy9A",
+          "rawDate": "2023-07",
+          "label": "jul 2023",
+          "timestamp": 1688169600000,
+          "image": "assets/streetview/anchorena/011_2023-07.jpg"
+        },
+        {
+          "pano": "m8cIpkBx39OeaYQS8MOD0A",
+          "rawDate": "2024-09",
+          "label": "sept 2024",
+          "timestamp": 1725148800000,
+          "image": "assets/streetview/anchorena/012_2024-09.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "juncal",
+      "label": "Juncal",
+      "sourceUrl": "https://www.google.com/maps/place/34%C2%B035'26.8%22S+58%C2%B024'10.0%22W/@-34.5907424,-58.4027305,3a,90y,243.16h,113.98t/data=!3m8!1e1!3m6!1sMyc1pW5gfULLiG18DleVCw!2e0!5s20240601T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-23.975316665130777%26panoid%3DMyc1pW5gfULLiG18DleVCw%26yaw%3D243.15669845995535!7i16384!8i8192!4m4!3m3!8m2!3d-34.59079!4d-58.40278?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "lat": -34.590742416647444,
+      "lng": -58.40273046724829,
+      "heading": 243.16,
+      "pitch": -23.980000000000004,
+      "imageWidth": 900,
+      "imageHeight": 600,
+      "panos": [
+        {
+          "pano": "38jmJXqex7htpPrkRhwUqA",
+          "rawDate": "2013-10",
+          "label": "oct 2013",
+          "timestamp": 1380585600000,
+          "image": "assets/streetview/juncal/000_2013-10.jpg"
+        },
+        {
+          "pano": "6ug5wDiyZ4pPl0ZsNshj1Q",
+          "rawDate": "2014-07",
+          "label": "jul 2014",
+          "timestamp": 1404172800000,
+          "image": "assets/streetview/juncal/001_2014-07.jpg"
+        },
+        {
+          "pano": "DwEZgprYNi5539wmp9q-Pw",
+          "rawDate": "2015-09",
+          "label": "sept 2015",
+          "timestamp": 1441065600000,
+          "image": "assets/streetview/juncal/002_2015-09.jpg"
+        },
+        {
+          "pano": "7Waq3YaVoOWImQx2Qo1Feg",
+          "rawDate": "2016-10",
+          "label": "oct 2016",
+          "timestamp": 1475280000000,
+          "image": "assets/streetview/juncal/003_2016-10.jpg"
+        },
+        {
+          "pano": "sVgUyR3zqMnO7Ls8BM4o8A",
+          "rawDate": "2017-06",
+          "label": "jun 2017",
+          "timestamp": 1496275200000,
+          "image": "assets/streetview/juncal/004_2017-06.jpg"
+        },
+        {
+          "pano": "iS3LFxDzNrQw3CUUduKEWQ",
+          "rawDate": "2019-04",
+          "label": "abr 2019",
+          "timestamp": 1554076800000,
+          "image": "assets/streetview/juncal/005_2019-04.jpg"
+        },
+        {
+          "pano": "BR98kojOlO9p-SCrDMM7IA",
+          "rawDate": "2022-07",
+          "label": "jul 2022",
+          "timestamp": 1656633600000,
+          "image": "assets/streetview/juncal/006_2022-07.jpg"
+        },
+        {
+          "pano": "Xks64Ykrep2vyDdQXLRm8g",
+          "rawDate": "2023-05",
+          "label": "may 2023",
+          "timestamp": 1682899200000,
+          "image": "assets/streetview/juncal/007_2023-05.jpg"
+        },
+        {
+          "pano": "Myc1pW5gfULLiG18DleVCw",
+          "rawDate": "2024-06",
+          "label": "jun 2024",
+          "timestamp": 1717200000000,
+          "image": "assets/streetview/juncal/008_2024-06.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "guardiavieja",
+      "label": "Guardia Vieja",
+      "sourceUrl": "https://www.google.com/maps/place/34%C2%B035'59.5%22S+58%C2%B025'46.7%22W/@-34.5997902,-58.4297648,3a,90y,137.72h,110.3t/data=!3m7!1e1!3m5!1si2Q9xJRh0Do18XcDxLwEpQ!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-20.302590976060714%26panoid%3Di2Q9xJRh0Do18XcDxLwEpQ%26yaw%3D137.72099580053865!7i16384!8i8192!4m4!3m3!8m2!3d-34.59985!4d-58.42963?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "lat": -34.59979024835202,
+      "lng": -58.429764756812276,
+      "heading": 137.72,
+      "pitch": -20.299999999999997,
+      "imageWidth": 900,
+      "imageHeight": 600,
+      "panos": [
+        {
+          "pano": "TAfzpJS5GaRoGusIEBv87w",
+          "rawDate": "2013-10",
+          "label": "oct 2013",
+          "timestamp": 1380585600000,
+          "image": "assets/streetview/guardiavieja/000_2013-10.jpg"
+        },
+        {
+          "pano": "bG-EpcBChiQc7HV8TIcTCw",
+          "rawDate": "2014-07",
+          "label": "jul 2014",
+          "timestamp": 1404172800000,
+          "image": "assets/streetview/guardiavieja/001_2014-07.jpg"
+        },
+        {
+          "pano": "vMAL7Ounq9s5ZcfcYPhI8g",
+          "rawDate": "2015-06",
+          "label": "jun 2015",
+          "timestamp": 1433116800000,
+          "image": "assets/streetview/guardiavieja/002_2015-06.jpg"
+        },
+        {
+          "pano": "-vvJaPI33m8LGqajeUVSoQ",
+          "rawDate": "2016-10",
+          "label": "oct 2016",
+          "timestamp": 1475280000000,
+          "image": "assets/streetview/guardiavieja/003_2016-10.jpg"
+        },
+        {
+          "pano": "lhVIR3J-4v_RvahZxSy7jQ",
+          "rawDate": "2017-07",
+          "label": "jul 2017",
+          "timestamp": 1498867200000,
+          "image": "assets/streetview/guardiavieja/004_2017-07.jpg"
+        },
+        {
+          "pano": "KFiHfZgP0xqoEjeXLmMqaQ",
+          "rawDate": "2017-08",
+          "label": "ago 2017",
+          "timestamp": 1501545600000,
+          "image": "assets/streetview/guardiavieja/005_2017-08.jpg"
+        },
+        {
+          "pano": "OsNSn5hMT5A9o81k_JesiQ",
+          "rawDate": "2019-04",
+          "label": "abr 2019",
+          "timestamp": 1554076800000,
+          "image": "assets/streetview/guardiavieja/006_2019-04.jpg"
+        },
+        {
+          "pano": "sWurpLg__whj7-Z4swfl_w",
+          "rawDate": "2020-03",
+          "label": "mar 2020",
+          "timestamp": 1583020800000,
+          "image": "assets/streetview/guardiavieja/007_2020-03.jpg"
+        },
+        {
+          "pano": "UnjTNRD8mzuOK8DjLEmswQ",
+          "rawDate": "2021-11",
+          "label": "nov 2021",
+          "timestamp": 1635724800000,
+          "image": "assets/streetview/guardiavieja/008_2021-11.jpg"
+        },
+        {
+          "pano": "BcLnf7XUG3_TFF27Mkzkew",
+          "rawDate": "2022-08",
+          "label": "ago 2022",
+          "timestamp": 1659312000000,
+          "image": "assets/streetview/guardiavieja/009_2022-08.jpg"
+        },
+        {
+          "pano": "Quxd9N5-ZNlHnW_6AvkFqQ",
+          "rawDate": "2023-05",
+          "label": "may 2023",
+          "timestamp": 1682899200000,
+          "image": "assets/streetview/guardiavieja/010_2023-05.jpg"
+        },
+        {
+          "pano": "i2Q9xJRh0Do18XcDxLwEpQ",
+          "rawDate": "2024-07",
+          "label": "jul 2024",
+          "timestamp": 1719792000000,
+          "image": "assets/streetview/guardiavieja/011_2024-07.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "sarmiento",
+      "label": "Sarmiento",
+      "sourceUrl": "https://www.google.com/maps/place/34%C2%B036'16.3%22S+58%C2%B025'25.5%22W/@-34.6045708,-58.4236855,3a,90y,326.31h,110.02t/data=!3m8!1e1!3m6!1saNIS0ftEvdsrkekUg1Ogww!2e0!5s20251001T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-20.02388980500801%26panoid%3DaNIS0ftEvdsrkekUg1Ogww%26yaw%3D326.3083095774211!7i16384!8i8192!4m4!3m3!8m2!3d-34.6045294!4d-58.4237442?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "lat": -34.604570859016896,
+      "lng": -58.42364839470568,
+      "heading": 326.31,
+      "pitch": -20.019999999999996,
+      "imageWidth": 900,
+      "imageHeight": 600,
+      "panos": [
+        {
+          "pano": "QI810IfRTG5n3ipqMvTmdQ",
+          "rawDate": "2013-10",
+          "label": "oct 2013",
+          "timestamp": 1380585600000,
+          "image": "assets/streetview/sarmiento/000_2013-10.jpg"
+        },
+        {
+          "pano": "DTgAnyr8H_SF0mCcHv92Ow",
+          "rawDate": "2015-06",
+          "label": "jun 2015",
+          "timestamp": 1433116800000,
+          "image": "assets/streetview/sarmiento/001_2015-06.jpg"
+        },
+        {
+          "pano": "DPZrQncAPmbhgtGAtD4Bcw",
+          "rawDate": "2016-12",
+          "label": "dic 2016",
+          "timestamp": 1480550400000,
+          "image": "assets/streetview/sarmiento/002_2016-12.jpg"
+        },
+        {
+          "pano": "aI8o6MXDCzYpmxpqhENdyg",
+          "rawDate": "2022-06",
+          "label": "jun 2022",
+          "timestamp": 1654041600000,
+          "image": "assets/streetview/sarmiento/003_2022-06.jpg"
+        },
+        {
+          "pano": "uesqYrvvwMIiiPaliUsYVQ",
+          "rawDate": "2023-01",
+          "label": "ene 2023",
+          "timestamp": 1672531200000,
+          "image": "assets/streetview/sarmiento/004_2023-01.jpg"
+        },
+        {
+          "pano": "aNIS0ftEvdsrkekUg1Ogww",
+          "rawDate": "2025-10",
+          "label": "oct 2025",
+          "timestamp": 1759276800000,
+          "image": "assets/streetview/sarmiento/005_2025-10.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "guatemala",
+      "label": "Guatemala",
+      "sourceUrl": "https://www.google.com/maps/place/34%C2%B035'21.3%22S+58%C2%B025'10.6%22W/@-34.5892375,-58.419437,3a,75y,257.52h,110.36t/data=!3m8!1e1!3m6!1s6-qbaNxfa65LP406c8E0zA!2e0!5s20240601T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-20.361201832172526%26panoid%3D6-qbaNxfa65LP406c8E0zA%26yaw%3D257.5193349958762!7i16384!8i8192!4m4!3m3!8m2!3d-34.5892427!4d-58.4195981?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "lat": -34.58923746828657,
+      "lng": -58.41943698424308,
+      "heading": 257.52,
+      "pitch": -20.36,
+      "imageWidth": 900,
+      "imageHeight": 600,
+      "panos": [
+        {
+          "pano": "yvrTM9zXNsZzmG8e3SPsIw",
+          "rawDate": "2013-10",
+          "label": "oct 2013",
+          "timestamp": 1380585600000,
+          "image": "assets/streetview/guatemala/000_2013-10.jpg"
+        },
+        {
+          "pano": "BlBBcirYMyD1tFGoPgDa9g",
+          "rawDate": "2014-07",
+          "label": "jul 2014",
+          "timestamp": 1404172800000,
+          "image": "assets/streetview/guatemala/001_2014-07.jpg"
+        },
+        {
+          "pano": "a3BNfjY63MJis1A581aEoQ",
+          "rawDate": "2015-06",
+          "label": "jun 2015",
+          "timestamp": 1433116800000,
+          "image": "assets/streetview/guatemala/002_2015-06.jpg"
+        },
+        {
+          "pano": "gV2Fi2xIJLwG3WxeZdrZBQ",
+          "rawDate": "2016-10",
+          "label": "oct 2016",
+          "timestamp": 1475280000000,
+          "image": "assets/streetview/guatemala/003_2016-10.jpg"
+        },
+        {
+          "pano": "jpvRhD9t15Al5AydFRWa2A",
+          "rawDate": "2017-08",
+          "label": "ago 2017",
+          "timestamp": 1501545600000,
+          "image": "assets/streetview/guatemala/004_2017-08.jpg"
+        },
+        {
+          "pano": "qjn2cZNuTbHwgWUJJ9jpRw",
+          "rawDate": "2019-04",
+          "label": "abr 2019",
+          "timestamp": 1554076800000,
+          "image": "assets/streetview/guatemala/005_2019-04.jpg"
+        },
+        {
+          "pano": "dsUFrhUf_JzgjrDuUE9uMw",
+          "rawDate": "2021-11",
+          "label": "nov 2021",
+          "timestamp": 1635724800000,
+          "image": "assets/streetview/guatemala/006_2021-11.jpg"
+        },
+        {
+          "pano": "0H6wNtR7rjiuVRymhJl9Cg",
+          "rawDate": "2022-07",
+          "label": "jul 2022",
+          "timestamp": 1656633600000,
+          "image": "assets/streetview/guatemala/007_2022-07.jpg"
+        },
+        {
+          "pano": "439GC9LWglfTyOHHynb2qA",
+          "rawDate": "2023-05",
+          "label": "may 2023",
+          "timestamp": 1682899200000,
+          "image": "assets/streetview/guatemala/008_2023-05.jpg"
+        },
+        {
+          "pano": "6-qbaNxfa65LP406c8E0zA",
+          "rawDate": "2024-06",
+          "label": "jun 2024",
+          "timestamp": 1717200000000,
+          "image": "assets/streetview/guatemala/009_2024-06.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "godoycruz",
+      "label": "Godoy Cruz",
+      "sourceUrl": "https://www.google.com/maps/place/34%C2%B034'51.4%22S+58%C2%B025'37.9%22W/@-34.5809662,-58.4272744,3a,90y,98.75h,114.72t/data=!3m7!1e1!3m5!1s76HiRzEGHTwcQd8xMKAAVw!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-24.717184503139677%26panoid%3D76HiRzEGHTwcQd8xMKAAVw%26yaw%3D98.74705672397714!7i16384!8i8192!4m4!3m3!8m2!3d-34.5809455!4d-58.4271848?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "lat": -34.58096623785146,
+      "lng": -58.427274385172645,
+      "heading": 98.75,
+      "pitch": -24.72,
+      "imageWidth": 900,
+      "imageHeight": 600,
+      "panos": [
+        {
+          "pano": "LZO3IgQqKSmxbeQ3uC4wXQ",
+          "rawDate": "2013-10",
+          "label": "oct 2013",
+          "timestamp": 1380585600000,
+          "image": "assets/streetview/godoycruz/000_2013-10.jpg"
+        },
+        {
+          "pano": "KlKi47C3ng1EOg67lu78xg",
+          "rawDate": "2014-06",
+          "label": "jun 2014",
+          "timestamp": 1401580800000,
+          "image": "assets/streetview/godoycruz/001_2014-06.jpg"
+        },
+        {
+          "pano": "6ZagjaSZxrjqrwdYh8eKUA",
+          "rawDate": "2015-06",
+          "label": "jun 2015",
+          "timestamp": 1433116800000,
+          "image": "assets/streetview/godoycruz/002_2015-06.jpg"
+        },
+        {
+          "pano": "0y9Oo-pP_yBvWs5ZVy-UCg",
+          "rawDate": "2016-10",
+          "label": "oct 2016",
+          "timestamp": 1475280000000,
+          "image": "assets/streetview/godoycruz/003_2016-10.jpg"
+        },
+        {
+          "pano": "TPr0lVb2wmYylijO5Gg0iQ",
+          "rawDate": "2017-08",
+          "label": "ago 2017",
+          "timestamp": 1501545600000,
+          "image": "assets/streetview/godoycruz/004_2017-08.jpg"
+        },
+        {
+          "pano": "DbMuQlSAxsPBkWbGz6AUMA",
+          "rawDate": "2019-05",
+          "label": "may 2019",
+          "timestamp": 1556668800000,
+          "image": "assets/streetview/godoycruz/005_2019-05.jpg"
+        },
+        {
+          "pano": "UodF2sbVRU_Urh5N0zCl4g",
+          "rawDate": "2022-06",
+          "label": "jun 2022",
+          "timestamp": 1654041600000,
+          "image": "assets/streetview/godoycruz/006_2022-06.jpg"
+        },
+        {
+          "pano": "2tj8IlGUD1MYl0jDUjygTw",
+          "rawDate": "2023-05",
+          "label": "may 2023",
+          "timestamp": 1682899200000,
+          "image": "assets/streetview/godoycruz/007_2023-05.jpg"
+        },
+        {
+          "pano": "76HiRzEGHTwcQd8xMKAAVw",
+          "rawDate": "2025-10",
+          "label": "oct 2025",
+          "timestamp": 1759276800000,
+          "image": "assets/streetview/godoycruz/008_2025-10.jpg"
         }
       ]
     }
