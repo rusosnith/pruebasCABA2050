@@ -263,6 +263,66 @@
       margin-top: 0.7rem;
       line-height: 1.4;
     }
+    .analytics-card {
+      border-color: #34517f;
+      background: linear-gradient(135deg, rgba(24, 35, 69, 0.96), rgba(15, 20, 43, 0.96));
+    }
+    .analytics-card strong {
+      display: block;
+      margin-bottom: 0.45rem;
+      color: #f3f6ff;
+      font-size: 0.95rem;
+    }
+    .analytics-status {
+      margin-top: 0.8rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid #5e4f21;
+      background: rgba(94, 79, 33, 0.18);
+      color: #f7d98f;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+    .analytics-status.ready {
+      border-color: #2f6f57;
+      background: rgba(47, 111, 87, 0.16);
+      color: #9ce3be;
+    }
+    .inline-fields {
+      display: flex;
+      gap: 0.75rem;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+    .inline-fields input {
+      flex: 1;
+      min-width: 220px;
+    }
+    .inline-fields button {
+      width: auto;
+      min-width: 170px;
+      margin-top: 0;
+    }
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      padding: 0.7rem 0.8rem;
+      border-radius: 7px;
+      border: 1px solid #3a3a6a;
+      background: #0f0f2e;
+      color: #ddf;
+      font-size: 0.9rem;
+      outline: none;
+      resize: vertical;
+      font-family: inherit;
+    }
+    textarea:focus { border-color: #5a7fff; }
+    .feedback-card {
+      display: none;
+    }
+    .feedback-card.visible {
+      display: block;
+    }
     .manual-panel summary {
       cursor: pointer;
       list-style: none;
@@ -277,6 +337,22 @@
 
   <h1>🕐 Street View – Comparador de épocas</h1>
   <p class="subtitle">Elegí una ubicación precargada y compará la imagen más vieja con la más nueva desde archivos servidos por GitHub Pages</p>
+
+  <div class="card analytics-card">
+    <strong>Versión de test con monitoreo</strong>
+    <p class="helper-text">Esta prueba registra eventos de uso y puede guardar sesiones en PostHog para validar si el flujo se entiende. Evitá compartir datos sensibles al usarla.</p>
+    <div class="analytics-status" id="analytics-status">Monitoreo desactivado hasta configurar la clave del proyecto de PostHog en el código.</div>
+  </div>
+
+  <div class="card">
+    <label for="participant-id">Código de participante</label>
+    <div class="inline-fields">
+      <input type="text" id="participant-id" placeholder="ej. grupo-a-03" maxlength="64" />
+      <button type="button" class="mini-button" id="btn-save-participant" onclick="saveParticipantId()">Guardar código</button>
+    </div>
+    <div class="helper-text">Si querés separar testers, podés compartir links con <strong>?participant=grupo-a-03</strong> y este campo se completa solo.</div>
+    <div class="analytics-status" id="participant-status">Participante no identificado todavía.</div>
+  </div>
 
   <div class="card">
     <label for="preloaded-location">Ubicación precargada</label>
@@ -356,7 +432,44 @@
     </div>
   </div>
 
-  <details class="card manual-panel">
+  <div class="card feedback-card" id="feedback-card">
+    <strong>Feedback rápido</strong>
+    <p class="helper-text">Cuando termines la prueba, mandá una respuesta corta. Se guarda como evento en PostHog para cruzarlo con la sesión.</p>
+
+    <label for="feedback-rating">¿Qué tan claro fue el comparador?</label>
+    <select id="feedback-rating">
+      <option value="">Elegí una opción</option>
+      <option value="1">1 - Nada claro</option>
+      <option value="2">2 - Poco claro</option>
+      <option value="3">3 - Más o menos</option>
+      <option value="4">4 - Claro</option>
+      <option value="5">5 - Muy claro</option>
+    </select>
+
+    <label for="feedback-sense">¿Te hizo sentido la idea?</label>
+    <select id="feedback-sense">
+      <option value="">Elegí una opción</option>
+      <option value="si">Sí</option>
+      <option value="mas_o_menos">Más o menos</option>
+      <option value="no">No</option>
+    </select>
+
+    <label for="feedback-real-version">¿Usarías una versión real de esto?</label>
+    <select id="feedback-real-version">
+      <option value="">Elegí una opción</option>
+      <option value="si">Sí</option>
+      <option value="quizas">Quizás</option>
+      <option value="no">No</option>
+    </select>
+
+    <label for="feedback-comment">Comentario abierto</label>
+    <textarea id="feedback-comment" placeholder="Qué entendiste, qué te confundió, qué faltó o qué tendría valor en una versión real"></textarea>
+
+    <button type="button" id="btn-feedback" onclick="submitFeedback()">Enviar feedback</button>
+    <div class="analytics-status" id="feedback-status">El feedback se envía a PostHog al apretar este botón.</div>
+  </div>
+
+  <details class="card manual-panel" id="manual-panel">
     <summary>Modo manual con API Key</summary>
     <label for="sv-url">URL de Google Street View</label>
     <input type="text" id="sv-url"
@@ -373,6 +486,313 @@
   </details>
 
   <script>
+    const ANALYTICS_PLACEHOLDER_KEY = 'REEMPLAZAR_CON_PROJECT_API_KEY';
+    const ANALYTICS_CONFIG = Object.assign({
+      enabled: true,
+      apiKey: 'phc_AGSuXE3fkjitQFgbYBo2qAXgPTGBE5kcWVwMX7CiJWbB',
+      apiHost: 'https://us.i.posthog.com'
+    }, window.__POSTHOG_CONFIG__ || {});
+    const PARTICIPANT_STORAGE_KEY = 'streetview-test-participant-id';
+    const PARTICIPANT_QUERY_KEYS = ['participant', 'tester', 'p'];
+
+    const analyticsState = {
+      enabled: false,
+      initialized: false,
+      comparatorSeen: false,
+      splitTracked: false,
+      opacityTracked: false,
+      timelineTracked: false,
+      participantId: '',
+      participantSource: 'anonymous',
+      comparisonContext: {
+        source: 'unknown'
+      }
+    };
+
+    function updateAnalyticsNotice(message, ready = false) {
+      const notice = document.getElementById('analytics-status');
+      if (!notice) return;
+      notice.textContent = message;
+      notice.classList.toggle('ready', ready);
+    }
+
+    function ensurePostHogLoader() {
+      !function(t,e){
+        let o; let n; let p; let r;
+        if (e.__SV) return;
+        window.posthog = e;
+        e._i = e._i || [];
+        e.init = function(i,s,a){
+          function g(target, method) {
+            let object = target;
+            let methodName = method;
+            if (method.indexOf('.') !== -1) {
+              const parts = method.split('.');
+              object = target[parts[0]] = target[parts[0]] || [];
+              methodName = parts[1];
+            }
+            object[methodName] = function(){
+              object.push([methodName].concat(Array.prototype.slice.call(arguments, 0)));
+            };
+          }
+
+          p = t.createElement('script');
+          p.type = 'text/javascript';
+          p.crossOrigin = 'anonymous';
+          p.async = true;
+          p.src = s.api_host.replace('.i.posthog.com', '-assets.i.posthog.com') + '/static/array.js';
+          r = t.getElementsByTagName('script')[0];
+          r.parentNode.insertBefore(p, r);
+
+          const instance = typeof a !== 'undefined' ? e[a] = [] : e;
+          if (typeof a === 'undefined') a = 'posthog';
+
+          instance.people = instance.people || [];
+          instance.toString = function(stub) {
+            let value = 'posthog';
+            if (a !== 'posthog') value += '.' + a;
+            if (!stub) value += ' (stub)';
+            return value;
+          };
+          instance.people.toString = function() {
+            return instance.toString(1) + '.people (stub)';
+          };
+
+          o = 'capture identify alias people.set people.set_once register register_once unregister reset opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing set_config get_property get_distinct_id isFeatureEnabled reloadFeatureFlags onFeatureFlags onSessionId'.split(' ');
+          for (n = 0; n < o.length; n += 1) g(instance, o[n]);
+          e._i.push([i, s, a]);
+        };
+        e.__SV = 1;
+      }(document, window.posthog || []);
+    }
+
+    function initAnalytics() {
+      if (analyticsState.initialized) return analyticsState.enabled;
+      analyticsState.initialized = true;
+
+      const hasValidKey = Boolean(ANALYTICS_CONFIG.apiKey)
+        && ANALYTICS_CONFIG.apiKey !== ANALYTICS_PLACEHOLDER_KEY
+        && /^phc_/i.test(ANALYTICS_CONFIG.apiKey);
+      if (!ANALYTICS_CONFIG.enabled || !hasValidKey) {
+        updateAnalyticsNotice('Monitoreo desactivado. Pegá la Project API Key de PostHog en ANALYTICS_CONFIG.apiKey para activar eventos y session replay.', false);
+        return false;
+      }
+
+      ensurePostHogLoader();
+      window.posthog.init(ANALYTICS_CONFIG.apiKey, {
+        api_host: ANALYTICS_CONFIG.apiHost,
+        autocapture: true,
+        capture_pageview: true,
+        capture_pageleave: true,
+        persistence: 'localStorage',
+        loaded(posthog) {
+          posthog.register({
+            app_name: 'pruebas-caba-2050',
+            app_environment: window.location.hostname === 'localhost' ? 'local' : 'published'
+          });
+        }
+      });
+
+      analyticsState.enabled = true;
+      updateAnalyticsNotice('Monitoreo activo. Esta versión enviará eventos y permitirá revisar sesiones en PostHog.', true);
+      trackEvent('analytics_ready', {
+        api_host: ANALYTICS_CONFIG.apiHost,
+        page_path: window.location.pathname
+      });
+      return true;
+    }
+
+    function updateParticipantStatus(message, ready = false) {
+      const notice = document.getElementById('participant-status');
+      if (!notice) return;
+      notice.textContent = message;
+      notice.classList.toggle('ready', ready);
+    }
+
+    function updateFeedbackStatus(message, ready = false) {
+      const notice = document.getElementById('feedback-status');
+      if (!notice) return;
+      notice.textContent = message;
+      notice.classList.toggle('ready', ready);
+    }
+
+    function normalizeParticipantId(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9._-]/g, '')
+        .slice(0, 64);
+    }
+
+    function getParticipantFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      for (const key of PARTICIPANT_QUERY_KEYS) {
+        const participantId = normalizeParticipantId(params.get(key));
+        if (participantId) return { participantId, source: `query:${key}` };
+      }
+      return null;
+    }
+
+    function applyParticipantIdentity(participantId, source = 'manual', shouldTrack = false) {
+      const normalizedId = normalizeParticipantId(participantId);
+      if (!normalizedId) return false;
+
+      analyticsState.participantId = normalizedId;
+      analyticsState.participantSource = source;
+      localStorage.setItem(PARTICIPANT_STORAGE_KEY, normalizedId);
+
+      const input = document.getElementById('participant-id');
+      if (input && input.value !== normalizedId) input.value = normalizedId;
+
+      updateParticipantStatus(`Participante activo: ${normalizedId}. Las sesiones y eventos quedarán asociados a este código.`, true);
+
+      if (window.posthog) {
+        if (typeof window.posthog.identify === 'function') {
+          window.posthog.identify(normalizedId, {
+            participant_id: normalizedId,
+            participant_source: source
+          });
+        }
+        if (typeof window.posthog.register === 'function') {
+          window.posthog.register({
+            participant_id: normalizedId,
+            participant_source: source
+          });
+        }
+        if (window.posthog.people && typeof window.posthog.people.set === 'function') {
+          window.posthog.people.set({
+            participant_id: normalizedId,
+            participant_source: source
+          });
+        }
+      }
+
+      if (shouldTrack) {
+        trackEvent('participant_registered', {
+          participant_id: normalizedId,
+          participant_source: source
+        });
+      }
+
+      return true;
+    }
+
+    function initializeParticipantIdentity() {
+      const queryParticipant = getParticipantFromQuery();
+      const storedParticipant = normalizeParticipantId(localStorage.getItem(PARTICIPANT_STORAGE_KEY));
+
+      if (queryParticipant) {
+        applyParticipantIdentity(queryParticipant.participantId, queryParticipant.source, true);
+        return;
+      }
+
+      if (storedParticipant) {
+        applyParticipantIdentity(storedParticipant, 'local_storage', false);
+        return;
+      }
+
+      updateParticipantStatus('Participante no identificado todavía. Si querés separar testers, cargá un código antes de empezar.', false);
+    }
+
+    function saveParticipantId() {
+      const input = document.getElementById('participant-id');
+      const participantId = normalizeParticipantId(input ? input.value : '');
+
+      if (!participantId) {
+        updateParticipantStatus('Ingresá un código breve para identificar a la persona que prueba.', false);
+        return;
+      }
+
+      applyParticipantIdentity(participantId, 'manual', true);
+    }
+
+    function setComparisonContext(context) {
+      analyticsState.comparisonContext = Object.assign({ source: 'unknown' }, context || {});
+    }
+
+    function trackEvent(name, properties = {}) {
+      if (!analyticsState.enabled || !window.posthog || typeof window.posthog.capture !== 'function') return;
+
+      const payload = Object.assign({
+        current_mode: currentMode,
+        comparison_source: analyticsState.comparisonContext.source,
+        participant_id: analyticsState.participantId || undefined,
+        participant_source: analyticsState.participantSource || undefined,
+        pano_count: allPanos.length || undefined
+      }, properties);
+
+      Object.keys(payload).forEach((key) => {
+        if (payload[key] === undefined || payload[key] === null || payload[key] === '') delete payload[key];
+      });
+
+      window.posthog.capture(name, payload);
+    }
+
+    function trackError(message, properties = {}) {
+      trackEvent('error_shown', Object.assign({ message }, properties));
+    }
+
+    function resetInteractionTracking() {
+      analyticsState.comparatorSeen = false;
+      analyticsState.splitTracked = false;
+      analyticsState.opacityTracked = false;
+      analyticsState.timelineTracked = false;
+    }
+
+    function setupComparatorObserver() {
+      if (!('IntersectionObserver' in window)) return;
+
+      const comparatorWrap = document.getElementById('comparator-wrap');
+      if (!comparatorWrap) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting || analyticsState.comparatorSeen || !allPanos.length) return;
+          analyticsState.comparatorSeen = true;
+          trackEvent('comparison_seen', {
+            location_label: analyticsState.comparisonContext.locationLabel,
+            location_slug: analyticsState.comparisonContext.locationSlug
+          });
+        });
+      }, { threshold: 0.55 });
+
+      observer.observe(comparatorWrap);
+    }
+
+    function submitFeedback() {
+      const rating = document.getElementById('feedback-rating').value;
+      const sense = document.getElementById('feedback-sense').value;
+      const realVersion = document.getElementById('feedback-real-version').value;
+      const comment = document.getElementById('feedback-comment').value.trim();
+
+      if (!rating && !sense && !realVersion && !comment) {
+        updateFeedbackStatus('Completá al menos un campo antes de enviar el feedback.', false);
+        return;
+      }
+
+      trackEvent('feedback_submitted', {
+        clarity_rating: rating ? Number(rating) : undefined,
+        concept_sense: sense || undefined,
+        would_use_real_version: realVersion || undefined,
+        feedback_comment: comment || undefined,
+        feedback_comment_length: comment.length || undefined,
+        location_label: analyticsState.comparisonContext.locationLabel,
+        location_slug: analyticsState.comparisonContext.locationSlug
+      });
+
+      if (window.posthog && window.posthog.people && typeof window.posthog.people.set === 'function') {
+        window.posthog.people.set({
+          last_feedback_rating: rating || '',
+          last_feedback_concept_sense: sense || '',
+          last_feedback_real_version: realVersion || '',
+          last_feedback_at: new Date().toISOString()
+        });
+      }
+
+      updateFeedbackStatus('Gracias. El feedback ya quedó enviado a PostHog.', true);
+    }
+
     // ── Estado global ────────────────────────────────────────────────────────
     let currentMode  = 'split';
     let allPanos     = [];   // [{pano, label, rawDate, timestamp}] viejo→nuevo
@@ -467,6 +887,7 @@
 
     // ── Modos ────────────────────────────────────────────────────────────────
     function setMode(mode, tabBtn) {
+      const previousMode = currentMode;
       stopAutoplay();
       currentMode = mode;
       const comp = document.getElementById('comparator');
@@ -503,6 +924,15 @@
         base.src = '';
         applyTimelineIndex(currentTimelineIndex, false);
       }
+
+      if (previousMode !== mode && allPanos.length) {
+        trackEvent('mode_changed', {
+          from_mode: previousMode,
+          to_mode: mode,
+          location_label: analyticsState.comparisonContext.locationLabel,
+          location_slug: analyticsState.comparisonContext.locationSlug
+        });
+      }
     }
 
     // ── Split drag ───────────────────────────────────────────────────────────
@@ -511,6 +941,13 @@
     function onCompMouseDown(e) {
       if (currentMode !== 'split') return;
       stopAutoplay();
+      if (!analyticsState.splitTracked) {
+        analyticsState.splitTracked = true;
+        trackEvent('split_drag_started', {
+          location_label: analyticsState.comparisonContext.locationLabel,
+          location_slug: analyticsState.comparisonContext.locationSlug
+        });
+      }
       dragging = true;
       e.preventDefault();
       updateSplitSlider(e);
@@ -538,15 +975,24 @@
 
     function onOpacityInput(val, fromUser = true) {
       if (fromUser) stopAutoplay();
+      if (fromUser && !analyticsState.opacityTracked) {
+        analyticsState.opacityTracked = true;
+        trackEvent('opacity_slider_used', {
+          location_label: analyticsState.comparisonContext.locationLabel,
+          location_slug: analyticsState.comparisonContext.locationSlug
+        });
+      }
       setOpacityValue(val);
     }
 
     function toggleOpacityAutoplay() {
       if (autoplayMode === 'opacity') {
+        trackEvent('autoplay_toggled', { mode: 'opacity', action: 'stop' });
         stopAutoplay();
         return;
       }
 
+      trackEvent('autoplay_toggled', { mode: 'opacity', action: 'start' });
       setMode('opacity', document.getElementById('tab-opacity'));
       startAutoplay('opacity', onOpacityInput, 0, 100);
     }
@@ -595,21 +1041,35 @@
 
     function onTimelineInput(val, fromUser = true) {
       if (!allPanos.length) return;
+      if (fromUser && !analyticsState.timelineTracked) {
+        analyticsState.timelineTracked = true;
+        trackEvent('timeline_slider_used', {
+          location_label: analyticsState.comparisonContext.locationLabel,
+          location_slug: analyticsState.comparisonContext.locationSlug
+        });
+      }
       const idx = getNearestTimelineIndex(Number(val));
       applyTimelineIndex(idx, fromUser);
     }
 
     function stepTimeline(direction) {
       stopAutoplay();
+      trackEvent('timeline_step_clicked', {
+        direction: direction > 0 ? 'next' : 'prev',
+        current_index: currentTimelineIndex,
+        next_index: Math.max(0, Math.min(currentTimelineIndex + direction, allPanos.length - 1))
+      });
       applyTimelineIndex(currentTimelineIndex + direction, false);
     }
 
     function toggleTimelineAutoplay() {
       if (autoplayMode === 'timeline') {
+        trackEvent('autoplay_toggled', { mode: 'timeline', action: 'stop' });
         stopAutoplay();
         return;
       }
 
+      trackEvent('autoplay_toggled', { mode: 'timeline', action: 'start' });
       setMode('timeline', document.getElementById('tab-timeline'));
       startAutoplay('timeline', onTimelineInput, timelineOffsets[0] || 0, timelineRangeMax);
     }
@@ -724,6 +1184,11 @@
     function loadLocationFromManifest(location) {
       stopAutoplay();
       resetTimelinePreloadStatus();
+      setComparisonContext({
+        source: 'preloaded',
+        locationLabel: location.label,
+        locationSlug: location.slug
+      });
 
       allPanos = (location.panos || []).map((entry, index) => ({
         pano: entry.pano,
@@ -736,6 +1201,11 @@
 
       if (!allPanos.length) {
         setStatus('La ubicacion seleccionada no tiene imagenes precargadas.');
+        trackError('La ubicacion seleccionada no tiene imagenes precargadas.', {
+          reason: 'preloaded_location_without_images',
+          location_label: location.label,
+          location_slug: location.slug
+        });
         return;
       }
 
@@ -746,6 +1216,14 @@
       newPanoId = allPanos[allPanos.length - 1].pano || '';
       setStatus(`Mostrando ${location.label}.`, true);
       showComparison(allPanos[0].label, allPanos[allPanos.length - 1].label, allPanos.length);
+      trackEvent('comparison_ready', {
+        source: 'preloaded',
+        location_label: location.label,
+        location_slug: location.slug,
+        oldest_label: allPanos[0].label,
+        newest_label: allPanos[allPanos.length - 1].label,
+        pano_count: allPanos.length
+      });
     }
 
     function loadSelectedLocation() {
@@ -754,9 +1232,15 @@
 
       if (!location) {
         setStatus('Elegi una ubicacion precargada.');
+        trackError('Elegi una ubicacion precargada.', { reason: 'missing_preloaded_selection' });
         return;
       }
 
+      trackEvent('preloaded_location_opened', {
+        location_label: location.label,
+        location_slug: location.slug,
+        pano_count: (location.panos || []).length
+      });
       loadLocationFromManifest(location);
     }
 
@@ -768,9 +1252,14 @@
         const manifest = await response.json();
         preloadedLocations = Array.isArray(manifest.locations) ? manifest.locations : [];
         populatePreloadedSelect();
+        trackEvent('preloaded_manifest_loaded', {
+          location_count: preloadedLocations.length,
+          generated_at: manifest.generatedAt || 'unknown'
+        });
 
         if (!preloadedLocations.length) {
           setPreloadedMeta('No hay ubicaciones generadas todavia. Ejecuta el workflow de GitHub Actions para poblar este selector.');
+          trackError('No hay ubicaciones generadas todavia.', { reason: 'empty_manifest' });
           return;
         }
 
@@ -783,6 +1272,10 @@
         preloadedLocations = [];
         populatePreloadedSelect();
         setPreloadedMeta('No se pudo cargar data/manifest.json. Revisa que el workflow haya generado el manifiesto antes de publicar en GitHub Pages.');
+        trackError('No se pudo cargar data/manifest.json.', {
+          reason: 'manifest_load_failed',
+          detail: error instanceof Error ? error.message : String(error)
+        });
       }
     }
 
@@ -1057,21 +1550,41 @@
     async function startComparison() {
       stopAutoplay();
       resetTimelinePreloadStatus();
+      setComparisonContext({ source: 'manual' });
       const url = document.getElementById('sv-url').value.trim();
       const key = document.getElementById('api-key').value.trim();
 
-      if (!url) { setStatus('Pegá una URL de Street View.'); return; }
-      if (!key) { setStatus('Ingresá tu Google Maps API Key.'); return; }
+      trackEvent('comparison_started', { source: 'manual' });
+
+      if (!url) {
+        setStatus('Pegá una URL de Street View.');
+        trackError('Pegá una URL de Street View.', { reason: 'missing_streetview_url', source: 'manual' });
+        return;
+      }
+      if (!key) {
+        setStatus('Ingresá tu Google Maps API Key.');
+        trackError('Ingresá tu Google Maps API Key.', { reason: 'missing_google_maps_key', source: 'manual' });
+        return;
+      }
 
       const parsed = parseStreetViewURL(url);
-      if (!parsed) { setStatus('No se pudo leer la URL. Asegurate que sea una URL de Street View de Google Maps.'); return; }
+      if (!parsed) {
+        setStatus('No se pudo leer la URL. Asegurate que sea una URL de Street View de Google Maps.');
+        trackError('No se pudo leer la URL.', { reason: 'invalid_streetview_url', source: 'manual' });
+        return;
+      }
 
       const btn = document.getElementById('btn-compare');
       btn.disabled = true;
       setStatus('Cargando API de Google Maps…');
 
       try { await loadMapsAPI(key); }
-      catch(err) { setStatus(err.message); btn.disabled = false; return; }
+      catch(err) {
+        setStatus(err.message);
+        trackError(err.message, { reason: 'maps_api_load_failed', source: 'manual' });
+        btn.disabled = false;
+        return;
+      }
 
       setStatus('Buscando panoramas históricos…');
       currentHead  = parsed.heading;
@@ -1086,6 +1599,11 @@
           btn.disabled = false;
           if (status !== 'OK') {
             setStatus(`No se encontró Street View (status: ${status})`);
+            trackError(`No se encontró Street View (status: ${status})`, {
+              reason: 'streetview_not_found',
+              source: 'manual',
+              streetview_status: status
+            });
             return;
           }
 
@@ -1097,6 +1615,13 @@
             resetTimelinePreloadStatus();
             setStatus('Solo hay una imagen disponible (sin historial).', true);
             showComparison('actual', 'actual', 1);
+            trackEvent('comparison_ready', {
+              source: 'manual',
+              oldest_label: 'actual',
+              newest_label: 'actual',
+              pano_count: 1,
+              has_history: false
+            });
             return;
           }
 
@@ -1106,11 +1631,20 @@
 
           setStatus(`✓ Se encontraron ${allPanos.length} imágenes históricas.`, true);
           showComparison(allPanos[0].label, allPanos[allPanos.length - 1].label, allPanos.length);
+          trackEvent('comparison_ready', {
+            source: 'manual',
+            oldest_label: allPanos[0].label,
+            newest_label: allPanos[allPanos.length - 1].label,
+            pano_count: allPanos.length,
+            has_history: true
+          });
         }
       );
     }
 
     function showComparison(oldDate, newDate, count) {
+      resetInteractionTracking();
+
       // Labels
       document.getElementById('lbl-old').textContent  = oldDate;
       document.getElementById('lbl-new').textContent  = newDate;
@@ -1149,11 +1683,41 @@
       document.getElementById('main-labels').style.display = 'flex';
 
       document.getElementById('comparator-wrap').style.display = 'block';
+      document.getElementById('feedback-card').classList.add('visible');
+      updateFeedbackStatus('El feedback se envía a PostHog al apretar este botón.', false);
       document.getElementById('comparator-wrap').scrollIntoView({ behavior: 'smooth' });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      initAnalytics();
+      initializeParticipantIdentity();
       updatePlayButtons();
+      setupComparatorObserver();
+
+      const participantInput = document.getElementById('participant-id');
+      participantInput.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        saveParticipantId();
+      });
+
+      const preloadedSelect = document.getElementById('preloaded-location');
+      preloadedSelect.addEventListener('change', (event) => {
+        const selectedSlug = event.target.value;
+        const location = preloadedLocations.find((entry) => entry.slug === selectedSlug);
+        if (!location) return;
+        trackEvent('preloaded_location_selected', {
+          location_label: location.label,
+          location_slug: location.slug,
+          pano_count: (location.panos || []).length
+        });
+      });
+
+      const manualPanel = document.getElementById('manual-panel');
+      manualPanel.addEventListener('toggle', () => {
+        trackEvent('manual_panel_toggled', { open: manualPanel.open });
+      });
+
       loadPreloadedLocations();
     });
   </script>
