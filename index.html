@@ -16,6 +16,72 @@
       align-items: center;
       padding: 2rem 1rem;
     }
+    .tracking-header {
+      width: 100%;
+      max-width: 980px;
+      margin: -2rem 0 1.5rem;
+      padding: 0.85rem 1rem;
+      border: 1px solid #d3b26a;
+      border-radius: 0 0 16px 16px;
+      background: linear-gradient(180deg, #f4e2b8 0%, #e7cf9e 100%);
+      color: #4c3612;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    }
+    .tracking-header strong {
+      color: #3e2a0f;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .tracking-header-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .tracking-copy {
+      flex: 1 1 320px;
+      min-width: 0;
+    }
+    .tracking-copy p {
+      margin-top: 0.2rem;
+      font-size: 0.84rem;
+      line-height: 1.35;
+      color: #6a4a17;
+    }
+    .tracking-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex: 1 1 360px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .tracking-controls label {
+      margin: 0;
+      color: #5d451b;
+      font-size: 0.76rem;
+      white-space: nowrap;
+    }
+    .tracking-controls input[type="text"] {
+      width: 220px;
+      min-width: 160px;
+      background: rgba(255,255,255,0.72);
+      border-color: #c9aa63;
+      color: #33240d;
+    }
+    .tracking-controls input[type="text"]:focus {
+      border-color: #8b6415;
+    }
+    .tracking-controls .mini-button {
+      background: #7a5715;
+      border-color: #8a6725;
+      color: #fff7e8;
+    }
+    .tracking-controls .mini-button:hover {
+      background: #93691a;
+    }
     h1 { font-size: 1.6rem; margin-bottom: 0.3rem; color: #e0e0ff; }
     p.subtitle { color: #aaa; margin-bottom: 1.5rem; font-size: 0.9rem; text-align: center; }
     .card {
@@ -288,6 +354,19 @@
       background: rgba(47, 111, 87, 0.16);
       color: #9ce3be;
     }
+    .tracking-header .analytics-status {
+      margin-top: 0.45rem;
+      padding: 0.45rem 0.6rem;
+      border-color: rgba(122, 87, 21, 0.28);
+      background: rgba(255, 248, 232, 0.6);
+      color: #6a4a17;
+      font-size: 0.74rem;
+    }
+    .tracking-header .analytics-status.ready {
+      border-color: rgba(47, 111, 87, 0.35);
+      background: rgba(222, 245, 233, 0.72);
+      color: #21503d;
+    }
     .inline-fields {
       display: flex;
       gap: 0.75rem;
@@ -323,6 +402,69 @@
     .feedback-card.visible {
       display: block;
     }
+    .feedback-panel {
+      background: linear-gradient(180deg, rgba(52, 39, 16, 0.92), rgba(34, 25, 11, 0.96));
+      border-color: #8f6d2f;
+      color: #f5e8c8;
+    }
+    .feedback-panel summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: #f7e5b8;
+      font-weight: 700;
+    }
+    .feedback-panel summary::-webkit-details-marker { display: none; }
+    .feedback-panel summary::after {
+      content: 'Mostrar';
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #d8bf7b;
+    }
+    .feedback-panel[open] summary::after {
+      content: 'Ocultar';
+    }
+    .feedback-panel .helper-text {
+      color: #d8c8a0;
+    }
+    .feedback-panel .analytics-status {
+      border-color: rgba(143, 109, 47, 0.45);
+      background: rgba(255, 248, 232, 0.08);
+      color: #efd9a4;
+    }
+    .feedback-panel .analytics-status.ready {
+      border-color: rgba(47, 111, 87, 0.45);
+      background: rgba(222, 245, 233, 0.12);
+      color: #9ce3be;
+    }
+    .feedback-body {
+      margin-top: 1rem;
+      padding-top: 0.25rem;
+    }
+    @media (max-width: 720px) {
+      .tracking-header {
+        padding: 0.85rem 0.9rem;
+        border-radius: 0 0 14px 14px;
+      }
+      .tracking-header-row {
+        align-items: stretch;
+      }
+      .tracking-controls {
+        justify-content: stretch;
+      }
+      .tracking-controls label {
+        width: 100%;
+      }
+      .tracking-controls input[type="text"] {
+        width: 100%;
+      }
+      .tracking-controls .mini-button {
+        width: 100%;
+      }
+    }
     .manual-panel summary {
       cursor: pointer;
       list-style: none;
@@ -335,24 +477,24 @@
 </head>
 <body>
 
+  <header class="tracking-header">
+    <div class="tracking-header-row">
+      <div class="tracking-copy">
+        <strong>Entorno de prueba</strong>
+        <p>Esta banda no forma parte de la app: identifica al tester y muestra el estado del monitoreo en PostHog.</p>
+        <div class="analytics-status" id="analytics-status">Monitoreo desactivado hasta configurar la clave del proyecto de PostHog en el código.</div>
+      </div>
+      <div class="tracking-controls">
+        <label for="participant-id">Código de participante</label>
+        <input type="text" id="participant-id" placeholder="ej. grupo-a-03" maxlength="64" />
+        <button type="button" class="mini-button" id="btn-save-participant" onclick="saveParticipantId()">Guardar</button>
+      </div>
+    </div>
+    <div class="analytics-status" id="participant-status">Participante no identificado todavía.</div>
+  </header>
+
   <h1>🕐 Street View – Comparador de épocas</h1>
   <p class="subtitle">Elegí una ubicación precargada y compará la imagen más vieja con la más nueva desde archivos servidos por GitHub Pages</p>
-
-  <div class="card analytics-card">
-    <strong>Versión de test con monitoreo</strong>
-    <p class="helper-text">Esta prueba registra eventos de uso y puede guardar sesiones en PostHog para validar si el flujo se entiende. Evitá compartir datos sensibles al usarla.</p>
-    <div class="analytics-status" id="analytics-status">Monitoreo desactivado hasta configurar la clave del proyecto de PostHog en el código.</div>
-  </div>
-
-  <div class="card">
-    <label for="participant-id">Código de participante</label>
-    <div class="inline-fields">
-      <input type="text" id="participant-id" placeholder="ej. grupo-a-03" maxlength="64" />
-      <button type="button" class="mini-button" id="btn-save-participant" onclick="saveParticipantId()">Guardar código</button>
-    </div>
-    <div class="helper-text">Si querés separar testers, podés compartir links con <strong>?participant=grupo-a-03</strong> y este campo se completa solo.</div>
-    <div class="analytics-status" id="participant-status">Participante no identificado todavía.</div>
-  </div>
 
   <div class="card">
     <label for="preloaded-location">Ubicación precargada</label>
@@ -432,43 +574,6 @@
     </div>
   </div>
 
-  <div class="card feedback-card" id="feedback-card">
-    <strong>Feedback rápido</strong>
-    <p class="helper-text">Cuando termines la prueba, mandá una respuesta corta. Se guarda como evento en PostHog para cruzarlo con la sesión.</p>
-
-    <label for="feedback-rating">¿Qué tan claro fue el comparador?</label>
-    <select id="feedback-rating">
-      <option value="">Elegí una opción</option>
-      <option value="1">1 - Nada claro</option>
-      <option value="2">2 - Poco claro</option>
-      <option value="3">3 - Más o menos</option>
-      <option value="4">4 - Claro</option>
-      <option value="5">5 - Muy claro</option>
-    </select>
-
-    <label for="feedback-sense">¿Te hizo sentido la idea?</label>
-    <select id="feedback-sense">
-      <option value="">Elegí una opción</option>
-      <option value="si">Sí</option>
-      <option value="mas_o_menos">Más o menos</option>
-      <option value="no">No</option>
-    </select>
-
-    <label for="feedback-real-version">¿Usarías una versión real de esto?</label>
-    <select id="feedback-real-version">
-      <option value="">Elegí una opción</option>
-      <option value="si">Sí</option>
-      <option value="quizas">Quizás</option>
-      <option value="no">No</option>
-    </select>
-
-    <label for="feedback-comment">Comentario abierto</label>
-    <textarea id="feedback-comment" placeholder="Qué entendiste, qué te confundió, qué faltó o qué tendría valor en una versión real"></textarea>
-
-    <button type="button" id="btn-feedback" onclick="submitFeedback()">Enviar feedback</button>
-    <div class="analytics-status" id="feedback-status">El feedback se envía a PostHog al apretar este botón.</div>
-  </div>
-
   <details class="card manual-panel" id="manual-panel">
     <summary>Modo manual con API Key</summary>
     <label for="sv-url">URL de Google Street View</label>
@@ -483,6 +588,45 @@
 
     <button id="btn-compare" onclick="startComparison()">Comparar</button>
     <div id="status"></div>
+  </details>
+
+  <details class="card feedback-card feedback-panel" id="feedback-card">
+    <summary>Feedback de la prueba</summary>
+    <div class="feedback-body">
+      <p class="helper-text">Este panel no forma parte de la app final. Cuando termines la prueba, podés dejar una respuesta corta y se guarda en PostHog para cruzarla con la sesión.</p>
+
+      <label for="feedback-rating">¿Qué tan claro fue el comparador?</label>
+      <select id="feedback-rating">
+        <option value="">Elegí una opción</option>
+        <option value="1">1 - Nada claro</option>
+        <option value="2">2 - Poco claro</option>
+        <option value="3">3 - Más o menos</option>
+        <option value="4">4 - Claro</option>
+        <option value="5">5 - Muy claro</option>
+      </select>
+
+      <label for="feedback-sense">¿Te hizo sentido la idea?</label>
+      <select id="feedback-sense">
+        <option value="">Elegí una opción</option>
+        <option value="si">Sí</option>
+        <option value="mas_o_menos">Más o menos</option>
+        <option value="no">No</option>
+      </select>
+
+      <label for="feedback-real-version">¿Usarías una versión real de esto?</label>
+      <select id="feedback-real-version">
+        <option value="">Elegí una opción</option>
+        <option value="si">Sí</option>
+        <option value="quizas">Quizás</option>
+        <option value="no">No</option>
+      </select>
+
+      <label for="feedback-comment">Comentario abierto</label>
+      <textarea id="feedback-comment" placeholder="Qué entendiste, qué te confundió, qué faltó o qué tendría valor en una versión real"></textarea>
+
+      <button type="button" id="btn-feedback" onclick="submitFeedback()">Enviar feedback</button>
+      <div class="analytics-status" id="feedback-status">El feedback se envía a PostHog al apretar este botón.</div>
+    </div>
   </details>
 
   <script>
@@ -1683,7 +1827,9 @@
       document.getElementById('main-labels').style.display = 'flex';
 
       document.getElementById('comparator-wrap').style.display = 'block';
-      document.getElementById('feedback-card').classList.add('visible');
+      const feedbackCard = document.getElementById('feedback-card');
+      feedbackCard.classList.add('visible');
+      feedbackCard.open = false;
       updateFeedbackStatus('El feedback se envía a PostHog al apretar este botón.', false);
       document.getElementById('comparator-wrap').scrollIntoView({ behavior: 'smooth' });
     }
