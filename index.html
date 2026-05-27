@@ -83,13 +83,7 @@
 
     
   <footer class="page-footer">
-    <div class="tracking-header-row">
-      <div class="tracking-controls">
-        <label for="participant-id">Código de participante</label>
-        <input type="text" id="participant-id" placeholder="ej. grupo-a-03" maxlength="64" />
-        <button type="button" class="mini-button" id="btn-save-participant" onclick="saveParticipantId()">Guardar</button>
-      </div>
-    </div>
+   
 
     <details class="card feedback-card feedback-panel visible" id="feedback-card" open>
       <summary>Feedback de la prueba</summary>
@@ -129,6 +123,14 @@
       </div>
     </details>
 
+     <div class="tracking-header-row">
+      <div class="tracking-controls">
+        <label for="participant-id">Código de participante</label>
+        <input type="text" id="participant-id" placeholder="ej. grupo-a-03" maxlength="64" />
+        <button type="button" class="mini-button" id="btn-save-participant" onclick="saveParticipantId()">Guardar</button>
+      </div>
+    </div>
+    
     <div class="footer-notices">
       <div class="helper-text footer-status" id="preloaded-meta" aria-live="polite">Buscando manifiesto local...</div>
       <p class="footer-status" id="status" aria-live="polite"></p>
@@ -231,7 +233,7 @@
         && ANALYTICS_CONFIG.apiKey !== ANALYTICS_PLACEHOLDER_KEY
         && /^phc_/i.test(ANALYTICS_CONFIG.apiKey);
       if (!ANALYTICS_CONFIG.enabled || !hasValidKey) {
-        updateAnalyticsNotice('Monitoreo desactivado. Pegá la Project API Key de PostHog en ANALYTICS_CONFIG.apiKey para activar eventos y session replay.', false);
+        updateAnalyticsNotice('', false);
         return false;
       }
 
@@ -251,7 +253,7 @@
       });
 
       analyticsState.enabled = true;
-      updateAnalyticsNotice('Monitoreo activo. Esta versión enviará eventos y permitirá revisar sesiones en PostHog.', true);
+      updateAnalyticsNotice('', false);
       trackEvent('analytics_ready', {
         api_host: ANALYTICS_CONFIG.apiHost,
         page_path: window.location.pathname
@@ -349,7 +351,7 @@
         return;
       }
 
-      updateParticipantStatus('Participante no identificado todavía. Si querés separar testers, cargá un código antes de empezar.', false);
+      updateParticipantStatus('', false);
     }
 
     function saveParticipantId() {
@@ -1144,7 +1146,7 @@
       const feedbackCard = document.getElementById('feedback-card');
       feedbackCard.classList.add('visible');
       feedbackCard.open = true;
-      updateFeedbackStatus('El feedback se envía a PostHog al apretar este botón.', false);
+      updateFeedbackStatus('', false);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
