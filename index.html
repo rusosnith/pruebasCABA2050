@@ -11,17 +11,17 @@
   <h1>Viaje en el tiempo porteño</h1>
   <p class="subtitle">Elegí una ubicación para ver como cambió en la última década</p>
 
-  <div class="card">
-    <label for="preloaded-location">Seleccionar ubicación para explorar</label>
-    <select id="preloaded-location">
-      <option value="">Cargando ubicaciones...</option>
-    </select>
-    <p id="status" aria-live="polite"></p>
-  </div>
-
   <div id="comparator-wrap">
+    <div class="comparator-panel-header">
+      <div class="comparator-panel-heading">
+        <label for="preloaded-location" class="comparator-select-label">Elegí la ubicación</label>
+        <select id="preloaded-location" aria-label="Seleccionar ubicación para explorar">
+          <option value="">Cargando ubicaciones...</option>
+        </select>
+      </div>
+    </div>
 
-    <p class="mode-selector-title">Selecciona el tipo de comparación</p>
+    <p class="mode-selector-title">Elegí el tipo de comparación</p>
 
     <div class="mode-tabs">
       <button class="mode-tab active" id="tab-split" onclick="setMode('split', this)">Comparador</button>
@@ -81,17 +81,21 @@
       </div>
     </div>
 
-    <div class="timeline-info">
-      <div class="badge">📅 Más vieja<strong id="info-old">—</strong></div>
-      <div class="badge">📅 Más nueva<strong id="info-new">—</strong></div>
-      <div class="badge">🗺 Imágenes históricas<strong id="info-count">—</strong></div>
-    </div>
+    
   </div>
+<div class="timeline-info">
+      <div class="badge">Más vieja<strong id="info-old">—</strong></div>
+      <div class="badge">Más nueva<strong id="info-new">—</strong></div>
+      <div class="badge">Imágenes históricas<strong id="info-count">—</strong></div>
+    </div>
 
+    
+  <footer class="page-footer">
+ 
   <details class="card feedback-card feedback-panel visible" id="feedback-card" open>
     <summary>Feedback de la prueba</summary>
     <div class="feedback-body">
-      <p class="helper-text">Este panel no forma parte de la app final. Cuando termines la prueba, podés dejar una respuesta corta y se guarda en PostHog para cruzarla con la sesión.</p>
+      <p class="helper-text">Gracias por participar de esta prueba, podes dejarnos comentarios</p>
 
       <label for="feedback-rating">¿Qué tan claro fue el comparador?</label>
       <select id="feedback-rating">
@@ -126,23 +130,16 @@
     </div>
   </details>
 
-
-   <header class="tracking-header">
-    <div class="tracking-header-row">
+   <div class="tracking-header-row">
       <div class="tracking-controls">
         <label for="participant-id">Código de participante</label>
         <input type="text" id="participant-id" placeholder="ej. grupo-a-03" maxlength="64" />
         <button type="button" class="mini-button" id="btn-save-participant" onclick="saveParticipantId()">Guardar</button>
       </div>
     </div>
-    
-  </header>
-
-  <footer class="page-footer">
     <div class="helper-text footer-status" id="preloaded-meta" aria-live="polite">Buscando manifiesto local...</div>
   </footer>
 
-  
   <script>
     const ANALYTICS_PLACEHOLDER_KEY = 'REEMPLAZAR_CON_PROJECT_API_KEY';
     const ANALYTICS_CONFIG = Object.assign({
@@ -843,7 +840,7 @@
       currentKey = '';
       oldPanoId = allPanos[0].pano || '';
       newPanoId = allPanos[allPanos.length - 1].pano || '';
-      setStatus(`Mostrando ${location.label}.`, true);
+      setStatus('', true);
       showComparison(allPanos[0].label, allPanos[allPanos.length - 1].label, allPanos.length);
       trackEvent('comparison_ready', {
         source: 'preloaded',

@@ -171,7 +171,33 @@ button:disabled { background: var(--color-canvas-soft); color: var(--color-body)
   gap: 6px;
   margin-bottom: 16px;
   padding: 6px;
-  background: rgba(230, 217, 202, 0.9);
+  background: #e6d9ca;
+}
+
+.comparator-panel-header {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+  justify-items: center;
+}
+
+.comparator-panel-heading {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  justify-items: center;
+}
+
+.comparator-select-label {
+  margin: 0;
+  text-align: center;
+}
+
+.comparator-panel-header select {
+  background: var(--color-layer-strong);
+  width: min(100%, 420px);
+  text-align: center;
+  text-align-last: center;
 }
 
 .mode-selector-title {
@@ -202,13 +228,13 @@ button:disabled { background: var(--color-canvas-soft); color: var(--color-body)
   text-transform: none;
 }
 
-.mode-tab:hover { background: rgba(248, 243, 235, 0.72); color: var(--color-ink-soft); }
+.mode-tab:hover { background: #f8f3eb; color: var(--color-ink-soft); }
 .mode-tab.active { background: var(--color-primary); color: var(--color-canvas); }
 
 #comparator-wrap { width: 100%; max-width: 900px; display: block; }
 
 #comparator-wrap {
-  background: rgba(250, 244, 236, 0.72);
+  background: #faf4ec;
   padding: 24px;
   margin-bottom: 24px;
   min-height: clamp(460px, 72vw, 860px);
@@ -382,6 +408,9 @@ button:disabled { background: var(--color-canvas-soft); color: var(--color-body)
   line-height: 16px;
   color: var(--color-body);
   margin-top: 4px;
+  width: calc(100% - 212px);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .timeline-preload {
@@ -491,6 +520,11 @@ button:disabled { background: var(--color-canvas-soft); color: var(--color-body)
   margin-top: 0;
   text-align: center;
   color: var(--color-subtle-text);
+}
+
+.page-footer,
+.page-footer * {
+  font-weight: 400;
 }
 
 .tracking-header {
@@ -635,6 +669,7 @@ textarea {
   .tracking-header { margin-top: 16px; }
   .tracking-header-row,
   .tracking-controls,
+  .comparator-panel-heading,
   .mode-tabs,
   .slider-row,
   .control-actions,
@@ -663,5 +698,10 @@ textarea {
   .mode-tab {
     width: 100%;
   }
+
+  .timeline-track-meta {
+    width: 100%;
+  }
+
   .slider-label-right { text-align: left; }
 }
