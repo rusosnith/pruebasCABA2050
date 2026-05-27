@@ -329,6 +329,20 @@ button:disabled { background: var(--color-canvas-soft); color: var(--color-body)
 }
 
 .slider-row input[type=range] { flex: 1; accent-color: var(--color-primary); cursor: pointer; }
+.timeline-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 2px;
+  align-items: center;
+}
+
+.timeline-slider-row { display: block; }
+.timeline-slider-row input[type=range] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
 .slider-label-left, .slider-label-right {
   min-width: 90px;
   font-family: var(--font-sans);
@@ -363,15 +377,16 @@ button:disabled { background: var(--color-canvas-soft); color: var(--color-body)
 .mini-button.active { background: var(--color-primary); color: var(--color-canvas); }
 
 .timeline-ticks {
+  grid-column: 1;
   position: relative;
-  height: 36px;
-  margin-top: 8px;
+  height: 32px;
+  margin-top: 0;
   padding: 0 2px;
 }
 
 .timeline-tick {
   position: absolute;
-  top: 8px;
+  top: 4px;
   transform: translateX(-50%);
   font-family: var(--font-sans);
   font-size: 12px;
@@ -399,19 +414,6 @@ button:disabled { background: var(--color-canvas-soft); color: var(--color-body)
 .timeline-tick.edge-right::before { margin-left: 0; margin-right: 0; }
 .timeline-tick.edge-right::before { margin-left: auto; }
 .timeline-tick.edge-left::before { margin-right: auto; }
-
-.timeline-track-meta {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--color-body);
-  margin-top: 4px;
-  width: calc(100% - 212px);
-  margin-left: auto;
-  margin-right: auto;
-}
 
 .timeline-preload {
   margin-top: 12px;
@@ -516,10 +518,20 @@ button:disabled { background: var(--color-canvas-soft); color: var(--color-body)
   background: #e7dccc;
 }
 
+.footer-notices {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 .footer-status {
   margin-top: 0;
   text-align: center;
   color: var(--color-subtle-text);
+}
+
+.footer-status:empty {
+  display: none;
 }
 
 .page-footer,
@@ -657,6 +669,12 @@ textarea {
   color: var(--color-subtle-text);
 }
 
+.page-footer .timeline-preload {
+  margin-top: 0;
+  padding-top: 0;
+  width: 100%;
+}
+
 .feedback-panel input[type="text"],
 .feedback-panel select,
 .feedback-panel textarea {
@@ -699,7 +717,12 @@ textarea {
     width: 100%;
   }
 
-  .timeline-track-meta {
+  .timeline-slider-row {
+    display: block;
+  }
+
+  .timeline-ticks {
+    grid-column: 1;
     width: 100%;
   }
 
