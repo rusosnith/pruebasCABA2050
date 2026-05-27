@@ -108,7 +108,7 @@
       outline: none;
     }
     input:focus, select:focus { border-color: #5a7fff; }
-    select { appearance: none; }
+    select { appearance: auto; }
     button {
       margin-top: 1.2rem;
       width: 100%;
@@ -332,6 +332,17 @@
       margin-top: 0.7rem;
       line-height: 1.4;
     }
+    .page-footer {
+      width: 100%;
+      max-width: 760px;
+      margin: 1rem 0 0;
+      padding-top: 0.9rem;
+      border-top: 1px solid rgba(146, 160, 200, 0.2);
+    }
+    .footer-status {
+      margin-top: 0;
+      text-align: center;
+    }
     .analytics-card {
       border-color: #34517f;
       background: linear-gradient(135deg, rgba(24, 35, 69, 0.96), rgba(15, 20, 43, 0.96));
@@ -401,6 +412,7 @@
     textarea:focus { border-color: #5a7fff; }
     .feedback-card {
       display: none;
+      margin-top: 1.5rem;
     }
     .feedback-card.visible {
       display: block;
@@ -478,12 +490,11 @@
   <p class="subtitle">Elegí una ubicación para ver como cambió en la última década</p>
 
   <div class="card">
-    <label for="preloaded-location">Ubicación precargada</label>
+    <label for="preloaded-location">Seleccionar ubicación para explorar</label>
     <select id="preloaded-location">
       <option value="">Cargando ubicaciones...</option>
     </select>
     <button id="btn-load-preloaded" onclick="loadSelectedLocation()">Abrir ubicación</button>
-    <div class="helper-text" id="preloaded-meta">Buscando manifiesto local...</div>
   </div>
 
   <div id="comparator-wrap">
@@ -605,6 +616,10 @@
     </div>
     
   </header>
+
+  <footer class="page-footer">
+    <div class="helper-text footer-status" id="preloaded-meta" aria-live="polite">Buscando manifiesto local...</div>
+  </footer>
 
   
   <script>
