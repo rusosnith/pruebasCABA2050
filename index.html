@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Street View – Comparador de épocas</title>
+  <title>Viaje en el tiempo porteño</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -18,14 +18,14 @@
     }
     .tracking-header {
       width: 100%;
-      max-width: 980px;
-      margin: -2rem 0 1.5rem;
-      padding: 0.85rem 1rem;
-      border: 1px solid #d3b26a;
-      border-radius: 0 0 16px 16px;
-      background: linear-gradient(180deg, #f4e2b8 0%, #e7cf9e 100%);
-      color: #4c3612;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      max-width: 760px;
+      margin: 1.5rem 0 0;
+      padding: 0.35rem 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #8d93a7;
+      box-shadow: none;
     }
     .tracking-header strong {
       color: #3e2a0f;
@@ -37,7 +37,7 @@
       display: flex;
       gap: 1rem;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       flex-wrap: wrap;
     }
     .tracking-copy {
@@ -53,34 +53,37 @@
     .tracking-controls {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      flex: 1 1 360px;
-      justify-content: flex-end;
+      gap: 0.5rem;
+      flex: 0 1 auto;
+      justify-content: center;
       flex-wrap: wrap;
     }
     .tracking-controls label {
       margin: 0;
-      color: #5d451b;
-      font-size: 0.76rem;
+      color: #8d93a7;
+      font-size: 0.72rem;
       white-space: nowrap;
     }
     .tracking-controls input[type="text"] {
-      width: 220px;
-      min-width: 160px;
-      background: rgba(255,255,255,0.72);
-      border-color: #c9aa63;
-      color: #33240d;
+      width: 180px;
+      min-width: 140px;
+      padding: 0.45rem 0.65rem;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #d6dae6;
     }
     .tracking-controls input[type="text"]:focus {
-      border-color: #8b6415;
+      border: none;
+      box-shadow: 0 0 0 1px rgba(214, 218, 230, 0.28);
     }
     .tracking-controls .mini-button {
-      background: #7a5715;
-      border-color: #8a6725;
-      color: #fff7e8;
+      padding: 0.45rem 0.8rem;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #c9cedd;
     }
     .tracking-controls .mini-button:hover {
-      background: #93691a;
+      background: rgba(255,255,255,0.14);
     }
     h1 { font-size: 1.6rem; margin-bottom: 0.3rem; color: #e0e0ff; }
     p.subtitle { color: #aaa; margin-bottom: 1.5rem; font-size: 0.9rem; text-align: center; }
@@ -446,8 +449,8 @@
     }
     @media (max-width: 720px) {
       .tracking-header {
-        padding: 0.85rem 0.9rem;
-        border-radius: 0 0 14px 14px;
+        margin-top: 1.25rem;
+        padding: 0;
       }
       .tracking-header-row {
         align-items: stretch;
@@ -462,7 +465,7 @@
         width: 100%;
       }
       .tracking-controls .mini-button {
-        width: 100%;
+        width: auto;
       }
     }
     .manual-panel summary {
@@ -477,24 +480,10 @@
 </head>
 <body>
 
-  <header class="tracking-header">
-    <div class="tracking-header-row">
-      <div class="tracking-copy">
-        <strong>Entorno de prueba</strong>
-        <p>Esta banda no forma parte de la app: identifica al tester y muestra el estado del monitoreo en PostHog.</p>
-        <div class="analytics-status" id="analytics-status">Monitoreo desactivado hasta configurar la clave del proyecto de PostHog en el código.</div>
-      </div>
-      <div class="tracking-controls">
-        <label for="participant-id">Código de participante</label>
-        <input type="text" id="participant-id" placeholder="ej. grupo-a-03" maxlength="64" />
-        <button type="button" class="mini-button" id="btn-save-participant" onclick="saveParticipantId()">Guardar</button>
-      </div>
-    </div>
-    <div class="analytics-status" id="participant-status">Participante no identificado todavía.</div>
-  </header>
+ 
 
-  <h1>🕐 Street View – Comparador de épocas</h1>
-  <p class="subtitle">Elegí una ubicación precargada y compará la imagen más vieja con la más nueva desde archivos servidos por GitHub Pages</p>
+  <h1>Viaje en el tiempo porteño</h1>
+  <p class="subtitle">Elegí una ubicación para ver como cambió en la última década</p>
 
   <div class="card">
     <label for="preloaded-location">Ubicación precargada</label>
@@ -590,7 +579,7 @@
     <div id="status"></div>
   </details>
 
-  <details class="card feedback-card feedback-panel" id="feedback-card">
+  <details class="card feedback-card feedback-panel visible" id="feedback-card" open>
     <summary>Feedback de la prueba</summary>
     <div class="feedback-body">
       <p class="helper-text">Este panel no forma parte de la app final. Cuando termines la prueba, podés dejar una respuesta corta y se guarda en PostHog para cruzarla con la sesión.</p>
@@ -625,10 +614,23 @@
       <textarea id="feedback-comment" placeholder="Qué entendiste, qué te confundió, qué faltó o qué tendría valor en una versión real"></textarea>
 
       <button type="button" id="btn-feedback" onclick="submitFeedback()">Enviar feedback</button>
-      <div class="analytics-status" id="feedback-status">El feedback se envía a PostHog al apretar este botón.</div>
+      
     </div>
   </details>
 
+
+   <header class="tracking-header">
+    <div class="tracking-header-row">
+      <div class="tracking-controls">
+        <label for="participant-id">Código de participante</label>
+        <input type="text" id="participant-id" placeholder="ej. grupo-a-03" maxlength="64" />
+        <button type="button" class="mini-button" id="btn-save-participant" onclick="saveParticipantId()">Guardar</button>
+      </div>
+    </div>
+    
+  </header>
+
+  
   <script>
     const ANALYTICS_PLACEHOLDER_KEY = 'REEMPLAZAR_CON_PROJECT_API_KEY';
     const ANALYTICS_CONFIG = Object.assign({
@@ -1829,9 +1831,8 @@
       document.getElementById('comparator-wrap').style.display = 'block';
       const feedbackCard = document.getElementById('feedback-card');
       feedbackCard.classList.add('visible');
-      feedbackCard.open = false;
+      feedbackCard.open = true;
       updateFeedbackStatus('El feedback se envía a PostHog al apretar este botón.', false);
-      document.getElementById('comparator-wrap').scrollIntoView({ behavior: 'smooth' });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
