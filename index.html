@@ -468,14 +468,6 @@
         width: auto;
       }
     }
-    .manual-panel summary {
-      cursor: pointer;
-      list-style: none;
-      font-weight: 700;
-      color: #e0e0ff;
-    }
-    .manual-panel summary::-webkit-details-marker { display: none; }
-    .manual-panel[open] summary { margin-bottom: 1rem; }
   </style>
 </head>
 <body>
@@ -497,9 +489,9 @@
   <div id="comparator-wrap">
 
     <div class="mode-tabs">
-      <button class="mode-tab active" id="tab-split" onclick="setMode('split', this)">✂️ Divisor</button>
-      <button class="mode-tab" id="tab-opacity" onclick="setMode('opacity', this)">🌫️ Opacidad</button>
-      <button class="mode-tab" id="tab-timeline" onclick="setMode('timeline', this)">🎞️ Timeline</button>
+      <button class="mode-tab active" id="tab-split" onclick="setMode('split', this)">Comparador</button>
+      <button class="mode-tab" id="tab-opacity" onclick="setMode('opacity', this)">Opacidad</button>
+      <button class="mode-tab" id="tab-timeline" onclick="setMode('timeline', this)">Linea de tiempo</button>
     </div>
 
     <div class="labels-row" id="main-labels">
@@ -562,22 +554,6 @@
       <div class="badge">🗺 Imágenes históricas<strong id="info-count">—</strong></div>
     </div>
   </div>
-
-  <details class="card manual-panel" id="manual-panel">
-    <summary>Modo manual con API Key</summary>
-    <label for="sv-url">URL de Google Street View</label>
-    <input type="text" id="sv-url"
-      value="https://www.google.com/maps/@-34.5706263,-58.4757463,3a,90y,172.4h,92.43t/data=!3m8!1e1!3m6!1s_nnYC8_I-qxBMA3qY6Xy3A!2e0!5s20151001T000000!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-2.434849756316609%26panoid%3D_nnYC8_I-qxBMA3qY6Xy3A%26yaw%3D172.40459482211702!7i13312!8i6656?entry=ttu&g_ep=EgoyMDI2MDQyOS4wIKXMDSoASAFQAw%3D%3D" />
-
-    <label for="api-key">
-      Google Maps API Key
-      <small style="color:#777"> — necesitás habilitar <em>Maps JavaScript API</em> y <em>Street View Static API</em></small>
-    </label>
-    <input type="password" id="api-key" placeholder="AIza…" />
-
-    <button id="btn-compare" onclick="startComparison()">Comparar</button>
-    <div id="status"></div>
-  </details>
 
   <details class="card feedback-card feedback-panel visible" id="feedback-card" open>
     <summary>Feedback de la prueba</summary>
@@ -1220,36 +1196,9 @@
       startAutoplay('timeline', onTimelineInput, timelineOffsets[0] || 0, timelineRangeMax);
     }
 
-    // ── URL parser ───────────────────────────────────────────────────────────
-    function parseStreetViewURL(url) {
-      const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-      if (!coordMatch) return null;
-      const lat = parseFloat(coordMatch[1]);
-      const lng = parseFloat(coordMatch[2]);
-      const headingMatch = url.match(/,(\d+(?:\.\d+)?)h[,\/]/);
-      const heading = headingMatch ? parseFloat(headingMatch[1]) : 0;
-      const tiltMatch = url.match(/,(\d+(?:\.\d+)?)t[,\/]/);
-      const tilt  = tiltMatch ? parseFloat(tiltMatch[1]) : 90;
-      const pitch = 90 - tilt;
-      return { lat, lng, heading, pitch };
-    }
-
-    // ── API ──────────────────────────────────────────────────────────────────
-    let mapsApiLoaded = false;
-
-    function loadMapsAPI(key) {
-      return new Promise((resolve, reject) => {
-        if (mapsApiLoaded) { resolve(); return; }
-        window.__mapsReady = () => { mapsApiLoaded = true; resolve(); };
-        const s = document.createElement('script');
-        s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=__mapsReady`;
-        s.onerror = () => reject(new Error('No se pudo cargar la API de Google Maps. Verificá tu API key.'));
-        document.head.appendChild(s);
-      });
-    }
-
     function setStatus(msg, ok = false) {
       const el = document.getElementById('status');
+      if (!el) return;
       el.textContent = msg;
       el.className   = ok ? 'ok' : '';
     }
@@ -1563,70 +1512,6 @@
       }).format(timestamp);
     }
 
-    async function fetchPanoramaMetadata(panoId, key, fallbackDate, sourceIndex) {
-      const url = `https://maps.googleapis.com/maps/api/streetview/metadata?pano=${encodeURIComponent(panoId)}&key=${encodeURIComponent(key)}`;
-      const response = await fetch(url);
-      if (!response.ok) return null;
-
-      const metadata = await response.json();
-      if (metadata.status !== 'OK') return null;
-
-      const rawDate = metadata.date || fallbackDate || '';
-
-      return {
-        pano: panoId,
-        rawDate,
-        label: formatDate(rawDate || 'sin fecha'),
-        timestamp: parseStreetViewDate(rawDate),
-        sourceIndex
-      };
-    }
-
-    async function buildTimelineEntries(data, key) {
-      const panoEntries = [];
-
-      (data.time || []).forEach((item, index) => {
-        if (item?.pano) {
-          panoEntries.push({
-            pano: item.pano,
-            fallbackDate: item.description || item.date || '',
-            sourceIndex: index
-          });
-        }
-      });
-
-      if (data.location?.pano) {
-        panoEntries.push({
-          pano: data.location.pano,
-          fallbackDate: panoEntries[panoEntries.length - 1]?.fallbackDate || '',
-          sourceIndex: panoEntries.length
-        });
-      }
-
-      const uniqueEntries = [];
-      const seenPanos = new Set();
-      panoEntries.forEach((entry) => {
-        if (!seenPanos.has(entry.pano)) {
-          seenPanos.add(entry.pano);
-          uniqueEntries.push(entry);
-        }
-      });
-
-      const entries = await Promise.all(
-        uniqueEntries.map(entry => fetchPanoramaMetadata(entry.pano, key, entry.fallbackDate, entry.sourceIndex))
-      );
-
-      return entries.filter(Boolean).sort((a, b) => {
-        if (Number.isFinite(a.timestamp) && Number.isFinite(b.timestamp) && a.timestamp !== b.timestamp) {
-          return a.timestamp - b.timestamp;
-        }
-
-        if (Number.isFinite(a.timestamp) && !Number.isFinite(b.timestamp)) return -1;
-        if (!Number.isFinite(a.timestamp) && Number.isFinite(b.timestamp)) return 1;
-        return a.sourceIndex - b.sourceIndex;
-      });
-    }
-
     function rebuildTimelineScale() {
       const slider = document.getElementById('timeline-slider');
       const ticks = document.getElementById('tl-ticks');
@@ -1690,102 +1575,6 @@
 
       rangeStart.textContent = allPanos[0].label;
       rangeEnd.textContent = allPanos[allPanos.length - 1].label;
-    }
-
-    // ── Main ─────────────────────────────────────────────────────────────────
-    async function startComparison() {
-      stopAutoplay();
-      resetTimelinePreloadStatus();
-      setComparisonContext({ source: 'manual' });
-      const url = document.getElementById('sv-url').value.trim();
-      const key = document.getElementById('api-key').value.trim();
-
-      trackEvent('comparison_started', { source: 'manual' });
-
-      if (!url) {
-        setStatus('Pegá una URL de Street View.');
-        trackError('Pegá una URL de Street View.', { reason: 'missing_streetview_url', source: 'manual' });
-        return;
-      }
-      if (!key) {
-        setStatus('Ingresá tu Google Maps API Key.');
-        trackError('Ingresá tu Google Maps API Key.', { reason: 'missing_google_maps_key', source: 'manual' });
-        return;
-      }
-
-      const parsed = parseStreetViewURL(url);
-      if (!parsed) {
-        setStatus('No se pudo leer la URL. Asegurate que sea una URL de Street View de Google Maps.');
-        trackError('No se pudo leer la URL.', { reason: 'invalid_streetview_url', source: 'manual' });
-        return;
-      }
-
-      const btn = document.getElementById('btn-compare');
-      btn.disabled = true;
-      setStatus('Cargando API de Google Maps…');
-
-      try { await loadMapsAPI(key); }
-      catch(err) {
-        setStatus(err.message);
-        trackError(err.message, { reason: 'maps_api_load_failed', source: 'manual' });
-        btn.disabled = false;
-        return;
-      }
-
-      setStatus('Buscando panoramas históricos…');
-      currentHead  = parsed.heading;
-      currentPitch = parsed.pitch;
-      currentKey   = key;
-
-      const svc = new google.maps.StreetViewService();
-      svc.getPanorama(
-        { location: { lat: parsed.lat, lng: parsed.lng }, radius: 80,
-          preference: google.maps.StreetViewPreference.NEAREST },
-        async (data, status) => {
-          btn.disabled = false;
-          if (status !== 'OK') {
-            setStatus(`No se encontró Street View (status: ${status})`);
-            trackError(`No se encontró Street View (status: ${status})`, {
-              reason: 'streetview_not_found',
-              source: 'manual',
-              streetview_status: status
-            });
-            return;
-          }
-
-          const timelineEntries = await buildTimelineEntries(data, key);
-          if (!timelineEntries.length) {
-            const pano = data.location.pano;
-            allPanos   = [{ pano, label: 'actual', rawDate: 'actual', timestamp: null, sourceIndex: 0 }];
-            oldPanoId  = newPanoId = pano;
-            resetTimelinePreloadStatus();
-            setStatus('Solo hay una imagen disponible (sin historial).', true);
-            showComparison('actual', 'actual', 1);
-            trackEvent('comparison_ready', {
-              source: 'manual',
-              oldest_label: 'actual',
-              newest_label: 'actual',
-              pano_count: 1,
-              has_history: false
-            });
-            return;
-          }
-
-          allPanos  = timelineEntries;
-          oldPanoId = allPanos[0].pano;
-          newPanoId = allPanos[allPanos.length - 1].pano;
-
-          setStatus(`✓ Se encontraron ${allPanos.length} imágenes históricas.`, true);
-          showComparison(allPanos[0].label, allPanos[allPanos.length - 1].label, allPanos.length);
-          trackEvent('comparison_ready', {
-            source: 'manual',
-            oldest_label: allPanos[0].label,
-            newest_label: allPanos[allPanos.length - 1].label,
-            pano_count: allPanos.length,
-            has_history: true
-          });
-        }
-      );
     }
 
     function showComparison(oldDate, newDate, count) {
@@ -1858,11 +1647,6 @@
           location_slug: location.slug,
           pano_count: (location.panos || []).length
         });
-      });
-
-      const manualPanel = document.getElementById('manual-panel');
-      manualPanel.addEventListener('toggle', () => {
-        trackEvent('manual_panel_toggled', { open: manualPanel.open });
       });
 
       loadPreloadedLocations();
