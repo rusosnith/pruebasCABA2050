@@ -116,8 +116,9 @@
           <option value="no">No</option>
         </select>
 
-        <label for="feedback-comment">Comentario abierto</label>
+          <label for="feedback-comment">Comentario abierto (opcional)</label>
         <textarea id="feedback-comment" placeholder="Qué entendiste, qué te confundió, qué faltó o qué tendría valor en una versión real"></textarea>
+          <p class="helper-text">Podés enviar feedback aunque dejes este campo vacío.</p>
 
         <button type="button" id="btn-feedback" onclick="submitFeedback()">Enviar feedback</button>
       </div>
@@ -426,7 +427,7 @@
       const comment = document.getElementById('feedback-comment').value.trim();
 
       if (!rating && !sense && !realVersion && !comment) {
-        updateFeedbackStatus('Completá al menos un campo antes de enviar el feedback.', false);
+        updateFeedbackStatus('Elegí al menos una respuesta o dejá un comentario antes de enviar el feedback.', false);
         return;
       }
 
