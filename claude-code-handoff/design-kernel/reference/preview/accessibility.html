@@ -1,0 +1,159 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Accessibility" subtitle="Contraste · focus · hit targets · ARIA · reduced motion" viewport="760x700" --><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; }
+  .panel { background: var(--background); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+  .panel h5 { font-size: 14px; font-weight: 600; margin: 0 0 10px; }
+  .row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-top: 1px solid var(--border); font-size: 12px; }
+  .row:first-of-type { border: 0; }
+  .ok { color: var(--success); font-weight: 600; }
+  .warn { color: var(--warning); font-weight: 600; }
+  .cswatch { width: 60px; height: 24px; min-height: 0; border-radius: var(--radius-xs); display: grid; place-items: center; font-size: 11px; font-family: var(--font-mono); flex-shrink: 0; padding: 0; border: 0; }
+  .ratio { font-family: var(--font-mono); margin-left: auto; }
+
+  .focusable { display: inline-flex; padding: 9px 16px; border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 13px; font-weight: 500; cursor: pointer; border: 0; align-items: center; gap: 6px; }
+  .focusable.show-ring { outline: var(--state-focus-width) solid var(--ring); outline-offset: var(--state-focus-offset); }
+  .target { width: 28px; height: 28px; border: 2px dashed var(--destructive); border-radius: var(--radius-xs); display: grid; place-items: center; font-size: 10px; color: var(--destructive); }
+  .target.ok { border-color: var(--success); color: var(--success); width: 44px; height: 44px; font-size: 11px; }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:12px">Accesibilidad — contraste, focus, targets, ARIA</div>
+
+<div class="grid">
+
+  <div class="panel">
+    <h5>Contraste — pares verificados</h5>
+    <div class="row">
+      <div class="cswatch" style="background:#380000; color:#FFEDD6;">Aa</div>
+      <span>foreground sobre background</span>
+      <span class="ratio ok">11.8 ·  AAA</span>
+    </div>
+    <div class="row">
+      <div class="cswatch" style="background:#E76D00; color:#FFEDD6;">Aa</div>
+      <span>primary-foreground (institutional)</span>
+      <span class="ratio warn">2.78 · brand exception</span>
+    </div>
+    <div class="row">
+      <div class="cswatch" style="background:#FFEDD6; color:#5C3A2E;">Aa</div>
+      <span>muted-foreground sobre background</span>
+      <span class="ratio ok">7.4 · AAA</span>
+    </div>
+    <div class="row">
+      <div class="cswatch" style="background:#FFEDD6; color:#E76D00;">Aa</div>
+      <span>primary text sobre background</span>
+      <span class="ratio warn">3.6 · AA large only</span>
+    </div>
+    <div class="row">
+      <div class="cswatch" style="background:#8D1800; color:#FFEDD6;">Aa</div>
+      <span>secondary sobre cream (badge)</span>
+      <span class="ratio ok">9.4 · AAA</span>
+    </div>
+    <div class="row">
+      <div class="cswatch" style="background:#FFEDD6; color:#BA1A1A;">Aa</div>
+      <span>destructive sobre background</span>
+      <span class="ratio ok">5.2 · AA</span>
+    </div>
+    <div style="font-size:11px; color:var(--muted-foreground); margin-top:10px; line-height:1.5;">
+      Cream-on-orange (2.78) es excepción de marca firmada. Para pliegos públicos / RFP, override local a <code style="font-family:var(--font-mono); background:var(--accent); padding:1px 4px; border-radius:var(--radius-xs);">--foreground</code>.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h5>Focus visible — siempre, 2px ring, 2px offset</h5>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; padding:14px; background:var(--surface-sunken); border-radius:var(--radius-sm);">
+      <button class="focusable" style="background:var(--primary); color:var(--primary-foreground);">Sin focus</button>
+      <button class="focusable show-ring" style="background:var(--primary); color:var(--primary-foreground);">Con focus</button>
+    </div>
+    <div style="font-size:11px; color:var(--muted-foreground); margin-top:10px; line-height:1.55;">
+      Nunca <code style="font-family:var(--font-mono);">outline: none</code> sin reemplazo. Usá <code style="font-family:var(--font-mono);">:focus-visible</code> para evitar mostrar el ring en clicks de mouse.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h5>Hit targets — mínimo 44 × 44 px en mobile</h5>
+    <div style="display:flex; align-items:center; gap:18px; padding:14px; background:var(--surface-sunken); border-radius:var(--radius-sm);">
+      <div class="target">28</div>
+      <div style="font-size:11px; color:var(--destructive); display:flex; align-items:center; gap:5px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Muy chico</div>
+      <div class="target ok">44</div>
+      <div style="font-size:11px; color:var(--success); display:flex; align-items:center; gap:5px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Mínimo iOS / Android</div>
+    </div>
+    <div style="font-size:11px; color:var(--muted-foreground); margin-top:10px; line-height:1.55;">
+      Iconos chicos van adentro de un wrapper táctil de 44 px. Espacio entre targets ≥ 8 px.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h5>ARIA — checklist por componente</h5>
+    <ul style="font-size:12px; line-height:1.6; padding-left:18px; margin:0;">
+      <li><strong>Combobox</strong> (autocomplete de dirección): <code style="font-family:var(--font-mono);">role=combobox</code> + <code style="font-family:var(--font-mono);">aria-expanded</code> + <code style="font-family:var(--font-mono);">aria-activedescendant</code>.</li>
+      <li><strong>Tabs</strong>: <code style="font-family:var(--font-mono);">role=tab</code> + <code style="font-family:var(--font-mono);">aria-selected</code>. Flechas izquierda/derecha cambian.</li>
+      <li><strong>Bottom sheet / modal</strong>: <code style="font-family:var(--font-mono);">role=dialog</code> + <code style="font-family:var(--font-mono);">aria-modal=true</code> + focus trap + Esc cierra.</li>
+      <li><strong>Stepper</strong>: <code style="font-family:var(--font-mono);">aria-current=step</code> en el paso activo.</li>
+      <li><strong>Toast / notif</strong>: <code style="font-family:var(--font-mono);">role=status</code> (info) o <code style="font-family:var(--font-mono);">role=alert</code> (error).</li>
+      <li><strong>Loading</strong>: <code style="font-family:var(--font-mono);">aria-busy=true</code> en el contenedor.</li>
+      <li><strong>Iconos solitarios</strong>: <code style="font-family:var(--font-mono);">aria-label</code> obligatorio.</li>
+      <li><strong>Decorativos</strong>: <code style="font-family:var(--font-mono);">aria-hidden=true</code>.</li>
+    </ul>
+  </div>
+
+  <div class="panel" style="grid-column: span 2;">
+    <h5>Reduced motion — honrar siempre</h5>
+    <pre style="font-family:var(--font-mono); font-size:11px; background:var(--surface-sunken); padding:12px; border-radius:var(--radius-sm); overflow:auto; margin:0;">@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}</pre>
+  </div>
+
+  <div class="panel" style="grid-column: span 2;">
+    <h5>Cobertura por componente — foco · target · ARIA · motion</h5>
+    <table style="width:100%; border-collapse:collapse; font-size:12px;">
+      <thead>
+        <tr style="text-align:left;">
+          <th style="padding:6px 8px; border-bottom:1px solid var(--border-strong); font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-foreground);">Familia</th>
+          <th style="padding:6px 8px; border-bottom:1px solid var(--border-strong); font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-foreground);">Foco</th>
+          <th style="padding:6px 8px; border-bottom:1px solid var(--border-strong); font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-foreground);">Target 44</th>
+          <th style="padding:6px 8px; border-bottom:1px solid var(--border-strong); font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-foreground);">ARIA</th>
+          <th style="padding:6px 8px; border-bottom:1px solid var(--border-strong); font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-foreground);">Motion</th>
+          <th style="padding:6px 8px; border-bottom:1px solid var(--border-strong); font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-foreground);">Evidencia</th>
+        </tr>
+      </thead>
+      <tbody id="a11y-grid"></tbody>
+    </table>
+    <div style="font-size:11px; color:var(--muted-foreground); margin-top:10px; line-height:1.5;">
+      <b style="color:var(--success);">✓</b> verificado en el kit &nbsp;·&nbsp; <b style="color:var(--warning);">◑</b> especificado, verificar en review &nbsp;·&nbsp; <b>—</b> no aplica. Motion: <b style="color:var(--success);">✓</b> global vía el reset <code style="font-family:var(--font-mono);">prefers-reduced-motion</code>.
+    </div>
+  </div>
+  <script>
+    // Coverage derived from real evidence in kit-componentes.html (aria-label, aria-selected,
+    // aria-current, focus tokens) + the ARIA checklist above. Edit as components are reviewed.
+    const A11Y = [
+      ['Botones',            'v','v','v','g', 'aria-label en btn-icon'],
+      ['Campos / forms',     'v','v','o','g', 'labels; verificar describedby de error'],
+      ['Toggles / switches', 'v','v','o','g', 'role=switch a confirmar'],
+      ['Segmented',          'v','v','v','g', 'aria-selected'],
+      ['Sliders',            'v','v','o','g', 'role=slider + aria-valuenow a confirmar'],
+      ['Badges / tags',      '-','-','v','g', 'aria-label en quitar'],
+      ['Chips de estado',    '-','-','-','g', 'presentacional'],
+      ['Cards',              'v','-','-','g', 'foco si es clickable'],
+      ['Tabs',               'v','v','v','g', 'aria-selected + flechas'],
+      ['Menus / dropdowns',  'v','v','o','g', 'role=menu a confirmar'],
+      ['Tooltips',           'v','-','o','g', 'aria-describedby a confirmar'],
+      ['Toasts',             'v','v','v','g', 'aria-label cerrar; role=status/alert (spec)'],
+      ['Modales',            'v','v','o','g', 'role=dialog + focus trap (spec)'],
+      ['Date picker',        'v','v','o','g', 'grid roles a confirmar'],
+      ['File upload',        'v','v','v','g', 'aria-label quitar'],
+      ['Paginacion',         'v','v','v','g', 'aria-current=page'],
+      ['Command palette',    'v','v','o','g', 'aria-activedescendant a confirmar'],
+    ];
+    const mark = { v:['✓','var(--success)'], o:['◑','var(--warning)'], g:['✓','var(--success)'], '-':['—','var(--muted-foreground)'] };
+    document.getElementById('a11y-grid').innerHTML = A11Y.map(r => {
+      const cell = (k) => `<td style="padding:6px 8px; border-bottom:1px solid var(--border); color:${mark[k][1]}; font-weight:600; text-align:center;">${mark[k][0]}</td>`;
+      return `<tr><td style="padding:6px 8px; border-bottom:1px solid var(--border); font-weight:600;">${r[0]}</td>${cell(r[1])}${cell(r[2])}${cell(r[3])}${cell(r[4])}<td style="padding:6px 8px; border-bottom:1px solid var(--border); color:var(--muted-foreground); font-size:11px;">${r[5]}</td></tr>`;
+    }).join('');
+  </script>
+
+</div>
+</div></body></html>

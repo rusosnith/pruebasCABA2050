@@ -1,0 +1,466 @@
+/* ================================================================
+   Terres Design System — colors_and_type.css
+   Plain CSS variables + semantic element styles. Framework-agnostic.
+
+   ⚠️ This file mirrors tokens.json (single source of truth, v1.4.0).
+   Hand-edit tokens.json and regenerate this file — do not hand-edit
+   tokens here in isolation, they will desync from the Tailwind side.
+   ================================================================ */
+
+/* IBM Plex Sans + Serif + Mono — all self-hosted from fonts/.
+   No external font CDN dependency. */
+
+@font-face { font-family: "IBM Plex Mono"; font-weight: 100; font-style: normal;  src: url("fonts/IBMPlexMono-Thin.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 100; font-style: italic;  src: url("fonts/IBMPlexMono-ThinItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 200; font-style: normal;  src: url("fonts/IBMPlexMono-ExtraLight.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 200; font-style: italic;  src: url("fonts/IBMPlexMono-ExtraLightItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 300; font-style: normal;  src: url("fonts/IBMPlexMono-Light.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 300; font-style: italic;  src: url("fonts/IBMPlexMono-LightItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-style: normal;  src: url("fonts/IBMPlexMono-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-style: italic;  src: url("fonts/IBMPlexMono-Italic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-style: normal;  src: url("fonts/IBMPlexMono-Medium.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-style: italic;  src: url("fonts/IBMPlexMono-MediumItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 600; font-style: normal;  src: url("fonts/IBMPlexMono-SemiBold.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 600; font-style: italic;  src: url("fonts/IBMPlexMono-SemiBoldItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 700; font-style: normal;  src: url("fonts/IBMPlexMono-Bold.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 700; font-style: italic;  src: url("fonts/IBMPlexMono-BoldItalic.ttf") format("truetype"); font-display: swap; }
+
+/* Note: IBM Plex Sans Condensed and SemiCondensed variants are also available
+   in fonts/ (28 files total across both). Not currently wired into any family
+   in the system — add @font-face rules with explicit family names
+   ("IBM Plex Sans Condensed" / "IBM Plex Sans SemiCondensed") if a future
+   use case calls for them. */
+
+@font-face { font-family: "IBM Plex Sans"; font-weight: 100; font-style: normal;  src: url("fonts/IBMPlexSans-Thin.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 100; font-style: italic;  src: url("fonts/IBMPlexSans-ThinItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 200; font-style: normal;  src: url("fonts/IBMPlexSans-ExtraLight.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 200; font-style: italic;  src: url("fonts/IBMPlexSans-ExtraLightItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 300; font-style: normal;  src: url("fonts/IBMPlexSans-Light.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 300; font-style: italic;  src: url("fonts/IBMPlexSans-LightItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; font-style: normal;  src: url("fonts/IBMPlexSans-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; font-style: italic;  src: url("fonts/IBMPlexSans-Italic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 500; font-style: normal;  src: url("fonts/IBMPlexSans-Medium.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 500; font-style: italic;  src: url("fonts/IBMPlexSans-MediumItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; font-style: normal;  src: url("fonts/IBMPlexSans-SemiBold.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; font-style: italic;  src: url("fonts/IBMPlexSans-SemiBoldItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 700; font-style: normal;  src: url("fonts/IBMPlexSans-Bold.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 700; font-style: italic;  src: url("fonts/IBMPlexSans-BoldItalic.ttf") format("truetype"); font-display: swap; }
+
+@font-face { font-family: "IBM Plex Serif"; font-weight: 100; font-style: normal;  src: url("fonts/IBMPlexSerif-Thin.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 100; font-style: italic;  src: url("fonts/IBMPlexSerif-ThinItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 200; font-style: normal;  src: url("fonts/IBMPlexSerif-ExtraLight.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 200; font-style: italic;  src: url("fonts/IBMPlexSerif-ExtraLightItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 300; font-style: normal;  src: url("fonts/IBMPlexSerif-Light.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 300; font-style: italic;  src: url("fonts/IBMPlexSerif-LightItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 400; font-style: normal;  src: url("fonts/IBMPlexSerif-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 400; font-style: italic;  src: url("fonts/IBMPlexSerif-Italic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 500; font-style: normal;  src: url("fonts/IBMPlexSerif-Medium.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 500; font-style: italic;  src: url("fonts/IBMPlexSerif-MediumItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 600; font-style: normal;  src: url("fonts/IBMPlexSerif-SemiBold.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 600; font-style: italic;  src: url("fonts/IBMPlexSerif-SemiBoldItalic.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 700; font-style: normal;  src: url("fonts/IBMPlexSerif-Bold.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; font-weight: 700; font-style: italic;  src: url("fonts/IBMPlexSerif-BoldItalic.ttf") format("truetype"); font-display: swap; }
+
+:root {
+  /* === BUILD:TOKENS:START ===
+     Everything between START and END is generated by build.mjs
+     from tokens.json. Hand-edits here will be overwritten.
+     Run `node build.mjs` to regenerate.
+     ============================================================ */
+
+  /* ---------- The 3 canonical Terres hexes ---------- */
+  --primary:               var(--orange-500);   /* Brand orange — CTA, institutional block, active product state */
+  --background:            var(--neutral-100);   /* Institutional cream — pages, surfaces, dashboards */
+  --foreground:            var(--burgundy-800);   /* Burgundy P10 — body text default */
+
+  /* ---------- Institutional pair (Terres signature, 2.78:1) ---------- */
+  --primary-foreground:    var(--neutral-100);   /* Cream on orange. 2.78:1 — EXCEPCION DE MARCA FIRMADA (audit 2026-06-02): no cumple WCAG AA, autorizada solo para wordmark/bloque institucional, nunca texto de lectura ni <24px. Override a --foreground en pliegos publicos/RFP. No overridear por bloque. */
+
+  /* ---------- Secondary (burgundy P20) — sparing, max 3-4 / view ---------- */
+  --secondary:             var(--burgundy-500);   /* Burgundy P20 — secondary buttons, strong tags, table-header fills */
+  --secondary-foreground:  var(--neutral-100);   /* Texto/ícono sobre el botón secundario burgundy. */
+
+  /* ---------- Surfaces ---------- */
+  --card:                  var(--neutral-100);   /* Fondo de card en producto = cream. Mantenido por paridad shadcn (audit 2026-06-02). */
+  --card-foreground:       var(--burgundy-800);   /* Texto sobre card. Mantenido por paridad shadcn. */
+  --popover:               var(--neutral-50);   /* Editorial light cream — popovers, menus, also valid page bg for long editorial pieces */
+  --popover-foreground:    var(--burgundy-800);   /* Texto sobre popover. Mantenido por paridad shadcn. */
+  --editorial-light:       var(--neutral-50);   /* Allowed page background for any long editorial piece: PDFs, .docx, press notes, long landings */
+  --surface-raised:        var(--neutral-50);   /* v2 — elevated surface inside product (header bars, sticky rails) one step lighter than page */
+  --surface-sunken:        var(--neutral-300);   /* v2 — recessed surface (table zebra, well, code block bg) */
+
+  /* ---------- Muted / accent — warm, leaning brown. Never cold gray. ---------- */
+  --muted:                 var(--neutral-300);   /* Fondo apagado: wells, zebra de tabla, chips neutros. */
+  --muted-foreground:      var(--neutral-800);   /* Texto secundario/labels sobre fondos claros. */
+  --accent:                var(--neutral-200);   /* Realce sutil: hover de fila, fondo de tag, bloque de énfasis suave. */
+  --accent-foreground:     var(--burgundy-800);   /* Texto sobre accent. Mantenido por paridad shadcn. */
+
+  /* ---------- Borders, inputs, focus ring ---------- */
+  --border:                var(--neutral-400);   /* Warm beige hairline — the v2 default separator. Never cold gray */
+  --border-strong:         var(--neutral-500);   /* v2 — emphasized hairline (top rule of a table, active divider) */
+  --input:                 var(--neutral-400);   /* Borde por defecto de inputs y campos. */
+  --ring:                  var(--orange-500);   /* Color del halo de foco en cualquier elemento interactivo. */
+
+  /* ---------- Semantic ---------- */
+  --destructive:           #BA1A1A;   /* Cold red — must not be confused with brand orange */
+  --destructive-foreground: var(--neutral-100);   /* Texto/ícono sobre fondo destructive sólido. */
+  --destructive-hover:     #9C1414;   /* Hover del botón destructive. Rojo más oscuro; no hay escala roja propia (audit 2026-06-02). */
+  --destructive-subtle:    #FFF3F3;   /* v2 — tinted bg for destructive chips / inline error rows */
+  --success:               #7D8C44;   /* Olive — the only green in the system */
+  --success-foreground:    var(--neutral-100);   /* Texto sobre success solido. Mantenido por paridad shadcn (los chips usan success-subtle + texto solido). */
+  --success-subtle:        #F3F7E8;   /* v2 — tinted bg for success chips / valid input */
+  --info:                  var(--petrol-600);   /* v2 — petrol. The one cool hue: info states + data 2-series counterpoint to orange */
+  --info-foreground:       var(--neutral-50);   /* Texto sobre info solido. Mantenido por paridad shadcn. */
+  --info-subtle:           var(--petrol-50);   /* v2 — tinted petrol bg for info chips / callouts */
+  --warning:               var(--amber-500);   /* v2 — deep amber/ochre. Distinct from brand orange (which is red-orange) */
+  --warning-foreground:    var(--neutral-50);   /* Texto sobre warning solido. Mantenido por paridad shadcn. */
+  --warning-subtle:        var(--amber-50);   /* v2 — tinted amber bg for warning chips */
+
+  /* ---------- Categorical charts (warm, no blue) ---------- */
+  --chart-1:               var(--orange-500);   /* Brand orange — series 1 / primary */
+  --chart-2:               var(--petrol-600);   /* v2 — petrol. The cool counterpoint for clean 2-series comparison */
+  --chart-3:               var(--burgundy-500);   /* Burgundy */
+  --chart-4:               var(--success);   /* Olive */
+  --chart-5:               #B85C00;   /* Roast — sin paso de escala propio */
+  --chart-6:               var(--neutral-800);   /* Brown */
+
+  /* ---------- Map palette (mapcn over MapLibre, re-themed, NO blue) ---------- */
+  --map-land:              var(--neutral-100);   /* Relleno de manzanas/tierra en el mapa. */
+  --map-water:             var(--neutral-400);   /* Warm neutral — Terres maps stay blue-free even in v2 */
+  --map-road:              var(--neutral-500);   /* Trazado de calles. */
+  --map-stroke:            var(--burgundy-500);   /* Contorno de parcela/borde de feature. */
+  --map-parcel:            var(--orange-500);   /* Relleno de la parcela activa/seleccionada (reposo, fill 0.18). */
+  --map-parcel-line:       var(--orange-500);   /* v2.4 — contorno de la parcela objetivo (line-layer 2D, reposo · 2px). */
+  --map-context-fill:      var(--neutral-50);   /* v2.4 — relleno del catastro vecino (fill 0.55). */
+  --map-context-line:      var(--burgundy-500);   /* v2.4 — contorno del catastro vecino (line 0.8 · opacity 0.35). Mismo rol que --map-stroke. */
+  --map-volume-1:          var(--orange-500);   /* v2.4 — volumen 3D fill-extrusion: cuerpo / piso par (opacity 0.95). */
+  --map-volume-2:          var(--orange-600);   /* v2.4 — volumen 3D: piso impar. Remapeo del #D86200 fuera de escala → orange-600 (0.95). */
+  --map-volume-3:          var(--orange-700);   /* v2.4 — volumen 3D: retiro 1. Remapeo del #C25600 fuera de escala → orange-700 (0.92). */
+  --map-volume-4:          var(--orange-800);   /* v2.4 — volumen 3D: retiro 2. Remapeo del #A84A00 fuera de escala → orange-800 (0.92). */
+  --map-parcel-hover:      var(--orange-600);   /* v2.4 — feature-state hover de parcela (fill 0.28 · outline orange-600 2px). */
+  --map-parcel-selected:   var(--orange-700);   /* v2.4 — feature-state seleccionado (fill 0.32 · outline orange-700 3px). */
+
+  /* ---------- Orange scale ---------- */
+  --orange-50:             #FFF4E6;
+  --orange-100:            #FFE3C2;
+  --orange-200:            #FFCB8F;
+  --orange-300:            #FFA94D;
+  --orange-400:            #F58A14;
+  --orange-500:            #E76D00;
+  --orange-600:            #C75D00;
+  --orange-700:            #A04B00;
+  --orange-800:            #783800;
+  --orange-900:            #4E2400;
+
+  /* ---------- Burgundy scale ---------- */
+  --burgundy-50:           #FBEAE6;
+  --burgundy-100:          #F4CCC4;
+  --burgundy-200:          #E8998A;
+  --burgundy-300:          #D26852;
+  --burgundy-400:          #B43820;
+  --burgundy-500:          #8D1800;
+  --burgundy-600:          #6E1000;
+  --burgundy-700:          #520A00;
+  --burgundy-800:          #380000;
+  --burgundy-900:          #220000;
+
+  /* ---------- Neutral scale ---------- */
+  --neutral-50:            #FFF8EC;
+  --neutral-100:           #FFEDD6;
+  --neutral-200:           #FFE0BB;
+  --neutral-300:           #F5E1C4;
+  --neutral-400:           #E8D2B0;
+  --neutral-500:           #C9A87A;
+  --neutral-600:           #A48560;
+  --neutral-700:           #7A5F3F;
+  --neutral-800:           #5C3A2E;
+  --neutral-900:           #3F2418;
+
+  /* ---------- Petrol scale ---------- */
+  --petrol-50:             #ECF3F2;
+  --petrol-100:            #CFE2E0;
+  --petrol-200:            #A6C9C6;
+  --petrol-300:            #74A9A5;
+  --petrol-400:            #458884;
+  --petrol-500:            #236B6B;
+  --petrol-600:            #1C5658;
+  --petrol-700:            #154446;
+  --petrol-800:            #103536;
+  --petrol-900:            #0B2526;
+
+  /* ---------- Amber scale ---------- */
+  --amber-50:              #FBF1D8;
+  --amber-100:             #F5DFA6;
+  --amber-200:             #EDC868;
+  --amber-300:             #DDAB2E;
+  --amber-400:             #C6900F;
+  --amber-500:             #B07D08;
+  --amber-600:             #8A6206;
+  --amber-700:             #6E4E00;
+
+  /* ---------- Radius ---------- */
+  --radius-xs:             0.125rem;   /* 2px — micro elements, inline tags, checkbox */
+  --radius-sm:             0.25rem;   /* 4px — chips, inputs, buttons, table cells */
+  --radius-md:             0.375rem;   /* 6px — default for cards in product */
+  --radius:                0.5rem;   /* 8px — v2 default everywhere (was 12px in v1) */
+  --radius-lg:             0.75rem;   /* 12px — hero cards, institutional blocks, modals */
+  --radius-pill:           9999px;   /* Pills, toggles, switches, avatars */
+
+  /* ---------- Spacing scale (4px base, warm whitespace) ---------- */
+  --space-0:               0;   /* Reset de espaciado (ancla de escala). */
+  --space-05:              0.125rem;   /* 2px — hairline insets */
+  --space-1:               0.25rem;   /* 4px */
+  --space-2:               0.5rem;   /* 8px */
+  --space-3:               0.75rem;   /* 12px */
+  --space-4:               1rem;   /* 16px */
+  --space-5:               1.25rem;   /* 20px */
+  --space-6:               1.5rem;   /* 24px */
+  --space-7:               2rem;   /* 32px — default section gutter in product */
+  --space-8:               2.5rem;   /* 40px */
+  --space-9:               3rem;   /* 48px */
+  --space-10:              4rem;   /* 64px — editorial section gap */
+  --space-11:              5rem;   /* 80px — editorial page margins */
+  --space-12:              6rem;   /* 96px — deck margins, big editorial breaks */
+
+  /* ---------- Shadows — restrained, warm-tinted ---------- */
+  --shadow-xs:             0 1px 0 0 rgba(56, 0, 0, 0.04);   /* Hairline lift — rarely needed, prefer a border */
+  --shadow-sm:             0 1px 2px -1px rgba(56, 0, 0, 0.08), 0 2px 8px -2px rgba(56, 0, 0, 0.06);   /* v2.4 — warm de dos capas (borgoña): bottom tenue + top difusa, spread negativo. Resting card en producto. Hairline-first sigue primero. */
+  --shadow-md:             0 4px 12px -2px rgba(56, 0, 0, 0.10), 0 2px 6px -2px rgba(56, 0, 0, 0.06);   /* v2.4 — warm de dos capas (borgoña). Hovered card, popover, dropdown. */
+  --shadow-lg:             0 8px 24px -6px rgba(56, 0, 0, 0.12);   /* Dialog, feature card */
+  --shadow-xl:             0 16px 48px -12px rgba(56, 0, 0, 0.16);   /* v2 — modal, focused fullscreen panel, command palette */
+
+  /* ---------- Type families ---------- */
+  --font-sans:             "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-serif:            "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --font-mono:             "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---------- Font weights — lighter at scale, solid at small sizes ---------- */
+  --weight-light:          300;
+  --weight-regular:        400;
+  --weight-medium:         500;
+  --weight-semibold:       600;
+  --weight-bold:           700;
+
+  /* ---------- Type scale — hierarchy by SIZE first, weight second ---------- */
+  --text-display:          4rem;
+  --text-h1:               2.75rem;
+  --text-h2:               2rem;
+  --text-h3:               1.5rem;
+  --text-h4:               1.125rem;
+  --text-subheading:       1.25rem;
+  --text-body:             0.9375rem;
+  --text-small:            0.8125rem;
+  --text-caption:          0.6875rem;
+
+  /* ---------- Leading & tracking ---------- */
+  --leading-display:       1;
+  --leading-tight:         1.05;
+  --leading-snug:          1.2;
+  --leading-normal:        1.4;
+  --leading-body:          1.55;
+  --tracking-tighter:      -0.03em;
+  --tracking-tight:        -0.02em;
+  --tracking-normal:       0;
+  --tracking-wide:         0.08em;
+
+  /* ---------- Responsive breakpoints ---------- */
+  --bp-sm:                 640px;
+  --bp-md:                 768px;
+  --bp-lg:                 1024px;
+  --bp-xl:                 1280px;
+  --bp-2xl:                1536px;
+
+  /* ---------- Motion — fades and slides. Never bounce, never scale on hover. ---------- */
+  --motion-instant:        80ms;   /* @kind other */
+  --motion-quick:          160ms;   /* @kind other */
+  --motion-normal:         240ms;   /* @kind other */
+  --motion-slow:           360ms;   /* @kind other */
+  --motion-lazy:           560ms;   /* @kind other */
+  --motion-hover:          180ms;   /* @kind other */
+  --motion-reveal:         280ms;   /* @kind other */
+  --motion-sheet:          300ms;   /* @kind other */
+  --ease-out:              cubic-bezier(0.22, 1, 0.36, 1);   /* @kind other */
+  --ease-in-out:           cubic-bezier(0.65, 0, 0.35, 1);   /* @kind other */
+  --ease-in:               cubic-bezier(0.55, 0, 1, 0.45);   /* @kind other */
+  --ease-out-quart:        cubic-bezier(0.25, 1, 0.5, 1);   /* @kind other */
+
+  /* ---------- Interaction states ---------- */
+  --state-primary-hover:   var(--orange-600);   /* Hover de botón/CTA primario. */
+  --state-primary-active:  var(--orange-700);   /* Pressed/active del primario. */
+  --state-primary-disabled-bg: var(--orange-200);   /* Fondo del primario deshabilitado. */
+  --state-primary-disabled-fg: var(--neutral-50);   /* Texto del primario deshabilitado. */
+  --state-secondary-hover-bg: var(--neutral-200);   /* Hover de botón secundario/ghost. */
+  --state-secondary-active-bg: var(--neutral-300);   /* Pressed del secundario/ghost. */
+  --state-focus-ring:      var(--orange-500);   /* Color del halo de foco. Igual a --ring; usar --ring salvo que necesites el set state-focus-* completo. */
+  --state-focus-offset:    2px;   /* Separación del halo de foco respecto del borde. */
+  --state-focus-width:     2px;   /* Grosor del halo de foco. */
+  --state-input-hover-border: var(--neutral-600);   /* Borde de input en hover. */
+  --state-input-focus-border: var(--orange-500);   /* Borde de input enfocado. */
+  --state-input-error-border: var(--destructive);   /* Borde de input con error. */
+  --state-input-error-bg:  var(--destructive-subtle);   /* Fondo de input con error. */
+  --state-input-success-border: var(--success);   /* Borde de input válido. */
+  --state-input-success-bg: var(--success-subtle);   /* Fondo de input válido. */
+  --state-input-disabled-bg: var(--neutral-300);   /* Fondo de input deshabilitado. */
+  --state-input-disabled-fg: var(--neutral-700);   /* Texto de input deshabilitado. */
+  --state-card-hover-border: var(--neutral-800);   /* Borde de card en hover (patrón hairline-first). */
+  --state-row-hover-bg:    var(--neutral-200);   /* Mantenido por paridad shadcn; varias tablas usan --accent directo (audit 2026-06-02). */
+  --state-row-selected-bg: var(--accent);   /* Mantenido por paridad shadcn; varias tablas usan --accent directo. */
+  /* === BUILD:TOKENS:END === */
+}
+
+/* ================================================================
+   Base
+   ================================================================ */
+
+html, body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Editorial long-read background (.docx, long PDF). */
+.editorial,
+.editorial body { background: var(--editorial-light); }
+
+/* Tabular numbers — mandatory on tables, inputs, KPIs, tickets. */
+table, input, .tabular-nums,
+.kpi, .ticker, .money, .pct {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================================================
+   Semantic element styles — hierarchy by SIZE first, then weight.
+   v2: lighter-at-scale (display 400, h1/h2 500, h3/h4 600). Color is
+   not hierarchy — hero numbers stay in --foreground, not --primary.
+   ================================================================ */
+
+h1, .h1 {
+  font-family: var(--font-sans);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--foreground);
+  margin: 0 0 var(--space-5) 0;
+}
+
+h2, .h2 {
+  font-family: var(--font-sans);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--foreground);
+  margin: 0 0 var(--space-4) 0;
+}
+
+h3, .h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--foreground);
+  margin: 0 0 var(--space-3) 0;
+}
+
+h4, .h4 {
+  font-family: var(--font-sans);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--foreground);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.display {
+  font-family: var(--font-sans);
+  font-size: var(--text-display);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tighter);
+  color: var(--foreground);
+}
+
+/* Editorial display — Plex Serif. For decks, dossiers, and editorial
+   headlines. v2 allows mixing serif accents into otherwise-sans views. */
+.serif-display {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
+  color: var(--foreground);
+}
+
+p, .p {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--foreground);
+  margin: 0 0 var(--space-4) 0;
+  text-wrap: pretty;
+}
+
+.small, small {
+  font-size: var(--text-small);
+  line-height: 1.45;
+  color: var(--foreground);
+}
+
+/* Uppercase tracked eyebrow — v2 routes these through Plex Mono.
+   Eyebrows, captions and table headers are the system's "data labels". */
+.eyebrow, .caption, th {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--muted-foreground);
+}
+
+/* Strong = weight, not color. Bold in foreground, never in burgundy. */
+strong, b, .strong {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* Inline code / mono — for KPIs, tickets, IDs */
+code, kbd, samp, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  color: var(--foreground);
+}
+
+a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+a:hover { color: var(--primary); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--space-6) 0;
+}
+
+/* ================================================================
+   Wordmark helper
+   "Terres." — always with the period. Plex Sans Bold (700).
+   Capital T, rest lowercase. Three color variants.
+   ================================================================ */
+.wordmark {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  display: inline-block;
+}
+.wordmark--primary    { color: var(--primary); }
+.wordmark--cream      { color: var(--primary-foreground); }
+.wordmark--foreground { color: var(--foreground); }

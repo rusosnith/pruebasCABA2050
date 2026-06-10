@@ -1,0 +1,229 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="modal-dialog" subtitle="Modal · 3 tamaños (sm/md/lg) + sheet mobile · scrim burgundy 0.40" viewport="700x1500" -->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="preview.css">
+<style>
+  .card { padding: 28px 32px; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
+  .title { font-size: 14px; font-weight: 600; color: var(--foreground); letter-spacing: -0.01em; }
+  .spec { font-family: var(--font-mono); font-size: 10px; color: var(--muted-foreground); }
+  .col { display: flex; flex-direction: column; gap: 22px; margin-top: 22px; }
+  .state-label { font-family: var(--font-mono); font-size: 10px; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; display: flex; gap: 8px; align-items: center; }
+  .state-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted-foreground); }
+
+  /* Stage: the surface we draw mocked dialogs on */
+  .stage { position: relative; background: var(--background); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .stage .behind { padding: 20px; min-height: 140px; }
+  .stage .behind .title-bg { font-size: 18px; font-weight: 600; color: var(--foreground); margin-bottom: 6px; }
+  .stage .behind .meta-bg { font-family: var(--font-mono); font-size: 11px; color: var(--muted-foreground); }
+  .stage .scrim { position: absolute; inset: 0; background: rgba(56, 0, 0, 0.40); display: grid; place-items: center; padding: 22px; }
+
+  /* Dialog primitive */
+  .dialog { background: var(--popover); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); display: flex; flex-direction: column; max-height: 100%; overflow: hidden; }
+  .dialog.sm  { width: 100%; max-width: 360px; }
+  .dialog.md  { width: 100%; max-width: 520px; }
+  .dialog.lg  { width: 100%; max-width: 680px; }
+
+  .dialog header { display: flex; align-items: flex-start; gap: 14px; padding: 22px 24px 8px; }
+  .dialog header .icon { width: 36px; height: 36px; border-radius: var(--radius-sm); display: grid; place-items: center; flex-shrink: 0; }
+  .dialog header .icon.brand { background: var(--accent); color: var(--primary); }
+  .dialog header .icon.destructive { background: var(--destructive-subtle); color: var(--destructive); }
+  .dialog header .text { flex: 1; }
+  .dialog header h3 { margin: 0; font-size: 17px; font-weight: 600; color: var(--foreground); letter-spacing: -0.01em; }
+  .dialog header .sub { margin: 4px 0 0; font-size: 13px; color: var(--muted-foreground); line-height: 1.5; }
+  .dialog header .x { background: transparent; border: 0; padding: 6px; cursor: pointer; color: var(--muted-foreground); border-radius: 6px; flex-shrink: 0; }
+  .dialog header .x:hover { background: var(--accent); color: var(--foreground); }
+  .dialog header .x { background: transparent; border: 0; padding: 6px; cursor: pointer; color: var(--muted-foreground); border-radius: var(--radius-xs); flex-shrink: 0; }
+
+  .dialog .body { padding: 14px 24px 18px; font-size: 14px; color: var(--foreground); line-height: 1.55; }
+  .dialog .body p { margin: 0 0 12px; }
+  .dialog .body p:last-child { margin-bottom: 0; }
+
+  .dialog footer { padding: 16px 24px 20px; display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid var(--border); margin-top: auto; background: rgba(255,237,214,0.5); }
+
+  /* Buttons */
+  .btn { font-family: var(--font-sans); font-size: var(--text-small); font-weight: var(--weight-medium); padding: 9px 16px; border-radius: var(--radius-sm); cursor: pointer; border: 0; }
+  .btn-primary { background: var(--primary); color: var(--primary-foreground); }
+  .btn-ghost { background: transparent; color: var(--foreground); }
+  .btn-destructive { background: var(--destructive); color: var(--destructive-foreground); }
+  .btn-outline { background: transparent; color: var(--foreground); border: 1px solid var(--foreground); padding: 9px 17px; }
+
+  /* Inline form inside dialog (md example) */
+  .form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .form-row label { font-family: var(--font-mono); font-size: var(--text-caption); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--muted-foreground); }
+  .form-row input, .form-row textarea { font-family: var(--font-sans); font-size: var(--text-small); padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--background); color: var(--foreground); outline: none; }
+  .form-row input:focus, .form-row textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(231,109,0,0.16); }
+  .form-row textarea { min-height: 80px; resize: vertical; font-family: var(--font-sans); }
+
+  /* Sheet (mobile bottom drawer) */
+  .sheet-stage { height: 240px; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--popover); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 14px 20px 22px; box-shadow: var(--shadow-xl); }
+  .sheet .handle { width: 40px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 16px; }
+  .sheet h3 { margin: 0 0 4px; font-size: 16px; font-weight: 600; color: var(--foreground); }
+  .sheet .sub { margin: 0 0 18px; font-size: 13px; color: var(--muted-foreground); }
+  .sheet .actions { display: flex; gap: 10px; }
+  .sheet .actions button { flex: 1; }
+
+  /* Notes */
+  .notes { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 10px; line-height: 1.6; color: var(--muted-foreground); display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; }
+  .notes b { color: var(--foreground); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="head">
+    <div class="title">Modal / dialog system</div>
+    <div class="spec">3 sizes · scrim burgundy 0.40 · primary CTA right · sheet for mobile</div>
+  </div>
+
+  <div class="col">
+
+    <!-- SM — confirm destructive -->
+    <div>
+      <div class="state-label"><span class="dot"></span>SM · 360px · confirmación destructiva · explica qué se borra</div>
+      <div class="stage" style="min-height: 260px;">
+        <div class="behind">
+          <div class="title-bg">Prefactibilidad — Av. Santa Fe 4120</div>
+          <div class="meta-bg">Borrador · guardada hace 2 h</div>
+        </div>
+        <div class="scrim">
+          <div class="dialog sm">
+            <header>
+              <div class="icon destructive">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </div>
+              <div class="text">
+                <h3>¿Borrar esta prefactibilidad?</h3>
+                <p class="sub">La cálculo, los KPIs y la nota del lote desaparecen. No se puede deshacer.</p>
+              </div>
+            </header>
+            <footer>
+              <button class="btn btn-ghost">Cancelar</button>
+              <button class="btn btn-destructive">Sí, borrarla</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MD — form / contact -->
+    <div>
+      <div class="state-label"><span class="dot"></span>MD · 520px · default · form interno · close button visible</div>
+      <div class="stage" style="min-height: 460px;">
+        <div class="behind">
+          <div class="title-bg">Lotes en seguimiento</div>
+          <div class="meta-bg">14 lotes · última actualización 11:42</div>
+        </div>
+        <div class="scrim">
+          <div class="dialog md">
+            <header>
+              <div class="icon brand">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              </div>
+              <div class="text">
+                <h3>Pedir tasación manual</h3>
+                <p class="sub">Te llamamos en menos de 24 h hábiles. Dejanos cómo contactarte.</p>
+              </div>
+              <button class="x" aria-label="Cerrar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </header>
+            <div class="body">
+              <div class="form-row">
+                <label>Tu nombre</label>
+                <input value="Hugo Méndez" />
+              </div>
+              <div class="form-row">
+                <label>Teléfono o WhatsApp</label>
+                <input value="+54 9 11 4xxx-xxxx" />
+              </div>
+              <div class="form-row" style="margin-bottom: 0;">
+                <label>Mejor horario para llamarte</label>
+                <input value="Mañana, entre 9 y 12 h" />
+              </div>
+            </div>
+            <footer>
+              <button class="btn btn-ghost">Cancelar</button>
+              <button class="btn btn-primary">Pedir tasación</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LG — detail / read -->
+    <div>
+      <div class="state-label"><span class="dot"></span>LG · 680px · lectura larga · sin close-on-scrim (sólo X explícita)</div>
+      <div class="stage" style="min-height: 380px;">
+        <div class="behind">
+          <div class="title-bg">Ficha de lote — Palermo</div>
+          <div class="meta-bg">FOT 3.0 · m² vendibles ~2.450 · plusvalía media</div>
+        </div>
+        <div class="scrim">
+          <div class="dialog lg">
+            <header>
+              <div class="text">
+                <h3>Detalle del cálculo — Av. Santa Fe 4120</h3>
+                <p class="sub">Cómo derivamos los m² vendibles. Todos los parámetros vienen del código urbanístico CABA vigente al 26·05·2026.</p>
+              </div>
+              <button class="x" aria-label="Cerrar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </header>
+            <div class="body" style="font-family: var(--font-mono); font-size: 12.5px; background: var(--background); padding: 14px 24px; line-height: 1.7;">
+              <div style="display: grid; grid-template-columns: 1fr auto; gap: 4px 12px;">
+                <span style="color:var(--muted-foreground);">Superficie del lote</span><span>818 m²</span>
+                <span style="color:var(--muted-foreground);">Distrito urbanístico</span><span>USAA1</span>
+                <span style="color:var(--muted-foreground);">FOT máximo</span><span>3,0</span>
+                <span style="color:var(--muted-foreground);">FOS máximo</span><span>0,60</span>
+                <span style="color:var(--muted-foreground);">Capacidad bruta (FOT × m²)</span><span>2.454 m²</span>
+                <span style="color:var(--muted-foreground);">Coef. de aprovechamiento</span><span>0,87</span>
+                <span style="color:var(--muted-foreground);"><b style="color: var(--foreground);">m² vendibles estimados</b></span><span><b style="color: var(--foreground);">2.135 m²</b></span>
+              </div>
+            </div>
+            <footer>
+              <button class="btn btn-ghost">Compartir link</button>
+              <button class="btn btn-primary">Volver a la prefactibilidad</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheet — mobile bottom drawer -->
+    <div>
+      <div class="state-label"><span class="dot"></span>Sheet (mobile) · bottom drawer · handle visible · safe-area inset bottom</div>
+      <div class="stage sheet-stage">
+        <div class="behind">
+          <div class="title-bg">Mapa de parcelas</div>
+          <div class="meta-bg">14 lotes en vista · zoom 16</div>
+        </div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <h3>Av. Santa Fe 4120</h3>
+          <p class="sub">Palermo · CABA · 818 m² · FOT 3,0</p>
+          <div class="actions">
+            <button class="btn btn-outline">Ver ficha</button>
+            <button class="btn btn-primary">Pedir tasación</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notes">
+    <div><b>Scrim</b> · rgba(56,0,0,0.40) burgundy · no backdrop-blur</div>
+    <div><b>Radius</b> · 16px (dialog) · 18px (sheet top)</div>
+    <div><b>Shadow</b> · warm-tinted, --shadow-lg variant</div>
+    <div><b>Close-on-scrim</b> · sm/md sí · lg no (lectura larga)</div>
+    <div><b>Esc</b> · siempre cierra · focus trap dentro</div>
+    <div><b>Primary CTA</b> · siempre a la derecha (RTL aware)</div>
+    <div><b>Mount</b> · fade scrim 200ms · dialog slide-up 240ms ease-out</div>
+    <div><b>Mobile</b> · MD → sheet automático bajo 640px</div>
+  </div>
+
+</div>
+</body>
+</html>

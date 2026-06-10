@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Micro-copy library" subtitle="30+ pares ✓ Terres / ✗ genérico por contexto" viewport="760x1400" --><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .pair { display: grid; grid-template-columns: 110px 1fr 1fr; gap: 14px; padding: 12px 0; border-top: 1px solid var(--border); align-items: start; }
+  .pair:first-child { border: 0; }
+  .ctx { font-size: var(--text-caption); font-family: var(--font-mono); color: var(--muted-foreground); text-transform: uppercase; letter-spacing: var(--tracking-wide); padding-top: 2px; }
+  .yes, .no { font-size: var(--text-small); line-height: 1.45; padding: 8px 10px; border-radius: var(--radius-sm); }
+  .yes { background: var(--success-subtle); color: var(--foreground); border-left: 3px solid var(--success); }
+  .no  { background: var(--destructive-subtle); color: var(--muted-foreground); border-left: 3px solid var(--destructive); }
+  .yes::before { content: "✓ "; color: var(--success); font-weight: 700; }
+  .no::before  { content: "✕ "; color: var(--destructive); font-weight: 700; }
+  .sec { font-family: var(--font-mono); font-size: var(--text-caption); font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--primary); margin: 14px 0 4px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .sec:first-of-type { border: 0; padding-top: 0; margin-top: 0; }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:12px">Micro-copy library — Rioplatense, "vos", verbos concretos. ✓ Terres · ✕ genérico</div>
+
+<div class="sec">CTAs</div>
+<div class="pair"><span class="ctx">Vender</span><div class="yes">Pedí tu factibilidad gratis</div><div class="no">Empezar ahora</div></div>
+<div class="pair"><span class="ctx">Comprar</span><div class="yes">Ver lotes disponibles</div><div class="no">Continuar</div></div>
+<div class="pair"><span class="ctx">Calcular</span><div class="yes">Calcular qué se construye</div><div class="no">Submit</div></div>
+<div class="pair"><span class="ctx">Cancelar</span><div class="yes">Cancelar</div><div class="no">Cerrar</div></div>
+<div class="pair"><span class="ctx">Guardar</span><div class="yes">Guardar borrador</div><div class="no">Save</div></div>
+
+<div class="sec">Errores</div>
+<div class="pair"><span class="ctx">CUIT inválido</span><div class="yes">No pudimos validar el CUIT. Revisalo y volvé a intentar.</div><div class="no">Error: invalid input.</div></div>
+<div class="pair"><span class="ctx">Sin conexión</span><div class="yes">No pudimos conectar. Tus datos están guardados.</div><div class="no">Network error</div></div>
+<div class="pair"><span class="ctx">Lote no encontrado</span><div class="yes">No encontramos ese lote. ¿Está fuera de CABA?</div><div class="no">404 - Not found</div></div>
+<div class="pair"><span class="ctx">Falta campo</span><div class="yes">Falta la superficie del lote.</div><div class="no">This field is required.</div></div>
+<div class="pair"><span class="ctx">Permisos</span><div class="yes">Necesitás que un admin te habilite "Producción Activa".</div><div class="no">Access denied.</div></div>
+
+<div class="sec">Vacíos</div>
+<div class="pair"><span class="ctx">Sin lotes</span><div class="yes">Todavía no cargaste ningún lote.</div><div class="no">No items.</div></div>
+<div class="pair"><span class="ctx">Sin búsqueda</span><div class="yes">No hay lotes que coincidan en este recorte.</div><div class="no">0 results.</div></div>
+<div class="pair"><span class="ctx">Sin operaciones</span><div class="yes">Todavía no hay operaciones cerradas en este período.</div><div class="no">No data available.</div></div>
+<div class="pair"><span class="ctx">Sin notif.</span><div class="yes">Estás al día. No hay novedades pendientes.</div><div class="no">No notifications.</div></div>
+
+<div class="sec">Confirmaciones</div>
+<div class="pair"><span class="ctx">Form enviado</span><div class="yes">Listo, te enviamos el informe a tu mail.</div><div class="no">Success!</div></div>
+<div class="pair"><span class="ctx">Guardado</span><div class="yes">Borrador guardado. Podés seguir cuando quieras.</div><div class="no">Saved</div></div>
+<div class="pair"><span class="ctx">Subscripción</span><div class="yes">Te sumamos a la lista. Recibís novedades los jueves.</div><div class="no">Subscribed!</div></div>
+<div class="pair"><span class="ctx">Eliminar</span><div class="yes">¿Eliminar este lote? Se va a perder el análisis cargado.</div><div class="no">Are you sure?</div></div>
+
+<div class="sec">Onboarding / micro-coaching</div>
+<div class="pair"><span class="ctx">Tooltip FOT</span><div class="yes">FOT: cuántos m² se pueden construir por cada m² de terreno.</div><div class="no">Factor of Total Occupancy</div></div>
+<div class="pair"><span class="ctx">Próximo paso</span><div class="yes">Falta poco: completá superficie y FOT.</div><div class="no">Complete the required fields</div></div>
+<div class="pair"><span class="ctx">Tiempo</span><div class="yes">Esto te lleva menos de 2 minutos.</div><div class="no">Quick form</div></div>
+
+<div class="sec">Notificaciones / email</div>
+<div class="pair"><span class="ctx">Asunto email</span><div class="yes">Tu factibilidad de Austria 2046 está lista</div><div class="no">Your report is ready</div></div>
+<div class="pair"><span class="ctx">Recordatorio</span><div class="yes">Quedó un borrador a medio cargar. ¿Volvés a terminarlo?</div><div class="no">You have a pending draft</div></div>
+<div class="pair"><span class="ctx">Nueva oferta</span><div class="yes">Llegó una oferta nueva por Austria 2046.</div><div class="no">New offer received</div></div>
+
+<div class="sec">Roles / tags</div>
+<div class="pair"><span class="ctx">Estados</span><div class="yes">Activo · En revisión · Cerrado · Borrador · Vencido</div><div class="no">Active · Review · Closed · Draft · Expired</div></div>
+<div class="pair"><span class="ctx">Canales</span><div class="yes">Producción Pasiva · Activa · Inmobiliaria</div><div class="no">Inbound · Outbound · Partner</div></div>
+
+<div style="margin-top:18px; font-size:11px; color:var(--muted-foreground); line-height:1.5; padding-top:14px; border-top:1px solid var(--border);">
+  <strong style="color:var(--foreground);">Reglas:</strong> Vos (no tú, no usted) · sentence case en CTAs · sin signos de exclamación en producto · números en formato AR (2.450.000 · 18,4 %) · sin emoji como ornamento (sí ✓ y ✕ semánticos).
+</div>
+</div></body></html>

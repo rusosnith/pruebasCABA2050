@@ -1,0 +1,202 @@
+#!/usr/bin/env node
+// ============================================================================
+// Terres design tokens build script
+// ----------------------------------------------------------------------------
+// Reads tokens.json (single source of truth) and regenerates the :root { ... }
+// block inside colors_and_type.css. Hand-written semantic styles (h1, p,
+// .wordmark, @font-face etc.) are preserved untouched — we only replace the
+// content between the BUILD:TOKENS:START / END markers.
+//
+// Usage:
+//   node build.mjs              # writes colors_and_type.css in place
+//   node build.mjs --check      # exits 1 if generated output would differ
+//                               # (useful in CI to catch drift)
+//
+// Requires: Node 18+. No npm dependencies.
+// ============================================================================
+
+import { readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const TOKENS_PATH = resolve(__dirname, "tokens.json");
+const CSS_PATH    = resolve(__dirname, "colors_and_type.css");
+const START       = "/* === BUILD:TOKENS:START ===";
+const END         = "/* === BUILD:TOKENS:END === */";
+
+const tokens = JSON.parse(readFileSync(TOKENS_PATH, "utf8"));
+
+// ---- Reference resolver --------------------------------------------------
+// Tokens can reference each other with {dot.path.notation}. Resolve them.
+function resolveRef(value) {
+  if (typeof value !== "string") return value;
+  const match = value.match(/^\{([^}]+)\}$/);
+  if (!match) return value;
+  const path = match[1].split(".");
+  let node = tokens;
+  for (const seg of path) {
+    if (node == null) throw new Error(`Unresolved token reference: ${value}`);
+    node = node[seg];
+  }
+  if (node == null) throw new Error(`Unresolved token reference: ${value}`);
+  // Unwrap { value: "..." } envelope if present
+  if (typeof node === "object" && "value" in node) return resolveRef(node.value);
+  return resolveRef(node);
+}
+
+// Pull a value from either a raw string or a { value, comment } envelope.
+// F1.2 (audit 2026-06): when a token's value is a *pure reference* like
+// {scales.orange.500}, emit `var(--orange-500)` instead of the resolved hex,
+// so the primitive stays the single point of change and edits propagate.
+function refToVarName(raw) {
+  if (typeof raw !== "string") return null;
+  const m = raw.match(/^\{([^}]+)\}$/);
+  if (!m) return null;
+  const p = m[1].split(".");
+  return p[0] === "scales" ? `${p[1]}-${p[2]}` : p[p.length - 1];
+}
+function valOf(v) {
+  const raw = v && typeof v === "object" && "value" in v ? v.value : v;
+  const refName = refToVarName(raw);
+  if (refName) return `var(--${refName})`;
+  if (typeof v === "string" || typeof v === "number") return resolveRef(v);
+  if (v && typeof v === "object" && "value" in v) return resolveRef(v.value);
+  return v;
+}
+function commentOf(v) {
+  return v && typeof v === "object" && v.comment ? v.comment : null;
+}
+
+// ---- Emitter -------------------------------------------------------------
+const lines = [];
+function header(title) {
+  lines.push("");
+  lines.push("  /* ---------- " + title + " ---------- */");
+}
+function emit(name, value, comment) {
+  // Pad name to a consistent column for readability
+  const pad = name.length < 22 ? " ".repeat(22 - name.length) : " ";
+  const c = comment ? `   /* ${comment} */` : "";
+  lines.push(`  --${name}:${pad}${value};${c}`);
+}
+function emitGroup(title, obj, prefix = "") {
+  header(title);
+  for (const [key, raw] of Object.entries(obj)) {
+    const name = prefix + key;
+    emit(name, valOf(raw), commentOf(raw));
+  }
+}
+
+// ---- Build the token block ----------------------------------------------
+header("The 3 canonical Terres hexes");
+for (const [k, v] of Object.entries(tokens.canonical)) emit(k, valOf(v), commentOf(v));
+
+header("Institutional pair (Terres signature, 2.78:1)");
+for (const [k, v] of Object.entries(tokens.institutional_pair)) emit(k, valOf(v), commentOf(v));
+
+header("Secondary (burgundy P20) — sparing, max 3-4 / view");
+for (const [k, v] of Object.entries(tokens.secondary)) emit(k, valOf(v), commentOf(v));
+
+header("Surfaces");
+for (const [k, v] of Object.entries(tokens.surfaces)) emit(k, valOf(v), commentOf(v));
+
+header("Muted / accent — warm, leaning brown. Never cold gray.");
+for (const [k, v] of Object.entries(tokens.muted_accent)) emit(k, valOf(v), commentOf(v));
+
+header("Borders, inputs, focus ring");
+for (const [k, v] of Object.entries(tokens.borders_inputs)) emit(k, valOf(v), commentOf(v));
+
+header("Semantic");
+for (const [k, v] of Object.entries(tokens.semantic)) emit(k, valOf(v), commentOf(v));
+
+header("Categorical charts (warm, no blue)");
+for (const [k, v] of Object.entries(tokens.charts)) emit(k, valOf(v), commentOf(v));
+
+header("Map palette (mapcn over MapLibre, re-themed, NO blue)");
+for (const [k, v] of Object.entries(tokens.map)) emit(k, valOf(v), commentOf(v));
+
+// Tonal scales
+for (const [scaleName, scale] of Object.entries(tokens.scales)) {
+  header(`${scaleName.charAt(0).toUpperCase() + scaleName.slice(1)} scale`);
+  for (const [step, hex] of Object.entries(scale)) emit(`${scaleName}-${step}`, hex, null);
+}
+
+header("Radius");
+for (const [k, v] of Object.entries(tokens.radius)) emit(k, valOf(v), commentOf(v));
+
+header("Spacing scale (4px base, warm whitespace)");
+for (const [k, v] of Object.entries(tokens.spacing)) emit(k, valOf(v), commentOf(v));
+
+header("Shadows — restrained, warm-tinted");
+for (const [k, v] of Object.entries(tokens.shadows)) emit(k, valOf(v), commentOf(v));
+
+header("Type families");
+emit("font-sans",  tokens.typography["font-sans"]);
+emit("font-serif", tokens.typography["font-serif"]);
+emit("font-mono",  tokens.typography["font-mono"]);
+
+if (tokens.typography.weights) {
+  header("Font weights — lighter at scale, solid at small sizes");
+  for (const [k, v] of Object.entries(tokens.typography.weights)) emit(`weight-${k}`, v);
+}
+
+header("Type scale — hierarchy by SIZE first, weight second");
+for (const [k, v] of Object.entries(tokens.typography.scale)) emit(k, v);
+
+header("Leading & tracking");
+for (const [k, v] of Object.entries(tokens.typography.leading))  emit(`leading-${k}`, v);
+for (const [k, v] of Object.entries(tokens.typography.tracking)) emit(`tracking-${k}`, v);
+
+header("Responsive breakpoints");
+for (const [k, v] of Object.entries(tokens.breakpoints)) emit(k, v);
+
+header("Motion — fades and slides. Never bounce, never scale on hover.");
+for (const [k, v] of Object.entries(tokens.motion)) emit(k, v);
+
+header("Interaction states");
+for (const [k, v] of Object.entries(tokens.states)) emit(`state-${k}`, valOf(v), commentOf(v));
+
+// ---- Splice into colors_and_type.css ------------------------------------
+const css = readFileSync(CSS_PATH, "utf8");
+const startIdx = css.indexOf(START);
+const endIdx   = css.indexOf(END);
+if (startIdx === -1 || endIdx === -1) {
+  console.error("✗ Missing BUILD:TOKENS:START / END markers in colors_and_type.css");
+  process.exit(1);
+}
+
+const head = css.slice(0, startIdx);
+const tail = css.slice(endIdx + END.length);
+
+const generated =
+  START + "\n" +
+  "     Everything between START and END is generated by build.mjs\n" +
+  "     from tokens.json. Hand-edits here will be overwritten.\n" +
+  "     Run `node build.mjs` to regenerate.\n" +
+  "     ============================================================ */\n" +
+  lines.join("\n") + "\n" +
+  "  " + END;
+
+const next = head + generated + tail;
+
+// ---- Check mode (CI) -----------------------------------------------------
+if (process.argv.includes("--check")) {
+  if (next === css) {
+    console.log("✓ colors_and_type.css is in sync with tokens.json");
+    process.exit(0);
+  } else {
+    console.error("✗ colors_and_type.css is OUT OF SYNC with tokens.json");
+    console.error("  Run: node build.mjs");
+    process.exit(1);
+  }
+}
+
+// ---- Write ---------------------------------------------------------------
+if (next === css) {
+  console.log("✓ colors_and_type.css already up to date — no changes written");
+} else {
+  writeFileSync(CSS_PATH, next, "utf8");
+  console.log("✓ colors_and_type.css regenerated from tokens.json");
+  console.log(`  ${Object.keys(lines).length} tokens emitted`);
+}

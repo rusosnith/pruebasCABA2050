@@ -1,0 +1,52 @@
+/* Shared base for all design system preview cards.
+   Each card is rendered ~700px wide. Keep ornament minimal — the
+   asset name renders OUTSIDE the card, so just show the tokens. */
+@import url("../../colors_and_type.css");
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.card {
+  padding: 24px 28px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+}
+
+.row    { display: flex; align-items: center; gap: 16px; }
+.col    { display: flex; flex-direction: column; gap: 8px; }
+.grid   { display: grid; gap: 12px; }
+.between{ display: flex; justify-content: space-between; align-items: center; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  min-height: 96px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border: 1px solid var(--border);
+}
+.swatch .name {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+}
+.swatch .hex { opacity: 0.85; }

@@ -1,0 +1,108 @@
+#!/usr/bin/env node
+// ============================================================================
+// Terres design-system guardrail
+// ----------------------------------------------------------------------------
+// Stops the three "detached instance" classes the 2026-06 audit found from ever
+// creeping back in:
+//   1. Out-of-palette hex      (ERROR) — any #rrggbb not defined in tokens.json
+//   2. Emoji as icon/decoration (ERROR) — README: "No emoji. Anywhere."
+//   3. Decorative gradients     (WARN)  — flagged for human review; functional
+//                                         uses (shimmer, map-fade, grid) are OK.
+//
+// Usage:
+//   node check-system.mjs          # report; exits 1 if any ERROR
+//   node check-system.mjs --strict # also exits 1 on WARN (gradients)
+//
+// Silence a single intentional line with a trailing  /* sys-ok */  marker.
+// Requires: Node 18+. No npm dependencies.
+// ============================================================================
+
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve, join, relative, extname } from "node:path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = __dirname;
+
+// ---- Allowed palette: every hex defined in tokens.json -------------------
+const tokens = JSON.parse(readFileSync(resolve(ROOT, "tokens.json"), "utf8"));
+const palette = new Set(["#ffffff", "#000000", "#fff", "#000"]);
+(function collect(node) {
+  if (node == null) return;
+  if (typeof node === "string") {
+    const m = node.match(/#[0-9a-fA-F]{3,8}\b/g);
+    if (m) m.forEach((h) => palette.add(h.toLowerCase()));
+  } else if (typeof node === "object") {
+    for (const v of Object.values(node)) collect(v);
+  }
+})(tokens);
+
+// ---- Scope ---------------------------------------------------------------
+const SCAN_EXT = new Set([".html", ".css", ".js", ".jsx"]);
+// Files/dirs that legitimately sit outside the token system:
+const EXCLUDE = [
+  "node_modules", ".git",
+  "deck-stage.js",                 // starter component (Anthropic colors)
+  "ios-frame.jsx", "android-frame.jsx", "design-canvas.jsx", // starters
+  "templates/parcel-map.js",       // sanctioned warm map palette
+  "templates/email-transactional.html", // email: cannot link external CSS
+  "templates/_archive",            // archived legacy
+  "uploads", "scraps", "fonts", "screenshots", "preview/preview.css",
+  "colors_and_type.css", "check-system.mjs", "build.mjs",
+  "Auditoría Sistema de Diseño.html",
+];
+const excluded = (rel) => EXCLUDE.some((e) => rel === e || rel.startsWith(e + "/") || rel.endsWith("/" + e) || rel.split("/").includes(e));
+
+function walk(dir, out = []) {
+  for (const name of readdirSync(dir)) {
+    const abs = join(dir, name);
+    const rel = relative(ROOT, abs);
+    if (excluded(rel)) continue;
+    const st = statSync(abs);
+    if (st.isDirectory()) walk(abs, out);
+    else if (SCAN_EXT.has(extname(name))) out.push(abs);
+  }
+  return out;
+}
+
+// ---- Detectors -----------------------------------------------------------
+const EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{26FF}\u{FE0F}]/u; // pictographs; spares ✓ ✕ and arrows
+const HEX   = /#[0-9a-fA-F]{6}\b/g;
+const GRAD  = /(linear|radial|conic)-gradient\(/;
+
+const errors = [];
+const warns  = [];
+
+for (const file of walk(ROOT)) {
+  const rel = relative(ROOT, file);
+  const lines = readFileSync(file, "utf8").split("\n");
+  lines.forEach((line, i) => {
+    const at = `${rel}:${i + 1}`;
+    if (line.includes("sys-ok")) return; // intentional, silenced
+    // 1. out-of-palette hex
+    const hexes = line.match(HEX) || [];
+    for (const h of hexes) {
+      if (!palette.has(h.toLowerCase())) errors.push(`${at}  out-of-palette hex ${h}`);
+    }
+    // 2. emoji
+    if (EMOJI.test(line)) errors.push(`${at}  emoji as icon/decoration`);
+    // 3. gradient (warn)
+    if (GRAD.test(line)) warns.push(`${at}  gradient — review (functional? add /* sys-ok */)`);
+  });
+}
+
+// ---- Report --------------------------------------------------------------
+const strict = process.argv.includes("--strict");
+if (warns.length) {
+  console.log(`\n⚠  ${warns.length} gradient(s) to review:`);
+  warns.forEach((w) => console.log("   " + w));
+}
+if (errors.length) {
+  console.error(`\n✗ ${errors.length} system violation(s):`);
+  errors.forEach((e) => console.error("   " + e));
+  console.error("\n  Fix with palette tokens / lucide icons, or mark intentional lines with /* sys-ok */.");
+  process.exit(1);
+}
+console.log(`\n✓ No out-of-palette hex or emoji in the kit (${warns.length} gradient warning(s)).`);
+if (strict && warns.length) process.exit(1);
+process.exit(0);

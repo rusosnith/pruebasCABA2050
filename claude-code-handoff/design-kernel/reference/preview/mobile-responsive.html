@@ -1,0 +1,103 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Mobile & breakpoints" subtitle="5 breakpoints + reglas mobile + hero + bottom sheet" viewport="760x560" --><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .bp-row { display: flex; gap: 1px; background: var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .bp { background: var(--background); padding: 14px; font-family: var(--font-mono); font-size: 11px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .bp strong { font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--foreground); }
+  .bp span { color: var(--muted-foreground); }
+
+  .device { display: flex; gap: 14px; align-items: flex-start; margin-top: 14px; }
+
+  .phone { width: 220px; flex-shrink: 0; background: var(--foreground); border-radius: 28px; padding: 8px; box-shadow: var(--shadow-lg); }
+  .phone-screen { background: var(--background); border-radius: 22px; padding: 14px 14px 76px; min-height: 380px; position: relative; overflow: hidden; }
+  .phone-screen .wm { font-family: var(--font-sans); font-weight: 700; font-size: 18px; color: var(--primary); letter-spacing: -0.02em; }
+  .phone-screen .h { font-size: 26px; font-weight: 700; line-height: 1.02; letter-spacing: -0.025em; margin-top: 28px; color: var(--foreground); }
+  .phone-screen .h em { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+  .phone-screen .sub { font-size: 12px; color: var(--muted-foreground); margin-top: 8px; line-height: 1.4; }
+  .phone-screen .input { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-size: 12px; margin-top: 16px; display: flex; align-items: center; gap: 8px; color: var(--muted-foreground); }
+  .phone-screen .cta { background: var(--primary); color: var(--primary-foreground); padding: 12px; border-radius: var(--radius-sm); text-align: center; font-size: 13px; font-weight: 600; margin-top: 10px; }
+  .phone-screen .micro { font-size: 9px; font-family: var(--font-mono); color: var(--muted-foreground); margin-top: 8px; text-align: center; }
+  .phone-screen .nav-bottom { position: absolute; left: 8px; right: 8px; bottom: 8px; background: var(--foreground); color: var(--primary-foreground); border-radius: var(--radius-md); padding: 8px; display: flex; justify-content: space-around; font-size: 9px; }
+  .phone-screen .nav-bottom div { display:flex; flex-direction:column; align-items:center; gap:2px; opacity: 0.7; }
+  .phone-screen .nav-bottom div.active { color: var(--primary); opacity: 1; }
+
+  /* Bottom sheet */
+  .sheet { width: 220px; flex-shrink: 0; background: var(--foreground); border-radius: 28px; padding: 8px; box-shadow: var(--shadow-lg); }
+  .sheet-screen { background: rgba(56,0,0,0.4); border-radius: 22px; padding: 0; min-height: 380px; position: relative; overflow: hidden; }
+  .sheet-screen::before { content: ""; position: absolute; inset: 0; background: var(--background); opacity: 0.2; }
+  .sheet-screen .bs { position: absolute; left: 0; right: 0; bottom: 0; background: var(--background); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 14px; }
+  .sheet-screen .handle { width: 36px; height: 4px; background: var(--border-strong); border-radius: var(--radius-pill); margin: 0 auto 12px; }
+  .sheet-screen .bs h5 { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+  .sheet-screen .bs p { font-size: 10px; color: var(--muted-foreground); margin: 0 0 12px; line-height: 1.4; }
+  .sheet-screen .bs .opt { padding: 8px 0; border-top: 1px solid var(--border); font-size: 12px; display: flex; justify-content: space-between; }
+  .sheet-screen .bs .opt:first-of-type { border: 0; }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:14px">Breakpoints + mobile patterns — toda calculadora vive primero en mobile</div>
+
+<div class="bp-row">
+  <div class="bp"><strong>sm</strong><span>640px</span><span>large phones</span></div>
+  <div class="bp"><strong>md</strong><span>768px</span><span>tablets</span></div>
+  <div class="bp"><strong>lg</strong><span>1024px</span><span>laptops</span></div>
+  <div class="bp"><strong>xl</strong><span>1280px</span><span>desktops</span></div>
+  <div class="bp"><strong>2xl</strong><span>1536px</span><span>wide</span></div>
+</div>
+
+<div class="device">
+
+  <!-- Mobile hero -->
+  <div class="phone">
+    <div class="phone-screen">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="wm">Terres.</span>
+        <span style="color:var(--foreground); display:inline-flex;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span>
+      </div>
+      <div class="h">Vendé tu terreno <em>sin vueltas.</em></div>
+      <div class="sub">Recibí ofertas en efectivo o canje. Empezá con tu dirección.</div>
+      <div class="input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Calle y altura</div>
+      <div class="cta">Pedí factibilidad gratis →</div>
+      <div class="micro">Sin costo · respuesta en 24 hs</div>
+      <div class="nav-bottom">
+        <div class="active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg><span>Hoy</span></div>
+        <div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span>Mapa</span></div>
+        <div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="13" y="7" width="3" height="10"/></svg><span>Lotes</span></div>
+        <div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span>Cuenta</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile bottom sheet -->
+  <div class="sheet">
+    <div class="sheet-screen">
+      <div class="bs">
+        <div class="handle"></div>
+        <h5>Ordenar lotes por</h5>
+        <p>Aplicado al recorte actual del mapa</p>
+        <div class="opt"><span>Más nuevos primero</span><span style="color:var(--primary); display:inline-flex;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></div>
+        <div class="opt"><span>Mayor superficie</span><span></span></div>
+        <div class="opt"><span>Menor incidencia</span><span></span></div>
+        <div class="opt"><span>Más cerca</span><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patterns reference -->
+  <div style="flex:1; padding-left:14px;">
+    <div style="font-size:11px; font-family:var(--font-mono); color:var(--muted-foreground); text-transform:uppercase; letter-spacing:var(--tracking-wide); margin-bottom:10px;">Reglas mobile</div>
+    <ul style="margin:0 0 14px; padding-left:18px; font-size:13px; line-height:1.55;">
+      <li><strong>Hit target mínimo 44 × 44 px</strong> · toda interacción.</li>
+      <li><strong>Bottom nav</strong> (no top tabs) — pulgar dominante.</li>
+      <li><strong>Bottom sheet</strong> para filtros, selects largos, confirmaciones — no modal central.</li>
+      <li><strong>Sticky CTA</strong> al fondo en flujos de conversión (hero, formularios largos).</li>
+      <li><strong>Tipografía: 32 → 26 → 16 → 12</strong> · escala reducida del desktop.</li>
+      <li><strong>Padding lateral 16 px</strong> en sm, 20 px en md.</li>
+      <li><strong>Grid 4 col</strong> en sm · 8 col en md · 12 col en lg+.</li>
+      <li><strong>Inputs 16 px mínimo</strong> — evita el auto-zoom de iOS Safari.</li>
+    </ul>
+    <div style="font-size:11px; color:var(--muted-foreground); padding-top:10px; border-top:1px solid var(--border);">
+      Mobile-first: arrancá la maqueta a 360 px y subí. La calculadora pública vive ahí.
+    </div>
+  </div>
+
+</div>
+</div></body></html>

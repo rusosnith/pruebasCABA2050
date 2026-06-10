@@ -1,0 +1,41 @@
+<!-- @dsCard group="Components" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .badge { font-family: var(--font-mono); font-size: var(--text-caption); text-transform: uppercase; letter-spacing: var(--tracking-wide); padding: 3px 8px; border-radius: var(--radius-xs); line-height: 1.4; }
+  .b-solid { background: var(--secondary); color: var(--secondary-foreground); }
+  .b-subtle { background: var(--accent); color: var(--foreground); }
+  .b-pill { background: transparent; color: var(--foreground); border: 1px solid var(--border-strong); border-radius: var(--radius-pill); padding: 3px 10px; }
+  .chip { font-family: var(--font-mono); font-size: var(--text-caption); text-transform: uppercase; letter-spacing: var(--tracking-wide); padding: 4px 9px; border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 5px; }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: var(--radius-pill); background: currentColor; }
+  .c-info { background: var(--info-subtle); color: var(--info); }
+  .c-success { background: var(--success-subtle); color: var(--success); }
+  .c-warning { background: var(--warning-subtle); color: var(--warning); }
+  .c-danger { background: var(--destructive-subtle); color: var(--destructive); }
+  .lbl { font-family: var(--font-mono); font-size: var(--text-caption); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--muted-foreground); margin: 16px 0 8px; }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:14px">Badges &amp; chips — el badge clasifica (mono), el chip informa estado vivo (tintado + punto)</div>
+
+<div class="lbl" style="margin-top:0">Roles · badge solid (burgundy, máx. 3-4 por vista)</div>
+<div class="row" style="gap:8px; flex-wrap:wrap;">
+  <span class="badge b-solid">Comprador</span>
+  <span class="badge b-solid">Vendedor</span>
+  <span class="badge b-subtle">Inmobiliaria</span>
+</div>
+
+<div class="lbl">Estado · chip tintado v2</div>
+<div class="row" style="gap:8px; flex-wrap:wrap;">
+  <span class="chip c-info">En revisión</span>
+  <span class="chip c-success">Cerrado</span>
+  <span class="chip c-warning">Vence pronto</span>
+  <span class="chip c-danger">Vencido</span>
+</div>
+
+<div class="lbl">Zonificación · pill outline</div>
+<div class="row" style="gap:8px; flex-wrap:wrap;">
+  <span class="badge b-pill">R2aI</span>
+  <span class="badge b-pill">R2bII</span>
+  <span class="badge b-pill">Producción Pasiva</span>
+  <span class="badge b-pill">Producción Activa</span>
+</div>
+</div></body></html>

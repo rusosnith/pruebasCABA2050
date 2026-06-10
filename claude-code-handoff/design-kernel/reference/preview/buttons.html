@@ -1,0 +1,24 @@
+<!-- @dsCard group="Components" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .btn { font-family: var(--font-sans); font-size: var(--text-small); font-weight: var(--weight-medium); border-radius: var(--radius-sm); padding: 9px 16px; border: 1px solid transparent; cursor: pointer; line-height: 1.2; }
+  .btn-primary { background: var(--primary); color: var(--primary-foreground); }
+  .btn-secondary { background: transparent; color: var(--secondary); border-color: var(--secondary); }
+  .btn-burgundy { background: var(--secondary); color: var(--secondary-foreground); }
+  .btn-ghost { background: transparent; color: var(--foreground); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; padding-left: 6px; padding-right: 6px; }
+  .btn-disabled { background: var(--state-primary-disabled-bg); color: var(--state-primary-disabled-fg); cursor: not-allowed; }
+  .legend { gap: 22px; margin-top: 16px; font-size: var(--text-caption); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--muted-foreground); flex-wrap: wrap; }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:16px">Botones — los CTA usan verbos concretos, nunca "Continuar" / "Siguiente"</div>
+<div class="row" style="gap:12px; flex-wrap:wrap;">
+  <button class="btn btn-primary">Calcular comisión</button>
+  <button class="btn btn-secondary">Ver lote</button>
+  <button class="btn btn-burgundy">Cargar parcela</button>
+  <button class="btn btn-ghost">Cancelar</button>
+  <button class="btn btn-primary btn-disabled">Pedir tasación</button>
+</div>
+<div class="row legend">
+  <span>Primary</span><span>Secondary</span><span>Burgundy · cuentagotas</span><span>Link</span><span>Disabled</span>
+</div>
+</div></body></html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Motion specs" subtitle="5 duraciones · 3 easings · reglas anim" viewport="760x460" --><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .row { display: grid; grid-template-columns: 100px 80px 1fr 110px; gap: 14px; align-items: center; padding: 10px 0; border-top: 1px solid var(--border); }
+  .row:first-child { border-top: 0; }
+  .row .name { font-family: var(--font-mono); font-size: 11px; color: var(--foreground); }
+  .row .val { font-family: var(--font-mono); font-size: 11px; color: var(--muted-foreground); }
+  .row .stage { background: var(--accent); border-radius: var(--radius-sm); height: 36px; position: relative; overflow: hidden; }
+  .row .dot { position: absolute; left: 8px; top: 8px; width: 20px; height: 20px; border-radius: var(--radius-pill); background: var(--primary); }
+  .row.run .dot { animation: slide var(--d) var(--e) infinite alternate; }
+  .row .lab { font-size: 11px; color: var(--muted-foreground); font-family: var(--font-mono); }
+  @keyframes slide { from { left: 8px; } to { left: calc(100% - 28px); } }
+
+  .use { display: flex; flex-direction: column; gap: 8px; padding: 14px; background: var(--surface-sunken); border-radius: var(--radius-sm); margin-top: 14px; }
+  .use h5 { font-size: 12px; font-weight: 600; margin: 0; }
+  .use ul { font-size: 12px; line-height: 1.55; margin: 0; padding-left: 18px; color: var(--foreground); }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:12px">Motion — duraciones · easings · uso. Fades y slides, nunca bounce ni scale.</div>
+
+<div class="row run" style="--d:0.08s; --e:cubic-bezier(0.22, 1, 0.36, 1)">
+  <span class="name">instant</span><span class="val">80 ms</span>
+  <div class="stage"><div class="dot"></div></div>
+  <span class="lab">casillas</span>
+</div>
+<div class="row run" style="--d:0.16s; --e:cubic-bezier(0.22, 1, 0.36, 1)">
+  <span class="name">quick</span><span class="val">160 ms</span>
+  <div class="stage"><div class="dot"></div></div>
+  <span class="lab">hover, switches</span>
+</div>
+<div class="row run" style="--d:0.24s; --e:cubic-bezier(0.22, 1, 0.36, 1)">
+  <span class="name">normal</span><span class="val">240 ms</span>
+  <div class="stage"><div class="dot"></div></div>
+  <span class="lab">casi toda la UI</span>
+</div>
+<div class="row run" style="--d:0.36s; --e:cubic-bezier(0.65, 0, 0.35, 1)">
+  <span class="name">slow</span><span class="val">360 ms</span>
+  <div class="stage"><div class="dot"></div></div>
+  <span class="lab">sheets, modales</span>
+</div>
+<div class="row run" style="--d:0.56s; --e:cubic-bezier(0.65, 0, 0.35, 1)">
+  <span class="name">lazy</span><span class="val">560 ms</span>
+  <div class="stage"><div class="dot"></div></div>
+  <span class="lab">transición de página</span>
+</div>
+
+<div class="use">
+  <h5>Reglas</h5>
+  <ul>
+    <li><strong>Default easing</strong> es <code style="font-family:var(--font-mono); font-size:11px; background:var(--background); padding:1px 4px; border-radius:3px;">--ease-out</code>. Entradas y la mayoría de UI.</li>
+    <li><strong>--ease-in-out</strong> sólo para movimientos largos simétricos (sheets, modales).</li>
+    <li><strong>--ease-in</strong> sólo en salidas (cierre). Nunca para entradas — se siente lento.</li>
+    <li>Hovers cambian <strong>background-color</strong> y <strong>color</strong>, jamás <code style="font-family:var(--font-mono); font-size:11px;">transform: scale</code>.</li>
+    <li>Honrá <strong>prefers-reduced-motion</strong>: corta animaciones a 0ms cuando esté activo.</li>
+  </ul>
+</div>
+</div></body></html>

@@ -1,0 +1,185 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Craft Stripe→Terres (referencia)" subtitle="Disciplina de craft en tokens canónicos v2.4" -->
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Craft Stripe→Terres — referencia en tokens canónicos</title>
+<!--
+  REFERENCIA RENDERIZADA — Sistema de diseño Terres (v2.4).
+  Demuestra la CRAFT transferida de Stripe (espaciado base, jerarquía por tamaño,
+  sombra warm de dos capas, motion con IntersectionObserver + --ease-out-quart,
+  prueba por números, un único momento "committed") expresada 100% en tokens Terres.
+
+  Disciplina de "un solo valor": esta pieza NO redefine ningún token inline.
+  Todo sale de colors_and_type.css (fuente única). Cero gradientes, cero skew,
+  cero navy, cero Söhne, cero blurple, cero sombra azul (firewall §0 del brief).
+-->
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 var(--space-6); }
+
+  /* Eyebrow: mono uppercase + divisor naranja de 1px (momento de sección) */
+  .eyebrow-row { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-6); }
+  .eyebrow-row .lead { color: var(--primary); }
+  .eyebrow-row .rule { width: 56px; height: 1px; background: var(--primary); }
+  .eyebrow-row .barrio { color: var(--muted-foreground); letter-spacing: var(--tracking-wide); }
+
+  /* HERO — H1 corto, peso liviano, tracking negativo, aireado */
+  .hero { padding: var(--space-11) 0 var(--space-8); }
+  .hero h1 {
+    font-size: clamp(2.5rem, 1.4rem + 4.5vw, 4rem);
+    line-height: var(--leading-tight); letter-spacing: var(--tracking-tight);
+    margin: 0 0 var(--space-6); max-width: 18ch; text-wrap: balance;
+  }
+  .hero p { font-size: var(--text-subheading); line-height: var(--leading-body); max-width: 56ch; margin: 0 0 var(--space-6); }
+  .cta-text {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    color: var(--primary); font-weight: var(--weight-medium); text-decoration: none;
+    border-bottom: 1px solid transparent; transition: border-color var(--motion-hover) var(--ease-out-quart);
+  }
+  .cta-text:hover { color: var(--primary); border-color: var(--primary); }
+  .cta-text .arrow { transition: transform var(--motion-hover) var(--ease-out-quart); }
+  .cta-text:hover .arrow { transform: translateX(3px); }
+
+  /* GRID de cards hairline-first (1px antes que sombra) */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); padding: var(--space-6) 0 var(--space-10); }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--motion-reveal) var(--ease-out-quart),
+                border-color var(--motion-reveal) var(--ease-out-quart);
+  }
+  .card:hover { box-shadow: var(--shadow-md); border-color: var(--primary); }
+  .card .ico { width: 22px; height: 22px; color: var(--primary); margin-bottom: var(--space-4); }
+  .card h3 { font-size: var(--text-h4); margin: 0 0 var(--space-2); }
+  .card .num {
+    font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+    font-size: var(--text-h1); font-weight: var(--weight-semibold);
+    color: var(--foreground); margin: var(--space-1) 0 0; line-height: 1;
+  }
+  .card .num .u { font-size: var(--text-h3); color: var(--muted-foreground); }
+
+  /* BANDA de números — CÁLIDA (no navy). Hairlines sobre cream. */
+  .stats {
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6);
+    padding: var(--space-9) 0; margin: 0 0 var(--space-10);
+  }
+  @media (max-width: 720px) { .stats { grid-template-columns: 1fr; gap: var(--space-8); } }
+  .stat .k {
+    font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+    font-size: var(--text-display); font-weight: var(--weight-semibold); color: var(--foreground); line-height: 1;
+  }
+  .stat .l {
+    font-family: var(--font-mono); text-transform: uppercase; letter-spacing: var(--tracking-wide);
+    font-size: var(--text-caption); color: var(--muted-foreground); margin-top: var(--space-2);
+  }
+
+  /* CIERRE "committed" — el ÚNICO bloque naranja pleno de la pieza */
+  .committed {
+    background: var(--primary); color: var(--primary-foreground);
+    border-radius: var(--radius-lg); padding: var(--space-10) var(--space-9); margin: 0 0 var(--space-11);
+  }
+  .committed .eyebrow-row .lead,
+  .committed .eyebrow-row .rule { color: var(--primary-foreground); background: var(--primary-foreground); }
+  .committed h2 {
+    color: var(--primary-foreground);
+    font-size: clamp(1.75rem, 1.1rem + 2.6vw, 2.75rem);
+    line-height: var(--leading-snug); letter-spacing: var(--tracking-tight);
+    margin: 0 0 var(--space-5); max-width: 22ch; text-wrap: balance;
+  }
+  .committed p { color: var(--primary-foreground); font-size: var(--text-subheading); max-width: 54ch; margin: 0 0 var(--space-7); }
+  .btn {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    background: var(--primary-foreground); color: var(--primary);
+    font-weight: var(--weight-semibold); padding: 14px 28px; border-radius: var(--radius-pill);
+    text-decoration: none; transition: transform var(--motion-hover) var(--ease-out-quart);
+  }
+  .btn:hover { color: var(--primary); }
+  .btn:active { transform: scale(.99); }
+
+  /* Reveal escalonado (IntersectionObserver, una vez, solo transform/opacity) */
+  .reveal { opacity: 0; transform: translateY(12px); }
+  .reveal.in { opacity: 1; transform: none; transition: opacity var(--motion-lazy) var(--ease-out-quart), transform var(--motion-lazy) var(--ease-out-quart); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal, .reveal.in { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+
+    <!-- HERO -->
+    <section class="hero reveal">
+      <div class="eyebrow-row">
+        <span class="eyebrow lead">Factibilidad</span>
+        <span class="rule" aria-hidden="true"></span>
+        <span class="eyebrow barrio">Palermo</span>
+      </div>
+      <h1>Austria 2046</h1>
+      <p>Qué se puede construir en este lote según el Código Urbanístico vigente,
+         y por dónde abrimos la conversación con vos.</p>
+      <a class="cta-text" href="#">Cómo trabajamos <span class="arrow" aria-hidden="true">→</span></a>
+    </section>
+
+    <!-- GRID 3-up: prueba por números, dato en mono -->
+    <section class="grid">
+      <article class="card reveal">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        <h3>M² vendibles</h3>
+        <p class="num">2.418 <span class="u">m²</span></p>
+      </article>
+      <article class="card reveal">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M15 9h.01M9 13h.01M15 13h.01"/></svg>
+        <h3>Altura máx</h3>
+        <p class="num">38,40 <span class="u">m</span></p>
+      </article>
+      <article class="card reveal">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11Z"/></svg>
+        <h3>Incidencia</h3>
+        <p class="num">USD 1.860<span class="u">/m²</span></p>
+      </article>
+    </section>
+
+    <!-- BANDA de stats CÁLIDA (no navy) -->
+    <section class="stats">
+      <div class="stat reveal"><div class="k">300+</div><div class="l">Desarrolladores en el pool</div></div>
+      <div class="stat reveal"><div class="k">15</div><div class="l">Minutos de reunión</div></div>
+      <div class="stat reveal"><div class="k">100%</div><div class="l">Sin compromiso</div></div>
+    </section>
+
+    <!-- CIERRE committed: único bloque naranja pleno -->
+    <section class="committed reveal">
+      <div class="eyebrow-row"><span class="eyebrow lead">Tasación</span><span class="rule" aria-hidden="true"></span></div>
+      <h2>El valor lo presentamos en una reunión de 15 minutos.</h2>
+      <p>Te llevamos comparables del barrio, plusvalía aplicada y una oferta inicial sobre la mesa.
+         Sin compromiso, presencial o por Zoom.</p>
+      <a class="btn" href="#">Pedir tasación <span aria-hidden="true">→</span></a>
+    </section>
+
+  </main>
+
+  <script>
+    // Doctrina de motion: IntersectionObserver, dispara una vez, disconnect.
+    // Solo animamos transform/opacity. Stagger por orden de aparición.
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          const el = e.target;
+          el.style.transitionDelay = (Math.min(i, 4) * 70) + 'ms';
+          el.classList.add('in');
+          obs.unobserve(el);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>

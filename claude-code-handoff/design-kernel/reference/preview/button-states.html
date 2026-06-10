@@ -1,0 +1,62 @@
+<!-- @dsCard group="Components" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .btn { font-family: var(--font-sans); font-size: var(--text-small); font-weight: var(--weight-medium); padding: 9px 16px; border-radius: var(--radius-sm); border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; line-height: 1.2; }
+  .btn-primary { background: var(--primary); color: var(--primary-foreground); }
+  .btn-primary.hover { background: var(--state-primary-hover); }
+  .btn-primary.active { background: var(--state-primary-active); }
+  .btn-primary.focus { background: var(--primary); outline: var(--state-focus-width) solid var(--ring); outline-offset: var(--state-focus-offset); }
+  .btn-primary.disabled { background: var(--state-primary-disabled-bg); color: var(--state-primary-disabled-fg); cursor: not-allowed; }
+  .btn-primary.loading { background: var(--primary); color: var(--primary-foreground); opacity: 0.85; }
+  .spinner { width: 12px; height: 12px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .lab { font-size: var(--text-caption); font-family: var(--font-mono); color: var(--muted-foreground); text-transform: uppercase; letter-spacing: var(--tracking-wide); margin-bottom: 8px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .grp { padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+  .grp:last-child { border: 0; margin: 0; padding: 0; }
+  .b-out { background: transparent; color: var(--secondary); border: 1px solid var(--secondary); }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:14px">Estados del botón — CTA primary · 6 estados canónicos</div>
+
+<div class="grp">
+  <div class="lab">Default · Hover · Active · Focus</div>
+  <div class="row">
+    <button class="btn btn-primary">Pedí factibilidad</button>
+    <button class="btn btn-primary hover">Pedí factibilidad</button>
+    <button class="btn btn-primary active">Pedí factibilidad</button>
+    <button class="btn btn-primary focus">Pedí factibilidad</button>
+  </div>
+</div>
+
+<div class="grp">
+  <div class="lab">Disabled · Loading</div>
+  <div class="row">
+    <button class="btn btn-primary disabled">Pedí factibilidad</button>
+    <button class="btn btn-primary loading"><span class="spinner"></span>Procesando…</button>
+  </div>
+</div>
+
+<div class="grp">
+  <div class="lab">Secondary outline · Hover · Active · Disabled</div>
+  <div class="row">
+    <button class="btn b-out">Ver lote</button>
+    <button class="btn b-out" style="background:var(--state-secondary-hover-bg);">Ver lote</button>
+    <button class="btn b-out" style="background:var(--state-secondary-active-bg);">Ver lote</button>
+    <button class="btn" style="background:transparent; color:var(--neutral-700); border:1px solid var(--border); cursor:not-allowed;">Ver lote</button>
+  </div>
+</div>
+
+<div class="grp">
+  <div class="lab">Burgundy (cuentagotas) · Link · Solo ícono</div>
+  <div class="row">
+    <button class="btn" style="background:var(--secondary); color:var(--secondary-foreground);">Cargar lote</button>
+    <button class="btn" style="background:transparent; color:var(--foreground); padding:9px 6px; text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px;">Cancelar</button>
+    <button class="btn" style="background:transparent; border:1px solid var(--border); padding:0; width:36px; height:36px; justify-content:center; border-radius:var(--radius-pill);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></button>
+  </div>
+</div>
+
+<div style="font-size:var(--text-caption); color:var(--muted-foreground); margin-top:6px; line-height:1.5;">
+  Hover y active siempre cambian background — nunca <code style="background:var(--accent); padding:1px 4px; border-radius:var(--radius-xs); font-family:var(--font-mono);">transform: scale</code>. Focus es siempre <code style="background:var(--accent); padding:1px 4px; border-radius:var(--radius-xs); font-family:var(--font-mono);">--ring</code> a 2px con 2px de offset.
+</div>
+</div></body></html>

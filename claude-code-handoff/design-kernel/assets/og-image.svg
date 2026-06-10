@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#E76D00"></rect>
+  <text x="96" y="540" font-family="IBM Plex Sans, system-ui, sans-serif" font-weight="700" font-size="120" letter-spacing="-3" fill="#FFEDD6">Terres.</text>
+  <text x="96" y="320" font-family="IBM Plex Serif, Georgia, serif" font-weight="500" font-style="italic" font-size="76" letter-spacing="-2" fill="#FFEDD6">Intermediación de suelo urbano</text>
+  <text x="96" y="408" font-family="IBM Plex Sans, system-ui, sans-serif" font-weight="600" font-size="56" letter-spacing="-1.5" fill="#FFEDD6">en CABA.</text>
+  <text x="96" y="180" font-family="IBM Plex Sans, system-ui, sans-serif" font-weight="600" font-size="22" letter-spacing="3" fill="#FFEDD6" opacity="0.85">FACTIBILIDADES GRATUITAS · OFERTAS REALES</text>
+</svg>

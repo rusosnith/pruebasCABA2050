@@ -1,0 +1,76 @@
+<!-- @dsCard group="Components" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .field { display: flex; flex-direction: column; gap: var(--space-2); }
+  .field label { font-family: var(--font-mono); font-size: var(--text-caption); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--muted-foreground); }
+  .field input { background: var(--background); border: 1px solid var(--input); border-radius: var(--radius-sm); padding: 9px 12px; font-family: var(--font-sans); font-size: var(--text-small); color: var(--foreground); outline: none; box-sizing: border-box; width: 100%; }
+  .field .meta { font-size: var(--text-caption); color: var(--muted-foreground); font-family: var(--font-sans); }
+  .field.focus input { border-color: var(--state-input-focus-border); box-shadow: 0 0 0 3px rgba(231,109,0,0.16); }
+  .field.error input { border-color: var(--state-input-error-border); background: var(--state-input-error-bg); }
+  .field.error .meta { color: var(--destructive); display:flex; align-items:center; gap:6px; }
+  .field.success input { border-color: var(--state-input-success-border); background: var(--state-input-success-bg); }
+  .field.success .meta { color: var(--success); display:flex; align-items:center; gap:6px; }
+  .field.disabled input { background: var(--state-input-disabled-bg); color: var(--state-input-disabled-fg); cursor: not-allowed; }
+  .field .meta svg { width: 13px; height: 13px; }
+  .field.with-icon { position: relative; }
+  .field.with-icon input { padding-left: 34px; }
+  .field.with-icon .ic { position: absolute; left: 11px; top: 29px; color: var(--muted-foreground); }
+  .field.with-icon .ic svg { width: 15px; height: 15px; }
+  .ac { background: var(--popover); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-top: var(--space-2); box-shadow: var(--shadow-md); overflow: hidden; }
+  .ac .op { padding: 9px 13px; font-size: var(--text-small); border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
+  .ac .op:first-child { border-top: 0; background: var(--accent); }
+  .ac .op .z { font-family: var(--font-mono); font-size: var(--text-caption); color: var(--muted-foreground); }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:16px">Estados del input — 6 estados · error en rojo frío, success en olivo</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+  <div class="field">
+    <label>Default</label>
+    <input value="" placeholder="Calle y altura">
+    <span class="meta">Placeholder visible</span>
+  </div>
+
+  <div class="field focus">
+    <label>Focused</label>
+    <input value="Austria 2046">
+    <span class="meta" style="color:var(--primary);">Borde naranja + halo de 3px</span>
+  </div>
+
+  <div class="field">
+    <label>Filled</label>
+    <input value="Av. Santa Fe 4120">
+    <span class="meta">Tabular · color foreground</span>
+  </div>
+
+  <div class="field error">
+    <label>Error</label>
+    <input value="123">
+    <span class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Falta calle. Ingresá calle y altura.</span>
+  </div>
+
+  <div class="field success">
+    <label>Success</label>
+    <input value="20-12345678-3">
+    <span class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>CUIT verificado</span>
+  </div>
+
+  <div class="field disabled">
+    <label>Disabled</label>
+    <input value="Charlone 165" disabled>
+    <span class="meta">No editable hasta confirmar el paso anterior</span>
+  </div>
+
+  <div class="field with-icon" style="grid-column: span 2;">
+    <label>Con ícono · autocompletado de dirección</label>
+    <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+    <input value="Austria 20">
+    <div class="ac">
+      <div class="op"><span><strong>Austria 20</strong>46 · Recoleta</span><span class="z">CABA</span></div>
+      <div class="op"><span><strong>Austria 20</strong>10 · Recoleta</span></div>
+      <div class="op"><span><strong>Austria 20</strong>78 · Recoleta</span></div>
+    </div>
+    <span class="meta">Combobox · flechas para navegar · Enter selecciona</span>
+  </div>
+</div>
+</div></body></html>

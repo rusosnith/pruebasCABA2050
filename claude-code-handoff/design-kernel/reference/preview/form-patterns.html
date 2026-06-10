@@ -1,0 +1,101 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Form patterns" subtitle="Multi-step + radio cards + file upload + stepper" viewport="760x720" --><html><head><meta charset="utf-8"><link rel="stylesheet" href="preview.css">
+<style>
+  .stepper { display: flex; align-items: center; gap: 0; margin-bottom: 24px; }
+  .step { flex: 1; display: flex; align-items: center; gap: 10px; font-family: var(--font-sans); font-size: 13px; }
+  .step .n { width: 26px; height: 26px; border-radius: var(--radius-pill); display: grid; place-items: center; font-weight: 600; font-size: 12px; font-family: var(--font-mono); flex-shrink: 0; }
+  .step.done .n { background: var(--foreground); color: var(--primary-foreground); }
+  .step.active .n { background: var(--primary); color: var(--primary-foreground); }
+  .step.pending .n { background: transparent; color: var(--neutral-700); border: 1px solid var(--border); }
+  .step .label { white-space: nowrap; }
+  .step.active .label { font-weight: 600; }
+  .step.pending .label { color: var(--muted-foreground); }
+  .step .line { flex: 1; height: 1px; background: var(--border); margin: 0 14px; }
+  .step.done .line { background: var(--foreground); }
+  .pane { background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-family: var(--font-mono); font-size: var(--text-caption); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--muted-foreground); }
+  .field input, .field select { background: var(--background); border: 1px solid var(--input); border-radius: var(--radius-sm); padding: 9px 12px; font-family: var(--font-sans); font-size: var(--text-small); color: var(--foreground); outline: none; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .drop { border: 1.5px dashed var(--border-strong); background: var(--surface-sunken); border-radius: var(--radius-md); padding: 22px; text-align: center; font-size: var(--text-small); color: var(--muted-foreground); }
+  .drop strong { color: var(--foreground); font-weight: 600; }
+  .file-chip { display: flex; align-items: center; gap: 10px; background: var(--accent); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 12px; }
+  .file-chip .x { margin-left: auto; cursor: pointer; opacity: 0.5; }
+  .progress { height: 4px; background: var(--neutral-400); border-radius: var(--radius-pill); overflow: hidden; flex: 1; }
+  .progress > div { background: var(--primary); height: 100%; }
+</style>
+</head><body><div class="card">
+<div class="eyebrow" style="margin-bottom:14px">Multi-step form · address autocomplete · file upload</div>
+
+<div class="stepper">
+  <div class="step done"><span class="n"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span class="label">Dirección</span><div class="line"></div></div>
+  <div class="step active"><span class="n">2</span><span class="label">Datos del lote</span><div class="line"></div></div>
+  <div class="step pending"><span class="n">3</span><span class="label">Contacto</span><div class="line"></div></div>
+  <div class="step pending"><span class="n">4</span><span class="label">Revisar</span></div>
+</div>
+
+<div class="pane">
+  <div style="margin-bottom:18px;">
+    <div class="eyebrow" style="font-size:10px;">Paso 2 de 4</div>
+    <div style="font-size:20px; font-weight:600; margin-top:4px;">Contanos más del lote</div>
+    <div style="font-size:13px; color:var(--muted-foreground); margin-top:4px;">Sumá lo que tengas a mano. Lo que falte, lo completamos nosotros.</div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:14px;">
+    <div class="field">
+      <label>Superficie estimada (m²)</label>
+      <input value="432" style="font-family:var(--font-mono);">
+    </div>
+    <div class="field">
+      <label>Frente (m) — opcional</label>
+      <input value="" placeholder="ej. 9,52" style="font-family:var(--font-mono);">
+    </div>
+  </div>
+
+  <div class="field" style="margin-bottom:14px;">
+    <label>¿Ya conocés el código urbanístico?</label>
+    <div style="display:flex; gap:8px;">
+      <label style="flex:1; padding:9px 12px; border:1px solid var(--primary); background:var(--accent); border-radius:var(--radius-sm); font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px;"><input type="radio" name="r" checked style="accent-color:var(--primary);"> No, lo averiguan ustedes</label>
+      <label style="flex:1; padding:9px 12px; border:1px solid var(--input); border-radius:var(--radius-sm); font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px;"><input type="radio" name="r" style="accent-color:var(--primary);"> Sí, lo cargo yo</label>
+    </div>
+  </div>
+
+  <div class="field" style="margin-bottom:18px;">
+    <label>Subí planos o títulos — opcional</label>
+    <div class="drop">
+      <div style="margin-bottom:4px; display:flex; align-items:center; justify-content:center; gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><strong>Arrastrá archivos acá</strong> o <a style="color:var(--primary);">buscalos</a></div>
+      <div style="font-family:var(--font-mono); font-size:11px;">PDF, JPG, PNG · máx. 10 MB cada uno</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+      <div class="file-chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <div style="flex:1;">
+          <div style="font-weight:500;">titulo-propiedad.pdf</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--muted-foreground);">2,1 MB · subido</div>
+        </div>
+        <span class="x"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+      </div>
+      <div class="file-chip" style="background:var(--background); border:1px solid var(--border);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <div style="flex:1;">
+          <div style="font-weight:500;">plano-municipal.pdf</div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+            <div class="progress"><div style="width:64%;"></div></div>
+            <span style="font-family:var(--font-mono); font-size:10px;">64%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; gap:10px; padding-top:14px; border-top:1px solid var(--border);">
+    <button style="background:transparent; color:var(--foreground); border:1px solid var(--foreground); border-radius:var(--radius-sm); padding:9px 16px; font-family:var(--font-sans); font-size:var(--text-small); font-weight:500; cursor:pointer;">← Atrás</button>
+    <button style="background:var(--primary); color:var(--primary-foreground); border:0; border-radius:var(--radius-sm); padding:9px 18px; font-family:var(--font-sans); font-size:var(--text-small); font-weight:500; cursor:pointer;">Siguiente paso →</button>
+  </div>
+</div>
+
+<div style="display:flex; gap:18px; margin-top:14px; font-size:11px; color:var(--muted-foreground);">
+  <span><strong style="color:var(--foreground);">Save & continue:</strong> cada paso se guarda al pasar al siguiente</span>
+  <span><strong style="color:var(--foreground);">Resume:</strong> volver con el mismo link recupera el progreso</span>
+</div>
+</div></body></html>
