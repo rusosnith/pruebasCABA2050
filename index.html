@@ -17,9 +17,12 @@
     <div class="comparator-panel-header">
       <div class="comparator-panel-heading">
         <label for="preloaded-location" class="comparator-select-label">Elegí la ubicación</label>
-        <select id="preloaded-location" aria-label="Seleccionar ubicación para explorar">
-          <option value="">Cargando ubicaciones...</option>
-        </select>
+        <div class="comparator-select-controls">
+          <select id="preloaded-location" aria-label="Seleccionar ubicación para explorar">
+            <option value="">Cargando ubicaciones...</option>
+          </select>
+          <button type="button" class="mini-button comparator-random-button" id="random-location-button" onclick="chooseRandomLocation()" disabled>Elegir al azar</button>
+        </div>
       </div>
     </div>
 
@@ -790,6 +793,15 @@
       document.getElementById('preloaded-meta').textContent = message;
     }
 
+    function syncPreloadedControls() {
+      const hasLocations = preloadedLocations.length > 0;
+      const select = document.getElementById('preloaded-location');
+      const randomButton = document.getElementById('random-location-button');
+
+      if (select) select.disabled = !hasLocations;
+      if (randomButton) randomButton.disabled = !hasLocations;
+    }
+
     function populatePreloadedSelect() {
       const select = document.getElementById('preloaded-location');
       select.innerHTML = '';
@@ -799,7 +811,7 @@
         option.value = '';
         option.textContent = 'No hay ubicaciones precargadas todavia';
         select.appendChild(option);
-        select.disabled = true;
+        syncPreloadedControls();
         return;
       }
 
@@ -811,7 +823,35 @@
         select.appendChild(option);
       });
 
-      select.disabled = false;
+      syncPreloadedControls();
+    }
+
+    function openPreloadedLocation(location, interactionSource = 'select') {
+      if (!location) {
+        setStatus('Elegi una ubicacion precargada.');
+        trackError('Elegi una ubicacion precargada.', { reason: 'missing_preloaded_selection' });
+        return false;
+      }
+
+      const select = document.getElementById('preloaded-location');
+      if (select && select.value !== location.slug) select.value = location.slug;
+
+      trackEvent('preloaded_location_selected', {
+        interaction_source: interactionSource,
+        location_label: location.label,
+        location_slug: location.slug,
+        pano_count: (location.panos || []).length
+      });
+
+      trackEvent('preloaded_location_opened', {
+        interaction_source: interactionSource,
+        location_label: location.label,
+        location_slug: location.slug,
+        pano_count: (location.panos || []).length
+      });
+
+      loadLocationFromManifest(location);
+      return true;
     }
 
     function loadLocationFromManifest(location) {
@@ -863,18 +903,26 @@
       const selectedSlug = document.getElementById('preloaded-location').value;
       const location = preloadedLocations.find((entry) => entry.slug === selectedSlug);
 
-      if (!location) {
-        setStatus('Elegi una ubicacion precargada.');
-        trackError('Elegi una ubicacion precargada.', { reason: 'missing_preloaded_selection' });
-        return;
+      return openPreloadedLocation(location, 'select');
+    }
+
+    function chooseRandomLocation() {
+      if (!preloadedLocations.length) {
+        setStatus('No hay ubicaciones precargadas para elegir al azar.');
+        trackError('No hay ubicaciones precargadas para elegir al azar.', { reason: 'random_preloaded_selection_unavailable' });
+        return false;
       }
 
-      trackEvent('preloaded_location_opened', {
-        location_label: location.label,
-        location_slug: location.slug,
-        pano_count: (location.panos || []).length
-      });
-      loadLocationFromManifest(location);
+      const currentSlug = document.getElementById('preloaded-location').value;
+      let candidateLocations = preloadedLocations;
+
+      if (preloadedLocations.length > 1 && currentSlug) {
+        const differentLocations = preloadedLocations.filter((entry) => entry.slug !== currentSlug);
+        if (differentLocations.length) candidateLocations = differentLocations;
+      }
+
+      const randomIndex = Math.floor(Math.random() * candidateLocations.length);
+      return openPreloadedLocation(candidateLocations[randomIndex], 'random_button');
     }
 
     async function loadPreloadedLocations() {
@@ -1166,18 +1214,7 @@
       });
 
       const preloadedSelect = document.getElementById('preloaded-location');
-      preloadedSelect.addEventListener('change', (event) => {
-        const selectedSlug = event.target.value;
-        const location = preloadedLocations.find((entry) => entry.slug === selectedSlug);
-        if (!location) {
-          setStatus('Elegi una ubicacion precargada.');
-          return;
-        }
-        trackEvent('preloaded_location_selected', {
-          location_label: location.label,
-          location_slug: location.slug,
-          pano_count: (location.panos || []).length
-        });
+      preloadedSelect.addEventListener('change', () => {
         loadSelectedLocation();
       });
 

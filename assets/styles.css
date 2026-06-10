@@ -295,6 +295,15 @@ button:disabled { background: var(--color-subtle-surface); border-color: var(--c
   justify-items: center;
 }
 
+.comparator-select-controls {
+  display: flex;
+  gap: 10px;
+  width: min(100%, 560px);
+  align-items: stretch;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 .comparator-select-label {
   margin: 0;
   text-align: center;
@@ -303,8 +312,14 @@ button:disabled { background: var(--color-subtle-surface); border-color: var(--c
 .comparator-panel-header select {
   background: var(--color-layer-strong);
   width: min(100%, 420px);
+  flex: 1 1 320px;
   text-align: center;
   text-align-last: center;
+}
+
+.comparator-random-button {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .mode-selector-title {
@@ -833,6 +848,7 @@ textarea {
   .tracking-header-row,
   .tracking-controls,
   .comparator-panel-heading,
+  .comparator-select-controls,
   .mode-tabs,
   .slider-row,
   .control-actions,
@@ -853,6 +869,8 @@ textarea {
   .tracking-controls label,
   .tracking-controls input[type="text"],
   .tracking-controls .mini-button,
+  .comparator-select-controls .mini-button,
+  .comparator-select-controls select,
   .mini-button {
     width: 100%;
   }
