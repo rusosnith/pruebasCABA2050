@@ -946,6 +946,9 @@ textarea {
   .comparator-select-controls select {
     width: 100%;
     min-width: 0;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 14px;
   }
 
   .comparator-select-controls .mini-button {

@@ -479,6 +479,7 @@
     let autoplayFrameId = null;
     let autoplayTimeoutId = null;
     let preloadedLocations = [];
+    const supportedModes = new Set(['split', 'opacity', 'timeline']);
     const cachedTimelineUrls = new Set();
     const pendingTimelinePreloads = new Map();
     let preloadSessionId = 0;
@@ -570,6 +571,51 @@
       }
     }
 
+    function getTabButtonForMode(mode) {
+      return document.getElementById(`tab-${mode}`);
+    }
+
+    function getCurrentSelectedLocation() {
+      const selectedSlug = document.getElementById('preloaded-location')?.value;
+      return preloadedLocations.find((entry) => entry.slug === selectedSlug) || null;
+    }
+
+    function getLocationOrder(location) {
+      if (!location) return null;
+      const index = preloadedLocations.findIndex((entry) => entry.slug === location.slug);
+      return index >= 0 ? index + 1 : null;
+    }
+
+    function syncUrlFragment(mode = currentMode) {
+      const params = new URLSearchParams();
+      const locationOrder = getLocationOrder(getCurrentSelectedLocation());
+
+      if (locationOrder) params.set('loc', String(locationOrder));
+      if (supportedModes.has(mode)) params.set('mode', mode);
+
+      const nextHash = params.toString();
+      const currentHash = window.location.hash.replace(/^#/, '');
+      if (nextHash === currentHash) return;
+
+      const nextUrl = nextHash
+        ? `${window.location.pathname}${window.location.search}#${nextHash}`
+        : `${window.location.pathname}${window.location.search}`;
+      window.history.replaceState(null, '', nextUrl);
+    }
+
+    function parseUrlFragmentState() {
+      const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const rawLocationOrder = Number.parseInt(params.get('loc') || '', 10);
+      const mode = params.get('mode');
+
+      return {
+        locationIndex: Number.isInteger(rawLocationOrder) && rawLocationOrder > 0
+          ? rawLocationOrder - 1
+          : null,
+        mode: supportedModes.has(mode) ? mode : null
+      };
+    }
+
     function setMode(mode, tabBtn, options = {}) {
       const previousMode = currentMode;
       stopAutoplay();
@@ -617,6 +663,8 @@
           location_slug: analyticsState.comparisonContext.locationSlug
         });
       }
+
+      syncUrlFragment(mode);
 
       if (options.autoplay && allPanos.length) {
         startModeAutoplay(mode);
@@ -847,7 +895,7 @@
       syncPreloadedControls();
     }
 
-    function openPreloadedLocation(location, interactionSource = 'select') {
+    function openPreloadedLocation(location, interactionSource = 'select', options = {}) {
       if (!location) {
         setStatus('Elegi una ubicacion precargada.');
         trackError('Elegi una ubicacion precargada.', { reason: 'missing_preloaded_selection' });
@@ -871,11 +919,11 @@
         pano_count: (location.panos || []).length
       });
 
-      loadLocationFromManifest(location);
+      loadLocationFromManifest(location, options);
       return true;
     }
 
-    function loadLocationFromManifest(location) {
+    function loadLocationFromManifest(location, options = {}) {
       stopAutoplay();
       resetTimelinePreloadStatus();
       setComparisonContext({
@@ -909,7 +957,12 @@
       oldPanoId = allPanos[0].pano || '';
       newPanoId = allPanos[allPanos.length - 1].pano || '';
       setStatus('', true);
-      showComparison(allPanos[0].label, allPanos[allPanos.length - 1].label, allPanos.length);
+      showComparison(
+        allPanos[0].label,
+        allPanos[allPanos.length - 1].label,
+        allPanos.length,
+        options.mode || currentMode
+      );
       trackEvent('comparison_ready', {
         source: 'preloaded',
         location_label: location.label,
@@ -927,7 +980,7 @@
       return openPreloadedLocation(location, 'select');
     }
 
-    function chooseRandomLocation() {
+    function chooseRandomLocation(options = {}) {
       if (!preloadedLocations.length) {
         setStatus('No hay ubicaciones precargadas para elegir al azar.');
         trackError('No hay ubicaciones precargadas para elegir al azar.', { reason: 'random_preloaded_selection_unavailable' });
@@ -943,7 +996,7 @@
       }
 
       const randomIndex = Math.floor(Math.random() * candidateLocations.length);
-      return openPreloadedLocation(candidateLocations[randomIndex], 'random_button');
+      return openPreloadedLocation(candidateLocations[randomIndex], 'random_button', { mode: options.mode || currentMode });
     }
 
     async function loadPreloadedLocations() {
@@ -969,7 +1022,19 @@
           ? new Date(manifest.generatedAt).toLocaleString('es-AR')
           : 'fecha desconocida';
         setPreloadedMeta(`${preloadedLocations.length} ubicacion(es) disponibles. Ultima generacion: ${generatedLabel}.`);
-        chooseRandomLocation();
+
+        const fragmentState = parseUrlFragmentState();
+        const initialLocation = Number.isInteger(fragmentState.locationIndex)
+          ? preloadedLocations[fragmentState.locationIndex] || null
+          : null;
+        const initialMode = fragmentState.mode || currentMode;
+
+        if (initialLocation) {
+          openPreloadedLocation(initialLocation, 'fragment', { mode: initialMode });
+          return;
+        }
+
+        chooseRandomLocation({ mode: initialMode });
       } catch (error) {
         preloadedLocations = [];
         populatePreloadedSelect();
@@ -1177,7 +1242,7 @@
       });
     }
 
-    function showComparison(oldDate, newDate, count) {
+    function showComparison(oldDate, newDate, count, targetMode = currentMode) {
       resetInteractionTracking();
 
       // Labels
@@ -1205,14 +1270,8 @@
       updateTimelineButtons();
       updatePlayButtons();
 
-      // Forzar tab split
-      currentMode = 'split';
-      document.getElementById('comparator').className = 'comparator mode-split';
-      document.querySelectorAll('.mode-tab').forEach((b, i) => b.classList.toggle('active', i === 0));
-      document.getElementById('hint').style.display = 'block';
-      document.getElementById('ctrl-opacity').classList.remove('visible');
-      document.getElementById('ctrl-timeline').classList.remove('visible');
-      document.getElementById('main-labels').style.display = '';
+      const resolvedMode = supportedModes.has(targetMode) ? targetMode : 'split';
+      setMode(resolvedMode, getTabButtonForMode(resolvedMode));
 
       document.getElementById('comparator-wrap').classList.add('is-ready');
       const feedbackCard = document.getElementById('feedback-card');
