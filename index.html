@@ -21,7 +21,7 @@
           <select id="preloaded-location" aria-label="Seleccionar ubicación para explorar">
             <option value="">Cargando ubicaciones...</option>
           </select>
-          <button type="button" class="mini-button comparator-random-button" id="random-location-button" onclick="chooseRandomLocation()" disabled>Elegir al azar</button>
+          <button type="button" class="mini-button comparator-random-button" id="random-location-button" onclick="chooseRandomLocation()" disabled>Una al azar</button>
         </div>
       </div>
     </div>
@@ -30,13 +30,19 @@
 
     <div class="mode-tabs">
       <button class="mode-tab active" id="tab-split" onclick="setMode('split', this)">Comparador</button>
-      <button class="mode-tab" id="tab-opacity" onclick="setMode('opacity', this)">Opacidad</button>
-      <button class="mode-tab" id="tab-timeline" onclick="setMode('timeline', this)">Linea de tiempo</button>
+      <button class="mode-tab" id="tab-opacity" onclick="setMode('opacity', this, { autoplay: true })">Opacidad</button>
+      <button class="mode-tab" id="tab-timeline" onclick="setMode('timeline', this, { autoplay: true })">Linea de tiempo</button>
     </div>
 
     <div class="labels-row" id="main-labels">
-      <div>⬅ MÁS VIEJA &nbsp;<span id="lbl-old">—</span></div>
-      <div><span id="lbl-new">—</span>&nbsp; MÁS NUEVA ➡</div>
+      <div>
+        <span class="label-caption">⬅ MÁS VIEJA</span>
+        <span class="label-date" id="lbl-old">—</span>
+      </div>
+      <div>
+        <span class="label-caption">MÁS NUEVA ➡</span>
+        <span class="label-date" id="lbl-new">—</span>
+      </div>
     </div>
 
     <div class="comparator mode-split" id="comparator"
@@ -51,14 +57,16 @@
     <p id="hint">Arrastrá el divisor para comparar</p>
 
     <div class="controls" id="ctrl-opacity">
-      <div class="slider-row">
-        <span class="slider-label-left"  id="op-lbl-old">vieja</span>
-        <input type="range" id="opacity-slider" min="0" max="100" value="50"
-               oninput="onOpacityInput(this.value)" />
-        <span class="slider-label-right" id="op-lbl-new">nueva</span>
-      </div>
-      <div class="control-actions">
-        <button class="mini-button" id="opacity-play" onclick="toggleOpacityAutoplay()">Play</button>
+      <div class="slider-row opacity-slider-row">
+        <div class="control-actions opacity-control-actions">
+          <button class="mini-button" id="opacity-play" onclick="toggleOpacityAutoplay()">Play</button>
+        </div>
+        <div class="opacity-slider-stack">
+          <span class="slider-label-left"  id="op-lbl-old">vieja</span>
+          <input type="range" id="opacity-slider" min="0" max="100" value="50"
+                 oninput="onOpacityInput(this.value)" />
+          <span class="slider-label-right" id="op-lbl-new">nueva</span>
+        </div>
       </div>
     </div>
 
@@ -551,7 +559,18 @@
     }
 
     // ── Modos ────────────────────────────────────────────────────────────────
-    function setMode(mode, tabBtn) {
+    function startModeAutoplay(mode) {
+      if (mode === 'opacity') {
+        startAutoplay('opacity', onOpacityInput, 0, 100);
+        return;
+      }
+
+      if (mode === 'timeline') {
+        startAutoplay('timeline', onTimelineInput, timelineOffsets[0] || 0, timelineRangeMax);
+      }
+    }
+
+    function setMode(mode, tabBtn, options = {}) {
       const previousMode = currentMode;
       stopAutoplay();
       currentMode = mode;
@@ -564,7 +583,7 @@
       document.getElementById('hint').style.display = mode === 'split' ? 'block' : 'none';
       document.getElementById('ctrl-opacity').classList.toggle('visible', mode === 'opacity');
       document.getElementById('ctrl-timeline').classList.toggle('visible', mode === 'timeline');
-      document.getElementById('main-labels').style.display = mode === 'timeline' ? 'none' : 'flex';
+      document.getElementById('main-labels').style.display = mode === 'timeline' ? 'none' : '';
 
       const base    = document.getElementById('img-base');
       const overlay = document.getElementById('img-overlay');
@@ -597,6 +616,10 @@
           location_label: analyticsState.comparisonContext.locationLabel,
           location_slug: analyticsState.comparisonContext.locationSlug
         });
+      }
+
+      if (options.autoplay && allPanos.length) {
+        startModeAutoplay(mode);
       }
     }
 
@@ -658,8 +681,7 @@
       }
 
       trackEvent('autoplay_toggled', { mode: 'opacity', action: 'start' });
-      setMode('opacity', document.getElementById('tab-opacity'));
-      startAutoplay('opacity', onOpacityInput, 0, 100);
+      setMode('opacity', document.getElementById('tab-opacity'), { autoplay: true });
     }
 
     // ── Timeline control ─────────────────────────────────────────────────────
@@ -735,8 +757,7 @@
       }
 
       trackEvent('autoplay_toggled', { mode: 'timeline', action: 'start' });
-      setMode('timeline', document.getElementById('tab-timeline'));
-      startAutoplay('timeline', onTimelineInput, timelineOffsets[0] || 0, timelineRangeMax);
+      setMode('timeline', document.getElementById('tab-timeline'), { autoplay: true });
     }
 
     function setStatus(msg, ok = false) {
@@ -948,7 +969,7 @@
           ? new Date(manifest.generatedAt).toLocaleString('es-AR')
           : 'fecha desconocida';
         setPreloadedMeta(`${preloadedLocations.length} ubicacion(es) disponibles. Ultima generacion: ${generatedLabel}.`);
-        loadLocationFromManifest(preloadedLocations[0]);
+        chooseRandomLocation();
       } catch (error) {
         preloadedLocations = [];
         populatePreloadedSelect();
@@ -1191,7 +1212,7 @@
       document.getElementById('hint').style.display = 'block';
       document.getElementById('ctrl-opacity').classList.remove('visible');
       document.getElementById('ctrl-timeline').classList.remove('visible');
-      document.getElementById('main-labels').style.display = 'flex';
+      document.getElementById('main-labels').style.display = '';
 
       document.getElementById('comparator-wrap').classList.add('is-ready');
       const feedbackCard = document.getElementById('feedback-card');
