@@ -13,7 +13,8 @@ const CSV_PATH = path.join(DATA_DIR, 'locations.csv');
 const SHEET_CSV_URL = process.env.GOOGLE_SHEETS_CSV_URL;
 
 const REQUIRED_COLUMNS = ['slug', 'label', 'street_view_url'];
-const OUTPUT_COLUMNS = ['slug', 'label', 'street_view_url', 'status', 'last_downloaded_at', 'last_error'];
+const OUTPUT_COLUMNS = ['slug', 'label', 'street_view_url', 'latitude', 'longitude', 'desactivar', 'status', 'last_downloaded_at', 'last_error'];
+const CONTENT_FALLBACK_COLUMNS = ['latitude', 'longitude', 'desactivar'];
 const OPERATIONAL_COLUMNS = ['status', 'last_downloaded_at', 'last_error'];
 
 async function readLocalRows() {
@@ -54,7 +55,10 @@ function buildOperationalStateMap(rows) {
     rows.map((row) => [normalizeValue(row.slug), {
       status: normalizeValue(row.status),
       last_downloaded_at: normalizeValue(row.last_downloaded_at),
-      last_error: normalizeValue(row.last_error)
+      last_error: normalizeValue(row.last_error),
+      latitude: normalizeValue(row.latitude),
+      longitude: normalizeValue(row.longitude),
+      desactivar: normalizeValue(row.desactivar)
     }])
   );
 }
@@ -67,12 +71,19 @@ function mergeRows(remoteRows, localStateBySlug) {
       slug: normalizeValue(row.slug),
       label: normalizeValue(row.label),
       street_view_url: normalizeValue(row.street_view_url),
+      latitude: '',
+      longitude: '',
+      desactivar: '',
       status: '',
       last_downloaded_at: '',
       last_error: ''
     };
 
     for (const column of OPERATIONAL_COLUMNS) {
+      mergedRow[column] = normalizeValue(row[column]);
+    }
+
+    for (const column of CONTENT_FALLBACK_COLUMNS) {
       mergedRow[column] = normalizeValue(row[column]);
     }
 
@@ -96,6 +107,12 @@ function mergeRows(remoteRows, localStateBySlug) {
 
     const localState = localStateBySlug.get(mergedRow.slug);
     for (const column of OPERATIONAL_COLUMNS) {
+      if (!mergedRow[column] && localState?.[column]) {
+        mergedRow[column] = localState[column];
+      }
+    }
+
+    for (const column of CONTENT_FALLBACK_COLUMNS) {
       if (!mergedRow[column] && localState?.[column]) {
         mergedRow[column] = localState[column];
       }

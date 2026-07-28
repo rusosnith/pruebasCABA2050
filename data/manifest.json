@@ -765,90 +765,6 @@
       ]
     },
     {
-      "slug": "corrales-1152-038-074-020",
-      "label": "Corrales 1152",
-      "sourceUrl": "https://www.google.com/maps/@-34.64803793994425,-58.42144396173209,3a,75y,242.27h,90t/data=!3m6!1e1!3m4!1smDWKRUE--EK3ypdoqk5qQg!2e0!7i16384!8i8192",
-      "lat": -34.648062282185535,
-      "lng": -58.42147522442837,
-      "fov": 75,
-      "heading": 242.27,
-      "pitch": 0,
-      "imageWidth": 900,
-      "imageHeight": 600,
-      "panos": [
-        {
-          "pano": "mDWKRUE--EK3ypdoqk5qQg",
-          "rawDate": "2023-07",
-          "label": "jul 2023",
-          "timestamp": 1688169600000,
-          "image": "assets/streetview/corrales-1152-038-074-020/000_2023-07.jpg"
-        }
-      ]
-    },
-    {
-      "slug": "tilcara-av-2722-038-075-001",
-      "label": "Tilcara Av. 2722",
-      "sourceUrl": "https://www.google.com/maps/@-34.64781100672189,-58.42348345698736,3a,75y,39.74h,90t/data=!3m6!1e1!3m4!1solaY0PkIuF9Dz_ProBHpoA!2e0!7i16384!8i8192",
-      "lat": -34.647825884335276,
-      "lng": -58.4235040088759,
-      "fov": 75,
-      "heading": 39.74,
-      "pitch": 0,
-      "imageWidth": 900,
-      "imageHeight": 600,
-      "panos": [
-        {
-          "pano": "rIbLKoouQCZY8AFd52_qOw",
-          "rawDate": "2013-10",
-          "label": "oct 2013",
-          "timestamp": 1380585600000,
-          "image": "assets/streetview/tilcara-av-2722-038-075-001/000_2013-10.jpg"
-        },
-        {
-          "pano": "IOVg9isa1L0WN4kG6pcmpg",
-          "rawDate": "2014-07",
-          "label": "jul 2014",
-          "timestamp": 1404172800000,
-          "image": "assets/streetview/tilcara-av-2722-038-075-001/001_2014-07.jpg"
-        },
-        {
-          "pano": "itcHB8DItqinjMMDHngT0w",
-          "rawDate": "2016-12",
-          "label": "dic 2016",
-          "timestamp": 1480550400000,
-          "image": "assets/streetview/tilcara-av-2722-038-075-001/002_2016-12.jpg"
-        },
-        {
-          "pano": "wInaNMnT5oTkQeP1vRd3sA",
-          "rawDate": "2019-04",
-          "label": "abr 2019",
-          "timestamp": 1554076800000,
-          "image": "assets/streetview/tilcara-av-2722-038-075-001/003_2019-04.jpg"
-        },
-        {
-          "pano": "48dpxi_hF00nV744VnGHsw",
-          "rawDate": "2022-08",
-          "label": "ago 2022",
-          "timestamp": 1659312000000,
-          "image": "assets/streetview/tilcara-av-2722-038-075-001/004_2022-08.jpg"
-        },
-        {
-          "pano": "J1Ci8W8ehwPcnkQOcXYzsg",
-          "rawDate": "2023-01",
-          "label": "ene 2023",
-          "timestamp": 1672531200000,
-          "image": "assets/streetview/tilcara-av-2722-038-075-001/005_2023-01.jpg"
-        },
-        {
-          "pano": "olaY0PkIuF9Dz_ProBHpoA",
-          "rawDate": "2025-06",
-          "label": "jun 2025",
-          "timestamp": 1748736000000,
-          "image": "assets/streetview/tilcara-av-2722-038-075-001/006_2025-06.jpg"
-        }
-      ]
-    },
-    {
       "slug": "tomas-a-le-breton-4936-053-005-004",
       "label": "Tomas A. Le Breton 4936",
       "sourceUrl": "https://www.google.com/maps/@-34.56957100956226,-58.4877845403223,3a,75y,145.73h,90t/data=!3m6!1e1!3m4!1sOymV6nn9XAZPs_J-EMkuJQ!2e0!7i16384!8i8192",
@@ -978,27 +894,6 @@
           "label": "jun 2025",
           "timestamp": 1748736000000,
           "image": "assets/streetview/brasil-av-171-006-049-015/013_2025-06.jpg"
-        }
-      ]
-    },
-    {
-      "slug": "calle-a-ceder-3962-066-122-000",
-      "label": "Calle a Ceder 3962",
-      "sourceUrl": "https://www.google.com/maps/@-34.67277035295731,-58.46059801161631,3a,75y,304.07h,90t/data=!3m6!1e1!3m4!1sHcgKtGBmnmA7EfAGZbkaPA!2e0!7i16384!8i8192",
-      "lat": -34.67281024691265,
-      "lng": -58.4605466152129,
-      "fov": 75,
-      "heading": 304.07,
-      "pitch": 0,
-      "imageWidth": 900,
-      "imageHeight": 600,
-      "panos": [
-        {
-          "pano": "HcgKtGBmnmA7EfAGZbkaPA",
-          "rawDate": "2025-09",
-          "label": "sept 2025",
-          "timestamp": 1756684800000,
-          "image": "assets/streetview/calle-a-ceder-3962-066-122-000/000_2025-09.jpg"
         }
       ]
     },

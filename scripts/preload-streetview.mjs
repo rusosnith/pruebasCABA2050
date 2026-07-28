@@ -1,6 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { parse } from 'csv-parse/sync';
 import { stringify } from 'csv-stringify/sync';
@@ -25,6 +25,7 @@ function parseEmbeddedThumbnail(url) {
     const thumbnailUrl = new URL(decodeURIComponent(thumbnailMatch[1]));
     const yaw = Number.parseFloat(thumbnailUrl.searchParams.get('yaw') || '');
     const pitch = Number.parseFloat(thumbnailUrl.searchParams.get('pitch') || '');
+    const panoId = thumbnailUrl.searchParams.get('panoid') || '';
 
     if (!Number.isFinite(yaw) || !Number.isFinite(pitch)) {
       return null;
@@ -33,6 +34,7 @@ function parseEmbeddedThumbnail(url) {
     return {
       yaw,
       pitch,
+      panoId,
       baseUrl: `${thumbnailUrl.origin}${thumbnailUrl.pathname}`
     };
   } catch {
@@ -65,8 +67,25 @@ function parseStreetViewURL(url) {
     fov,
     heading,
     pitch,
+    panoId: embeddedThumbnail?.panoId || null,
     thumbnailBaseUrl: embeddedThumbnail?.baseUrl || 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail'
   };
+}
+
+function buildImageQueryParams(parsedLocation, baseUrl = 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail') {
+  const url = new URL(baseUrl);
+  url.searchParams.set('cb_client', 'maps_sv.tactile');
+  url.searchParams.set('w', String(IMAGE_WIDTH));
+  url.searchParams.set('h', String(IMAGE_HEIGHT));
+  url.searchParams.set('pitch', String(parsedLocation.pitch));
+  url.searchParams.set('panoid', String(parsedLocation.panoId || ''));
+  url.searchParams.set('yaw', String(parsedLocation.heading));
+
+  if (Number.isFinite(parsedLocation.fov)) {
+    url.searchParams.set('fov', String(parsedLocation.fov));
+  }
+
+  return url.searchParams;
 }
 
 function hasCameraMismatch(existingLocation, parsedLocation) {
@@ -122,8 +141,20 @@ function safeFileSegment(value) {
     .replace(/^-+|-+$/g, '') || 'sin-fecha';
 }
 
-function thumbnailURL(panoId, heading, pitch, width = IMAGE_WIDTH, height = IMAGE_HEIGHT, baseUrl = 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail') {
-  return `${baseUrl}?cb_client=maps_sv.tactile&w=${width}&h=${height}&pitch=${pitch}&panoid=${encodeURIComponent(panoId)}&yaw=${heading}`;
+function thumbnailURL(panoId, heading, pitch, width = IMAGE_WIDTH, height = IMAGE_HEIGHT, baseUrl = 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail', fov = 90) {
+  const url = new URL(baseUrl);
+  url.searchParams.set('cb_client', 'maps_sv.tactile');
+  url.searchParams.set('w', String(width));
+  url.searchParams.set('h', String(height));
+  url.searchParams.set('pitch', String(pitch));
+  url.searchParams.set('panoid', panoId);
+  url.searchParams.set('yaw', String(heading));
+
+  if (Number.isFinite(fov)) {
+    url.searchParams.set('fov', String(fov));
+  }
+
+  return url.toString();
 }
 
 async function ensureDir(targetPath) {
@@ -153,7 +184,7 @@ async function readCSV() {
 async function writeCSV(rows) {
   const csvOut = stringify(rows, {
     header: true,
-    columns: ['slug', 'label', 'street_view_url', 'status', 'last_downloaded_at', 'last_error']
+    columns: ['slug', 'label', 'street_view_url', 'latitude', 'longitude', 'desactivar', 'status', 'last_downloaded_at', 'last_error']
   });
 
   await fs.writeFile(CSV_PATH, csvOut, 'utf8');
@@ -340,7 +371,8 @@ async function buildLocationManifestEntry(page, row, apiKey) {
       parsedLocation.pitch,
       IMAGE_WIDTH,
       IMAGE_HEIGHT,
-      parsedLocation.thumbnailBaseUrl
+      parsedLocation.thumbnailBaseUrl,
+      parsedLocation.fov
     );
 
     await downloadImage(imageURL, destinationPath);
@@ -393,6 +425,15 @@ async function main() {
       const slug = slugify(row.slug || row.label || row.street_view_url);
       const existingLocation = existingLocations.get(slug);
       const parsedLocation = parseStreetViewURL(row.street_view_url);
+      const hasDesactivar = String(row.desactivar || '').trim() !== '';
+
+      if (hasDesactivar) {
+        row.status = 'disabled';
+        row.last_error = '';
+        await writeCSV(rows);
+        continue;
+      }
+
       const shouldProcess = FORCE_ALL ||
         row.status !== 'done' ||
         !existingLocation ||
@@ -434,7 +475,19 @@ async function main() {
   await writeManifest(nextLocations);
 }
 
-main().catch((error) => {
-  process.stderr.write(`${error instanceof Error ? error.stack : String(error)}\n`);
-  process.exitCode = 1;
-});
+const isDirectExecution = process.argv[1]
+  ? pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url
+  : false;
+
+if (isDirectExecution) {
+  main().catch((error) => {
+    process.stderr.write(`${error instanceof Error ? error.stack : String(error)}\n`);
+    process.exitCode = 1;
+  });
+}
+
+export {
+  parseStreetViewURL,
+  buildImageQueryParams,
+  thumbnailURL
+};
