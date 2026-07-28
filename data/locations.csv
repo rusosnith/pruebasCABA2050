@@ -158,10 +158,7 @@ nazarre-5731-093-125-026,Nazarre 5731,"https://www.google.com/maps/@-34.62224311
 wagner-1139-085-018-013,Wagner 1139,"https://www.google.com/maps/@-34.62867855333402,-58.50199484666592,3a,75y,51.09h,90t/data=!3m6!1e1!3m4!1s_NHgz8cCoiMdeG572m3siA!2e0!7i16384!8i8192",-34.62854283,-58.50179052,,done,2026-07-28T01:55:07.602Z,
 heredia-1557-049-142-011,Heredia 1557,"https://www.google.com/maps/@-34.57550467480237,-58.46553975292791,3a,75y,41.96h,90t/data=!3m6!1e1!3m4!1slLzxHT-tB3g8qbYOAcUNCQ!2e0!7i16384!8i8192",-34.57530814,-58.46532511,,done,2026-07-28T01:55:10.412Z,
 general-manuel-a-rodriguez-2651-059-109-013,General Manuel A. Rodriguez 2651,"https://www.google.com/maps/@-34.59753353177027,-58.46190897615661,3a,75y,12.36h,90t/data=!3m6!1e1!3m4!1s-jjd8gopR2qQndnWgtFihw!2e0!7i16384!8i8192",-34.59729812,-58.46184629,,done,2026-07-28T01:55:12.467Z,
-anasco-2757-059-104-013,Añasco 2757,"https://www.google.com/maps/@-34.59796810639159,-58.46515705153539,3a,75y,10.11h,90t/data=!3m6!1e1!3m4!1sg1QixyldRRK3BjI0JRx1ug!2e0!7i16384!8i8192",-34.59765498,-58.46508924,,error,,"page.evaluate: Error: Street View lookup failed with status UNKNOWN_ERROR
-    at eval (eval at evaluate (:302:30), <anonymous>:12:20)
-    at https://maps.googleapis.com/maps-api-v3/api/js/65/10a/streetview.js:50:219
-    at https://maps.googleapis.com/maps-api-v3/api/js/65/10a/streetview.js:89:445"
+anasco-2757-059-104-013,Añasco 2757,"https://www.google.com/maps/@-34.59796810639159,-58.46515705153539,3a,75y,10.11h,90t/data=!3m6!1e1!3m4!1sg1QixyldRRK3BjI0JRx1ug!2e0!7i16384!8i8192",-34.59765498,-58.46508924,,done,2026-07-28T02:01:40.251Z,
 cordoba-av-2262-009-049-009,Cordoba Av. 2262,"https://www.google.com/maps/@-34.59966877386513,-58.39951864647047,3a,75y,193.21h,90t/data=!3m6!1e1!3m4!1sVt_N5819AyF0B10qLEx7RA!2e0!7i16384!8i8192",-34.59988768,-58.39958108,,done,2026-07-28T01:55:15.635Z,
 directorio-av-7320-076-026-003,Directorio Av. 7320,"https://www.google.com/maps/@-34.66561188109278,-58.50968408218532,3a,75y,125.83h,90t/data=!3m6!1e1!3m4!1snwyW9rLBT8fS_78lBx3cjw!2e0!7i16384!8i8192",-34.66574769,-58.50945539,,done,2026-07-28T01:55:16.890Z,
 albarracin-1938-038-065-013,Albarracin 1938,"https://www.google.com/maps/@-34.63941088330851,-58.42899915943475,3a,75y,81.48h,90t/data=!3m6!1e1!3m4!1sDR5fanUjZ-ksLMFh7HJEyg!2e0!7i16384!8i8192",-34.63937273,-58.42868955,,done,2026-07-28T01:55:18.659Z,
@@ -248,10 +245,7 @@ elcano-av-4033-049-147-036,Elcano Av. 4033,"https://www.google.com/maps/@-34.583
 holmberg-2749-053-102-017,Holmberg 2749,"https://www.google.com/maps/@-34.56666179362334,-58.47923700105805,3a,75y,57.12h,90t/data=!3m6!1e1!3m4!1svws1xzrCnP4II2V1DiEerg!2e0!7i16384!8i8192",-34.56651695,-58.47896494,,done,2026-07-28T01:57:58.205Z,
 basualdo-508-060-092-009,Basualdo 508,"https://www.google.com/maps/@-34.64310090141365,-58.50081936698788,3a,75y,40.0h,90t/data=!3m6!1e1!3m4!1sMp-co3Y2H1KABpzDDykRng!2e0!7i16384!8i8192",-34.64298238,-58.50069849,,done,2026-07-28T01:57:58.783Z,
 guamini-1168-072-046-030,Guamini 1168,"https://www.google.com/maps/@-34.65224019728996,-58.52283679194518,3a,75y,31.64h,90t/data=!3m6!1e1!3m4!1sTnuIxqmTrE54FdeBKlIYEw!2e0!7i16384!8i8192",-34.65204253,-58.52268874,,done,2026-07-28T01:58:00.263Z,
-irala-261-008-070-026,Irala 261,"https://www.google.com/maps/@-34.63116145780079,-58.36821953179125,3a,75y,255.52h,90t/data=!3m6!1e1!3m4!1sgIlZZOuBJWssBFV0TWKIDQ!2e0!7i16384!8i8192",-34.63121724,-58.36848208,,error,,"page.evaluate: Error: Street View lookup failed with status UNKNOWN_ERROR
-    at eval (eval at evaluate (:302:30), <anonymous>:12:20)
-    at https://maps.googleapis.com/maps-api-v3/api/js/65/10a/streetview.js:50:219
-    at https://maps.googleapis.com/maps-api-v3/api/js/65/10a/streetview.js:89:445"
+irala-261-008-070-026,Irala 261,"https://www.google.com/maps/@-34.63116145780079,-58.36821953179125,3a,75y,255.52h,90t/data=!3m6!1e1!3m4!1sgIlZZOuBJWssBFV0TWKIDQ!2e0!7i16384!8i8192",-34.63121724,-58.36848208,,done,2026-07-28T02:01:45.620Z,
 campillo-2716-061-032-002,Campillo 2716,"https://www.google.com/maps/@-34.58723735482774,-58.47494887716017,3a,75y,132.61h,90t/data=!3m6!1e1!3m4!1sxCCqsG3Qxxkg8XGGU0RGvA!2e0!7i16384!8i8192",-34.58740614,-58.47472602,,done,2026-07-28T01:58:01.987Z,
 hamburgo-3183-061-117-013,Hamburgo 3183,"https://www.google.com/maps/@-34.58633429263006,-58.48305417438843,3a,75y,322.6h,90t/data=!3m6!1e1!3m4!1sG6mSktxD0aXBmR9t47yAGQ!2e0!7i16384!8i8192",-34.5862157,-58.4831643,,done,2026-07-28T01:58:03.289Z,
 elpidio-gonzalez-5298-091-105-011,Elpidio Gonzalez 5298,"https://www.google.com/maps/@-34.6275131066588,-58.50913930976876,3a,75y,138.25h,90t/data=!3m6!1e1!3m4!1sPcLE8mOjf4qYHwUJlGyDkg!2e0!7i16384!8i8192",-34.6276241,-58.50901891,,done,2026-07-28T01:58:05.173Z,
