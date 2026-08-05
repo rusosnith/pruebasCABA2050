@@ -4,7 +4,68 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Viaje en el tiempo porteño</title>
+  <meta name="description" content="Viaje en el tiempo porteño — compara imágenes históricas de Google Street View para ver cómo cambiaron las calles de la ciudad. Explora ubicaciones, timelines e imágenes históricas." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="/" id="canonical-link" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Viaje en el tiempo porteño" />
+  <meta property="og:description" content="Compara imágenes históricas de Street View para ver cómo cambiaron las calles de la ciudad en la última década." />
+  <meta property="og:url" content="/" id="og-url" />
+  <meta property="og:site_name" content="Terres" />
+  <meta property="og:image" content="/assets/terres-favicon.svg" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Viaje en el tiempo porteño" />
+  <meta name="twitter:description" content="Compara imágenes históricas de Street View para ver cómo cambiaron las calles de la ciudad en la última década." />
+  <meta name="twitter:image" content="/assets/terres-favicon.svg" />
+
+  <!-- Favicons / touch icons -->
+  <link rel="icon" type="image/svg+xml" href="/assets/terres-favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/terres-favicon.svg" />
+
   <link rel="stylesheet" href="assets/styles.css" />
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "Viaje en el tiempo porteño",
+        "url": "/",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Terres",
+          "logo": { "@type": "ImageObject", "url": "/assets/terres-favicon.svg" }
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "Terres",
+        "url": "/",
+        "logo": { "@type": "ImageObject", "url": "/assets/terres-favicon.svg" }
+      }
+    ]
+  }
+  </script>
+
+  <script>
+    // Ajusta canonical y OG URL dinámicamente para evitar hashes y parámetros
+    (function() {
+      try {
+        const canonical = document.getElementById('canonical-link');
+        const ogUrl = document.getElementById('og-url');
+        const loc = window.location.origin + window.location.pathname;
+        if (canonical) canonical.setAttribute('href', loc);
+        if (ogUrl) ogUrl.setAttribute('content', loc);
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
 </head>
 <body>
 
@@ -12,6 +73,15 @@
     <h1>Viaje en el tiempo porteño</h1>
     <p class="subtitle">Elegí una ubicación para ver como cambió en la última década</p>
   </header>
+
+  <main>
+    <section id="editorial" aria-labelledby="editorial-title">
+      <h2 id="editorial-title">Sobre este proyecto</h2>
+      <p>Este proyecto permite explorar y comparar imágenes históricas de Google Street View para observar cómo cambiaron las calles y barrios de la Ciudad de Buenos Aires a lo largo del tiempo. Utilizamos un manifiesto local con ubicaciones pre-cargadas y una interfaz con comparador, opacidad y línea de tiempo.</p>
+      <p>Las imágenes provienen de Street View y están organizadas por ubicación y fecha. Puedes seleccionar una ubicación del selector, avanzar en la línea de tiempo o activar el modo de comparador para ver diferencias visuales entre épocas.</p>
+      <p>Si vas a compartir este sitio en redes sociales, la vista previa usará los metadatos Open Graph y Twitter definidos en la cabecera.</p>
+    </section>
+  </main>
 
   <div id="comparator-wrap">
     <div class="comparator-panel-header">
