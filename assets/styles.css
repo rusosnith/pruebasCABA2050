@@ -644,43 +644,6 @@ button:disabled { background: var(--color-subtle-surface); border-color: var(--c
   margin-top: 8px;
 }
 
-.timeline-info {
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  max-width: 900px;
-  margin-top: 0;
-  padding: 0 0 8px;
-  flex-wrap: wrap;
-}
-
-.timeline-info .badge {
-  flex: 1;
-  min-width: 120px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--color-body);
-  text-transform: uppercase;
-  padding: 14px 16px;
-  text-align: left;
-  background: rgba(255, 248, 236, 0.94);
-  border: 1px solid var(--color-hairline);
-  border-left: 4px solid var(--color-primary);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
-}
-
-.timeline-info .badge strong {
-  display: block;
-  color: var(--color-ink);
-  font-family: var(--font-display);
-  font-size: 22px;
-  line-height: 1.2;
-  font-weight: 500;
-  text-transform: none;
-  margin-top: 8px;
-}
 
 .helper-text {
   font-family: var(--font-body);
@@ -1022,36 +985,7 @@ textarea {
     object-position: center center;
   }
 
-  .timeline-info {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-    align-items: start;
-  }
-
-  .timeline-info .badge {
-    min-width: 0;
-    padding: 6px 4px;
-    text-align: center;
-    background: transparent;
-    border: 0;
-    border-top: 1px solid var(--color-hairline);
-    border-left: 0;
-    border-radius: 0;
-    box-shadow: none;
-    font-size: 10px;
-    line-height: 14px;
-    letter-spacing: 0.06em;
-    color: var(--color-body);
-  }
-
-  .timeline-info .badge strong {
-    margin-top: 2px;
-    font-size: 16px;
-    line-height: 1.1;
-    font-family: var(--font-body);
-    font-weight: 700;
-  }
+  
 
   .timeline-slider-row {
     display: block;
