@@ -74,15 +74,6 @@
     <p class="subtitle">Elegí una ubicación para ver como cambió en la última década</p>
   </header>
 
-  <main>
-    <section id="editorial" aria-labelledby="editorial-title">
-      <h2 id="editorial-title">Sobre este proyecto</h2>
-      <p>Este proyecto permite explorar y comparar imágenes históricas de Google Street View para observar cómo cambiaron las calles y barrios de la Ciudad de Buenos Aires a lo largo del tiempo. Utilizamos un manifiesto local con ubicaciones pre-cargadas y una interfaz con comparador, opacidad y línea de tiempo.</p>
-      <p>Las imágenes provienen de Street View y están organizadas por ubicación y fecha. Puedes seleccionar una ubicación del selector, avanzar en la línea de tiempo o activar el modo de comparador para ver diferencias visuales entre épocas.</p>
-      <p>Si vas a compartir este sitio en redes sociales, la vista previa usará los metadatos Open Graph y Twitter definidos en la cabecera.</p>
-    </section>
-  </main>
-
   <div id="comparator-wrap">
     <div class="comparator-panel-header">
       <div class="comparator-panel-heading">
@@ -91,7 +82,7 @@
           <select id="preloaded-location" aria-label="Seleccionar ubicación para explorar">
             <option value="">Cargando ubicaciones...</option>
           </select>
-          <button type="button" class="mini-button comparator-random-button" id="random-location-button" onclick="chooseRandomLocation()" disabled>Una al azar</button>
+          <button type="button" class="mini-button comparator-random-button" id="random-location-button" disabled>Una al azar</button>
         </div>
       </div>
     </div>
@@ -99,9 +90,9 @@
     <p class="mode-selector-title">Elegí el tipo de comparación</p>
 
     <div class="mode-tabs">
-      <button class="mode-tab active" id="tab-split" onclick="setMode('split', this)">Comparador</button>
-      <button class="mode-tab" id="tab-opacity" onclick="setMode('opacity', this, { autoplay: true })">Opacidad</button>
-      <button class="mode-tab" id="tab-timeline" onclick="setMode('timeline', this, { autoplay: true })">Linea de tiempo</button>
+      <button class="mode-tab active" id="tab-split" data-mode="split">Comparador</button>
+      <button class="mode-tab" id="tab-opacity" data-mode="opacity" data-autoplay="true">Opacidad</button>
+      <button class="mode-tab" id="tab-timeline" data-mode="timeline" data-autoplay="true">Linea de tiempo</button>
     </div>
 
     <div class="labels-row" id="main-labels">
@@ -115,10 +106,9 @@
       </div>
     </div>
 
-    <div class="comparator mode-split" id="comparator"
-         onmousedown="onCompMouseDown(event)" ontouchstart="onCompMouseDown(event)">
-      <img id="img-base"    src="" alt="imagen base" />
-      <img id="img-overlay" src="" alt="imagen overlay" />
+    <div class="comparator mode-split" id="comparator">
+      <img id="img-base"    src="" alt="imagen base" draggable="false" />
+      <img id="img-overlay" src="" alt="imagen overlay" draggable="false" />
       <div class="divider" id="divider">
         <div class="divider-handle">↔</div>
       </div>
@@ -129,12 +119,11 @@
     <div class="controls" id="ctrl-opacity">
       <div class="slider-row opacity-slider-row">
         <div class="control-actions opacity-control-actions">
-          <button class="mini-button" id="opacity-play" onclick="toggleOpacityAutoplay()">Play</button>
+          <button class="mini-button" id="opacity-play">Play</button>
         </div>
         <div class="opacity-slider-stack">
           <span class="slider-label-left"  id="op-lbl-old">vieja</span>
-          <input type="range" id="opacity-slider" min="0" max="100" value="50"
-                 oninput="onOpacityInput(this.value)" />
+          <input type="range" id="opacity-slider" min="0" max="100" value="50" />
           <span class="slider-label-right" id="op-lbl-new">nueva</span>
         </div>
       </div>
@@ -143,15 +132,14 @@
     <div class="controls" id="ctrl-timeline">
       <div class="timeline-layout">
         <div class="slider-row timeline-slider-row">
-          <input type="range" id="timeline-slider" min="0" max="1" step="1" value="0"
-                 oninput="onTimelineInput(this.value)" />
+          <input type="range" id="timeline-slider" min="0" max="1" step="1" value="0" />
         </div>
         <div class="timeline-ticks" id="tl-ticks"></div>
       </div>
       <div class="control-actions">
-        <button class="mini-button" id="timeline-prev" onclick="stepTimeline(-1)">Prev</button>
-        <button class="mini-button" id="timeline-play" onclick="toggleTimelineAutoplay()">Play</button>
-        <button class="mini-button" id="timeline-next" onclick="stepTimeline(1)">Next</button>
+        <button class="mini-button" id="timeline-prev">Prev</button>
+        <button class="mini-button" id="timeline-play">Play</button>
+        <button class="mini-button" id="timeline-next">Next</button>
       </div>
       <div id="tl-current-label">—</div>
     </div>
@@ -179,50 +167,69 @@
   </footer>
 
   <script>
-    const analyticsState = {
-      comparatorSeen: false,
-      splitTracked: false,
-      opacityTracked: false,
-      timelineTracked: false,
-      comparisonContext: {}
-    };
+    // ── Referencias DOM ───────────────────────────────────────────────────────
+    const $ = (id) => document.getElementById(id);
 
-    function setComparisonContext(context) {
-      analyticsState.comparisonContext = Object.assign({}, context || {});
+    const els = {};
+
+    function cacheDom() {
+      Object.assign(els, {
+        comparatorWrap: $('comparator-wrap'),
+        comparator: $('comparator'),
+        base: $('img-base'),
+        overlay: $('img-overlay'),
+        divider: $('divider'),
+        hint: $('hint'),
+        mainLabels: $('main-labels'),
+
+        locationSelect: $('preloaded-location'),
+        randomButton: $('random-location-button'),
+        preloadedMeta: $('preloaded-meta'),
+        status: $('status'),
+
+        opacityControls: $('ctrl-opacity'),
+        opacitySlider: $('opacity-slider'),
+        opacityPlay: $('opacity-play'),
+
+        timelineControls: $('ctrl-timeline'),
+        timelineSlider: $('timeline-slider'),
+        timelineTicks: $('tl-ticks'),
+        timelinePrev: $('timeline-prev'),
+        timelinePlay: $('timeline-play'),
+        timelineNext: $('timeline-next'),
+        timelineLabel: $('tl-current-label'),
+
+        preloadStatus: $('tl-preload-status'),
+        preloadProgress: $('tl-preload-progress'),
+        preloadText: $('tl-preload-text')
+      });
     }
 
-    function trackEvent(name, properties = {}) {
-      // Event tracking disabled.
-    }
+    // ── Estado ────────────────────────────────────────────────────────────────
+    const supportedModes = new Set(['split', 'opacity', 'timeline']);
 
-    function trackError(message, properties = {}) {
-      // Error reporting disabled.
-    }
+    let currentMode = 'split';
+    let allPanos = [];
+    let currentHeading = 0;
+    let currentPitch = 0;
+    let currentKey = '';
 
-    function resetInteractionTracking() {
-      analyticsState.comparatorSeen = false;
-      analyticsState.splitTracked = false;
-      analyticsState.opacityTracked = false;
-      analyticsState.timelineTracked = false;
-    }
-
-    // ── Estado global ────────────────────────────────────────────────────────
-    let currentMode  = 'split';
-    let allPanos     = [];   // [{pano, label, rawDate, timestamp}] viejo→nuevo
-    let currentHead  = 0, currentPitch = 0, currentKey = '';
-    let oldPanoId = '', newPanoId = '';
     let timelineOffsets = [];
     let timelineRangeMax = 1;
     let currentTimelineIndex = 0;
+
     let autoplayMode = null;
     let autoplayToken = 0;
     let autoplayFrameId = null;
     let autoplayTimeoutId = null;
+
     let preloadedLocations = [];
-    const supportedModes = new Set(['split', 'opacity', 'timeline']);
+    let dragging = false;
+
     const cachedTimelineUrls = new Set();
     const pendingTimelinePreloads = new Map();
     let preloadSessionId = 0;
+
     const preloadState = {
       total: 0,
       loaded: 0,
@@ -230,19 +237,47 @@
       active: false
     };
 
-    function updatePlayButtons() {
-      const opacityButton = document.getElementById('opacity-play');
-      const timelineButton = document.getElementById('timeline-play');
+    // ── Utilidades ────────────────────────────────────────────────────────────
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
 
-      opacityButton.textContent = autoplayMode === 'opacity' ? 'Detener' : 'Play';
-      timelineButton.textContent = autoplayMode === 'timeline' ? 'Detener' : 'Play';
-      opacityButton.classList.toggle('active', autoplayMode === 'opacity');
-      timelineButton.classList.toggle('active', autoplayMode === 'timeline');
+    function setText(values) {
+      Object.entries(values).forEach(([id, value]) => {
+        const element = $(id);
+        if (element) element.textContent = value;
+      });
+    }
+
+    function getImageSrc(entry) {
+      if (!entry) return '';
+      return entry.image || staticURL(entry.pano, currentHeading, currentPitch, currentKey);
+    }
+
+    function staticURL(panoid, heading, pitch, key, w = 900, h = 600) {
+      return `https://maps.googleapis.com/maps/api/streetview?size=${w}x${h}&pano=${encodeURIComponent(panoid || '')}&heading=${heading}&pitch=${pitch}&key=${encodeURIComponent(key)}`;
+    }
+
+    function setStatus(message, ok = false) {
+      els.status.textContent = message;
+      els.status.className = ok ? 'ok' : '';
+    }
+
+    function setPreloadedMeta(message) {
+      els.preloadedMeta.textContent = message;
+    }
+
+    // ── Autoplay ──────────────────────────────────────────────────────────────
+    function updatePlayButtons() {
+      els.opacityPlay.textContent = autoplayMode === 'opacity' ? 'Detener' : 'Play';
+      els.timelinePlay.textContent = autoplayMode === 'timeline' ? 'Detener' : 'Play';
+      els.opacityPlay.classList.toggle('active', autoplayMode === 'opacity');
+      els.timelinePlay.classList.toggle('active', autoplayMode === 'timeline');
     }
 
     function clearAutoplayHandles() {
-      if (autoplayFrameId) cancelAnimationFrame(autoplayFrameId);
-      if (autoplayTimeoutId) clearTimeout(autoplayTimeoutId);
+      if (autoplayFrameId !== null) cancelAnimationFrame(autoplayFrameId);
+      if (autoplayTimeoutId !== null) clearTimeout(autoplayTimeoutId);
       autoplayFrameId = null;
       autoplayTimeoutId = null;
     }
@@ -254,23 +289,23 @@
       updatePlayButtons();
     }
 
-    function startAutoplay(mode, applyValue, fromValue, toValue) {
+    function startOpacityAutoplay() {
       stopAutoplay();
-      if (fromValue === toValue) return;
 
-      autoplayMode = mode;
+      autoplayMode = 'opacity';
       const token = autoplayToken;
       updatePlayButtons();
 
       const phases = [
-        { from: fromValue, to: toValue, duration: 2000 },
+        { from: 0, to: 100, duration: 2000 },
         { wait: 2000 },
-        { from: toValue, to: fromValue, duration: 2000 },
+        { from: 100, to: 0, duration: 2000 },
         { wait: 2000 }
       ];
 
-      const runPhase = (phaseIndex) => {
-        if (token !== autoplayToken || autoplayMode !== mode) return;
+      function runPhase(phaseIndex) {
+        if (token !== autoplayToken || autoplayMode !== 'opacity') return;
+
         const phase = phases[phaseIndex % phases.length];
 
         if (phase.wait) {
@@ -279,45 +314,71 @@
         }
 
         const startTime = performance.now();
-        const animate = (now) => {
-          if (token !== autoplayToken || autoplayMode !== mode) return;
+
+        function animate(now) {
+          if (token !== autoplayToken || autoplayMode !== 'opacity') return;
+
           const progress = Math.min((now - startTime) / phase.duration, 1);
-          const value = phase.from + ((phase.to - phase.from) * progress);
-          applyValue(value, false);
+          setOpacityValue(phase.from + (phase.to - phase.from) * progress);
 
           if (progress < 1) {
             autoplayFrameId = requestAnimationFrame(animate);
-            return;
+          } else {
+            runPhase(phaseIndex + 1);
           }
-
-          runPhase(phaseIndex + 1);
-        };
+        }
 
         autoplayFrameId = requestAnimationFrame(animate);
-      };
+      }
 
       runPhase(0);
     }
 
-    // ── Modos ────────────────────────────────────────────────────────────────
+    async function startTimelineAutoplay() {
+      stopAutoplay();
+      if (allPanos.length < 2) return;
+
+      autoplayMode = 'timeline';
+      const token = autoplayToken;
+      updatePlayButtons();
+
+      // Espera a que todas las imágenes estén en caché antes de iniciar.
+      await Promise.all(allPanos.map((entry) => preloadImage(getImageSrc(entry))));
+      if (token !== autoplayToken || autoplayMode !== 'timeline') return;
+
+      const forward = allPanos.map((_, index) => index);
+      const backward = forward.slice(1, -1).reverse();
+      const sequence = [...forward, ...backward];
+      let position = 0;
+
+      function showNext() {
+        if (token !== autoplayToken || autoplayMode !== 'timeline') return;
+
+        applyTimelineIndex(sequence[position], false);
+        position = (position + 1) % sequence.length;
+        autoplayTimeoutId = setTimeout(showNext, 1200);
+      }
+
+      showNext();
+    }
+
     function startModeAutoplay(mode) {
-      if (mode === 'opacity') {
-        startAutoplay('opacity', onOpacityInput, 0, 100);
+      if (mode === 'opacity') startOpacityAutoplay();
+      if (mode === 'timeline') void startTimelineAutoplay();
+    }
+
+    function toggleAutoplay(mode) {
+      if (autoplayMode === mode) {
+        stopAutoplay();
         return;
       }
 
-      if (mode === 'timeline') {
-        startAutoplay('timeline', onTimelineInput, timelineOffsets[0] || 0, timelineRangeMax);
-      }
+      setMode(mode, { autoplay: true });
     }
 
-    function getTabButtonForMode(mode) {
-      return document.getElementById(`tab-${mode}`);
-    }
-
+    // ── URL / estado compartible ──────────────────────────────────────────────
     function getCurrentSelectedLocation() {
-      const selectedSlug = document.getElementById('preloaded-location')?.value;
-      return preloadedLocations.find((entry) => entry.slug === selectedSlug) || null;
+      return preloadedLocations.find((entry) => entry.slug === els.locationSelect.value) || null;
     }
 
     function getLocationOrder(location) {
@@ -340,454 +401,204 @@
       const nextUrl = nextHash
         ? `${window.location.pathname}${window.location.search}#${nextHash}`
         : `${window.location.pathname}${window.location.search}`;
+
       window.history.replaceState(null, '', nextUrl);
     }
 
     function parseUrlFragmentState() {
       const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-      const rawLocationOrder = Number.parseInt(params.get('loc') || '', 10);
+      const locationOrder = Number.parseInt(params.get('loc') || '', 10);
       const mode = params.get('mode');
 
       return {
-        locationIndex: Number.isInteger(rawLocationOrder) && rawLocationOrder > 0
-          ? rawLocationOrder - 1
+        locationIndex: Number.isInteger(locationOrder) && locationOrder > 0
+          ? locationOrder - 1
           : null,
         mode: supportedModes.has(mode) ? mode : null
       };
     }
 
-    function setMode(mode, tabBtn, options = {}) {
-      const previousMode = currentMode;
-      stopAutoplay();
-      currentMode = mode;
-      const comp = document.getElementById('comparator');
-      comp.className = 'comparator mode-' + mode;
-
-      document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
-      if (tabBtn) tabBtn.classList.add('active');
-
-      document.getElementById('hint').style.display = mode === 'split' ? 'block' : 'none';
-      document.getElementById('ctrl-opacity').classList.toggle('visible', mode === 'opacity');
-      document.getElementById('ctrl-timeline').classList.toggle('visible', mode === 'timeline');
-      document.getElementById('main-labels').style.display = mode === 'timeline' ? 'none' : '';
-
-      const base    = document.getElementById('img-base');
-      const overlay = document.getElementById('img-overlay');
+    // ── Modos de comparación ──────────────────────────────────────────────────
+    function renderMode(mode) {
+      const oldest = allPanos[0];
+      const newest = allPanos.at(-1);
 
       if (mode === 'split') {
-        base.src    = getImageSrc(allPanos[allPanos.length - 1]);
-        overlay.src = getImageSrc(allPanos[0]);
-        overlay.style.clipPath = 'inset(0 50% 0 0)';
-        overlay.style.opacity  = '1';
-        document.getElementById('divider').style.left = '50%';
-      }
-
-      if (mode === 'opacity') {
-        // base = vieja (fija), overlay = nueva (con opacidad variable)
-        base.src    = getImageSrc(allPanos[0]);
-        overlay.src = getImageSrc(allPanos[allPanos.length - 1]);
-        overlay.style.clipPath = 'none';
-        setOpacityValue(document.getElementById('opacity-slider').value);
-      }
-
-      if (mode === 'timeline') {
-        base.src = '';
-        applyTimelineIndex(currentTimelineIndex, false);
-      }
-
-      if (previousMode !== mode && allPanos.length) {
-        trackEvent('mode_changed', {
-          from_mode: previousMode,
-          to_mode: mode,
-          location_label: analyticsState.comparisonContext.locationLabel,
-          location_slug: analyticsState.comparisonContext.locationSlug
-        });
-      }
-
-      syncUrlFragment(mode);
-
-      if (options.autoplay && allPanos.length) {
-        startModeAutoplay(mode);
-      }
-    }
-
-    // ── Split drag ───────────────────────────────────────────────────────────
-    let dragging = false;
-
-    function onCompMouseDown(e) {
-      if (currentMode !== 'split') return;
-      stopAutoplay();
-      if (!analyticsState.splitTracked) {
-        analyticsState.splitTracked = true;
-        trackEvent('split_drag_started', {
-          location_label: analyticsState.comparisonContext.locationLabel,
-          location_slug: analyticsState.comparisonContext.locationSlug
-        });
-      }
-      dragging = true;
-      e.preventDefault();
-      updateSplitSlider(e);
-    }
-    document.addEventListener('mousemove', e => { if (dragging) updateSplitSlider(e); });
-    document.addEventListener('touchmove', e => { if (dragging) updateSplitSlider(e.touches[0]); });
-    document.addEventListener('mouseup',  () => { dragging = false; });
-    document.addEventListener('touchend', () => { dragging = false; });
-
-    function updateSplitSlider(e) {
-      const comp = document.getElementById('comparator');
-      const rect = comp.getBoundingClientRect();
-      const x    = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      const pct  = (x / rect.width) * 100;
-      document.getElementById('img-overlay').style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
-      document.getElementById('divider').style.left = pct + '%';
-    }
-
-    // ── Opacity control ──────────────────────────────────────────────────────
-    function setOpacityValue(val) {
-      const safeValue = Math.max(0, Math.min(100, Number(val)));
-      document.getElementById('opacity-slider').value = safeValue;
-      document.getElementById('img-overlay').style.opacity = safeValue / 100;
-    }
-
-    function onOpacityInput(val, fromUser = true) {
-      if (fromUser) stopAutoplay();
-      if (fromUser && !analyticsState.opacityTracked) {
-        analyticsState.opacityTracked = true;
-        trackEvent('opacity_slider_used', {
-          location_label: analyticsState.comparisonContext.locationLabel,
-          location_slug: analyticsState.comparisonContext.locationSlug
-        });
-      }
-      setOpacityValue(val);
-    }
-
-    function toggleOpacityAutoplay() {
-      if (autoplayMode === 'opacity') {
-        trackEvent('autoplay_toggled', { mode: 'opacity', action: 'stop' });
-        stopAutoplay();
+        els.base.src = getImageSrc(newest);
+        els.overlay.src = getImageSrc(oldest);
+        els.overlay.style.clipPath = 'inset(0 50% 0 0)';
+        els.overlay.style.opacity = '1';
+        els.divider.style.left = '50%';
         return;
       }
 
-      trackEvent('autoplay_toggled', { mode: 'opacity', action: 'start' });
-      setMode('opacity', document.getElementById('tab-opacity'), { autoplay: true });
+      if (mode === 'opacity') {
+        els.base.src = getImageSrc(oldest);
+        els.overlay.src = getImageSrc(newest);
+        els.overlay.style.clipPath = 'none';
+        setOpacityValue(els.opacitySlider.value);
+        return;
+      }
+
+      applyTimelineIndex(currentTimelineIndex, false);
     }
 
-    // ── Timeline control ─────────────────────────────────────────────────────
+    function setMode(mode, { autoplay = false } = {}) {
+      if (!supportedModes.has(mode) || !allPanos.length) return;
 
-    function getNearestTimelineIndex(targetOffset) {
-      let nearestIndex = 0;
-      let nearestDistance = Number.POSITIVE_INFINITY;
+      stopAutoplay();
+      currentMode = mode;
 
-      timelineOffsets.forEach((offset, index) => {
-        const distance = Math.abs(offset - targetOffset);
-        if (distance < nearestDistance) {
-          nearestDistance = distance;
-          nearestIndex = index;
-        }
+      els.comparator.className = `comparator mode-${mode}`;
+
+      document.querySelectorAll('.mode-tab').forEach((button) => {
+        button.classList.toggle('active', button.dataset.mode === mode);
       });
 
-      return nearestIndex;
+      els.hint.hidden = mode !== 'split';
+      els.opacityControls.classList.toggle('visible', mode === 'opacity');
+      els.timelineControls.classList.toggle('visible', mode === 'timeline');
+      els.mainLabels.hidden = mode === 'timeline';
+
+      renderMode(mode);
+      syncUrlFragment(mode);
+
+      if (autoplay) startModeAutoplay(mode);
+    }
+
+    // ── Comparador split ───────────────────────────────────────────────────────
+    function updateSplitSlider(event) {
+      const rect = els.comparator.getBoundingClientRect();
+      if (!rect.width) return;
+
+      const x = clamp(event.clientX - rect.left, 0, rect.width);
+      const percent = (x / rect.width) * 100;
+
+      els.overlay.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+      els.divider.style.left = `${percent}%`;
+    }
+
+    function startDragging(event) {
+      if (currentMode !== 'split') return;
+
+      stopAutoplay();
+      event.preventDefault();
+      dragging = true;
+      els.comparator.setPointerCapture?.(event.pointerId);
+      updateSplitSlider(event);
+    }
+
+    function stopDragging(event) {
+      dragging = false;
+      if (event?.pointerId !== undefined && els.comparator.hasPointerCapture?.(event.pointerId)) {
+        els.comparator.releasePointerCapture(event.pointerId);
+      }
+    }
+
+    // ── Opacidad ───────────────────────────────────────────────────────────────
+    function setOpacityValue(value) {
+      const safeValue = clamp(Number(value), 0, 100);
+      els.opacitySlider.value = String(safeValue);
+      els.overlay.style.opacity = String(safeValue / 100);
+    }
+
+    function onOpacityInput(value, fromUser = true) {
+      if (fromUser) stopAutoplay();
+      setOpacityValue(value);
+    }
+
+    // ── Timeline ───────────────────────────────────────────────────────────────
+    function getNearestTimelineIndex(target) {
+      if (!timelineOffsets.length) return 0;
+
+      let low = 0;
+      let high = timelineOffsets.length - 1;
+
+      while (low < high) {
+        const middle = Math.floor((low + high) / 2);
+        if (timelineOffsets[middle] < target) low = middle + 1;
+        else high = middle;
+      }
+
+      if (low === 0) return 0;
+
+      const previous = timelineOffsets[low - 1];
+      const current = timelineOffsets[low];
+      return target - previous <= current - target ? low - 1 : low;
     }
 
     function updateTimelineButtons() {
-      document.getElementById('timeline-prev').disabled = currentTimelineIndex <= 0;
-      document.getElementById('timeline-next').disabled = currentTimelineIndex >= allPanos.length - 1;
+      els.timelinePrev.disabled = currentTimelineIndex <= 0;
+      els.timelineNext.disabled = currentTimelineIndex >= allPanos.length - 1;
     }
 
     function applyTimelineIndex(index, fromUser = true) {
       if (!allPanos.length) return;
       if (fromUser) stopAutoplay();
 
-      currentTimelineIndex = Math.max(0, Math.min(index, allPanos.length - 1));
-      const p = allPanos[currentTimelineIndex];
+      currentTimelineIndex = clamp(index, 0, allPanos.length - 1);
+
+      const pano = allPanos[currentTimelineIndex];
       const offset = timelineOffsets[currentTimelineIndex] || 0;
+      const src = getImageSrc(pano);
 
-      const overlay = document.getElementById('img-overlay');
-      const src = getImageSrc(p);
-      if (overlay.getAttribute('src') !== src) overlay.src = src;
-      overlay.style.clipPath = 'none';
-      overlay.style.opacity  = '1';
-      document.getElementById('img-base').src = '';
-      document.getElementById('timeline-slider').value = String(offset);
+      if (els.overlay.getAttribute('src') !== src) els.overlay.src = src;
+      els.overlay.style.clipPath = 'none';
+      els.overlay.style.opacity = '1';
+      els.base.src = '';
+      els.timelineSlider.value = String(offset);
+      els.timelineLabel.textContent = pano.label;
 
-      document.getElementById('tl-current-label').textContent = p.label;
       updateTimelineButtons();
     }
 
-    function onTimelineInput(val, fromUser = true) {
+    function onTimelineInput(value, fromUser = true) {
       if (!allPanos.length) return;
-      if (fromUser && !analyticsState.timelineTracked) {
-        analyticsState.timelineTracked = true;
-        trackEvent('timeline_slider_used', {
-          location_label: analyticsState.comparisonContext.locationLabel,
-          location_slug: analyticsState.comparisonContext.locationSlug
-        });
-      }
-      const idx = getNearestTimelineIndex(Number(val));
-      applyTimelineIndex(idx, fromUser);
+      applyTimelineIndex(getNearestTimelineIndex(Number(value)), fromUser);
     }
 
     function stepTimeline(direction) {
       stopAutoplay();
-      trackEvent('timeline_step_clicked', {
-        direction: direction > 0 ? 'next' : 'prev',
-        current_index: currentTimelineIndex,
-        next_index: Math.max(0, Math.min(currentTimelineIndex + direction, allPanos.length - 1))
-      });
       applyTimelineIndex(currentTimelineIndex + direction, false);
     }
 
-    function toggleTimelineAutoplay() {
-      if (autoplayMode === 'timeline') {
-        trackEvent('autoplay_toggled', { mode: 'timeline', action: 'stop' });
-        stopAutoplay();
-        return;
-      }
-
-      trackEvent('autoplay_toggled', { mode: 'timeline', action: 'start' });
-      setMode('timeline', document.getElementById('tab-timeline'), { autoplay: true });
-    }
-
-    function setStatus(msg, ok = false) {
-      const el = document.getElementById('status');
-      if (!el) return;
-      el.textContent = msg;
-      el.className   = ok ? 'ok' : '';
-    }
-
+    // ── Precarga de imágenes ──────────────────────────────────────────────────
     function updateTimelinePreloadStatus() {
-      const status = document.getElementById('tl-preload-status');
-      const progress = document.getElementById('tl-preload-progress');
-      const text = document.getElementById('tl-preload-text');
+      const { total, loaded, failed, active } = preloadState;
 
-      if (!preloadState.active || preloadState.total === 0) {
-        status.classList.remove('visible', 'done');
-        progress.style.width = '0%';
-        text.textContent = 'Preparando caché…';
+      if (!active || total === 0) {
+        els.preloadStatus.classList.remove('visible', 'done');
+        els.preloadProgress.style.width = '0%';
+        els.preloadText.textContent = 'Preparando caché…';
         return;
       }
 
-      const completed = preloadState.loaded + preloadState.failed;
-      const percent = Math.round((completed / preloadState.total) * 100);
-      status.classList.add('visible');
-      status.classList.toggle('done', completed >= preloadState.total && preloadState.failed === 0);
-      progress.style.width = `${percent}%`;
+      const completed = loaded + failed;
+      const percent = Math.round((completed / total) * 100);
 
-      if (completed >= preloadState.total) {
-        text.textContent = preloadState.failed
-          ? `Caché lista con ${preloadState.failed} carga${preloadState.failed === 1 ? '' : 's'} pendiente${preloadState.failed === 1 ? '' : 's'}`
+      els.preloadStatus.classList.add('visible');
+      els.preloadStatus.classList.toggle('done', completed >= total && failed === 0);
+      els.preloadProgress.style.width = `${percent}%`;
+
+      if (completed >= total) {
+        els.preloadText.textContent = failed
+          ? `Caché lista con ${failed} carga${failed === 1 ? '' : 's'} pendiente${failed === 1 ? '' : 's'}`
           : 'Timeline listo';
         return;
       }
 
-      text.textContent = `Precargando timeline ${completed}/${preloadState.total}`;
+      els.preloadText.textContent = `Precargando timeline ${completed}/${total}`;
     }
 
     function resetTimelinePreloadStatus() {
       preloadSessionId += 1;
-      preloadState.total = 0;
-      preloadState.loaded = 0;
-      preloadState.failed = 0;
-      preloadState.active = false;
+      Object.assign(preloadState, {
+        total: 0,
+        loaded: 0,
+        failed: 0,
+        active: false
+      });
       updateTimelinePreloadStatus();
-    }
-
-    function getImageSrc(entry) {
-      if (!entry) return '';
-      if (entry.image) return entry.image;
-      return staticURL(entry.pano, currentHead, currentPitch, currentKey);
-    }
-
-    function setPreloadedMeta(message) {
-      document.getElementById('preloaded-meta').textContent = message;
-    }
-
-    function syncPreloadedControls() {
-      const hasLocations = preloadedLocations.length > 0;
-      const select = document.getElementById('preloaded-location');
-      const randomButton = document.getElementById('random-location-button');
-
-      if (select) select.disabled = !hasLocations;
-      if (randomButton) randomButton.disabled = !hasLocations;
-    }
-
-    function populatePreloadedSelect() {
-      const select = document.getElementById('preloaded-location');
-      select.innerHTML = '';
-
-      if (!preloadedLocations.length) {
-        const option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'No hay ubicaciones precargadas todavia';
-        select.appendChild(option);
-        syncPreloadedControls();
-        return;
-      }
-
-      preloadedLocations.forEach((location, index) => {
-        const option = document.createElement('option');
-        option.value = location.slug;
-        option.textContent = location.label;
-        if (index === 0) option.selected = true;
-        select.appendChild(option);
-      });
-
-      syncPreloadedControls();
-    }
-
-    function openPreloadedLocation(location, interactionSource = 'select', options = {}) {
-      if (!location) {
-        setStatus('Elegi una ubicacion precargada.');
-        trackError('Elegi una ubicacion precargada.', { reason: 'missing_preloaded_selection' });
-        return false;
-      }
-
-      const select = document.getElementById('preloaded-location');
-      if (select && select.value !== location.slug) select.value = location.slug;
-
-      trackEvent('preloaded_location_selected', {
-        interaction_source: interactionSource,
-        location_label: location.label,
-        location_slug: location.slug,
-        pano_count: (location.panos || []).length
-      });
-
-      trackEvent('preloaded_location_opened', {
-        interaction_source: interactionSource,
-        location_label: location.label,
-        location_slug: location.slug,
-        pano_count: (location.panos || []).length
-      });
-
-      loadLocationFromManifest(location, options);
-      return true;
-    }
-
-    function loadLocationFromManifest(location, options = {}) {
-      stopAutoplay();
-      resetTimelinePreloadStatus();
-      setComparisonContext({
-        source: 'preloaded',
-        locationLabel: location.label,
-        locationSlug: location.slug
-      });
-
-      allPanos = (location.panos || []).map((entry, index) => ({
-        pano: entry.pano,
-        rawDate: entry.rawDate,
-        label: entry.label || formatDate(entry.rawDate || 'sin fecha'),
-        timestamp: Number.isFinite(entry.timestamp) ? entry.timestamp : parseStreetViewDate(entry.rawDate),
-        sourceIndex: index,
-        image: entry.image
-      }));
-
-      if (!allPanos.length) {
-        setStatus('La ubicacion seleccionada no tiene imagenes precargadas.');
-        trackError('La ubicacion seleccionada no tiene imagenes precargadas.', {
-          reason: 'preloaded_location_without_images',
-          location_label: location.label,
-          location_slug: location.slug
-        });
-        return;
-      }
-
-      currentHead = location.heading || 0;
-      currentPitch = location.pitch || 0;
-      currentKey = '';
-      oldPanoId = allPanos[0].pano || '';
-      newPanoId = allPanos[allPanos.length - 1].pano || '';
-      setStatus('', true);
-      showComparison(
-        allPanos[0].label,
-        allPanos[allPanos.length - 1].label,
-        allPanos.length,
-        options.mode || currentMode
-      );
-      trackEvent('comparison_ready', {
-        source: 'preloaded',
-        location_label: location.label,
-        location_slug: location.slug,
-        oldest_label: allPanos[0].label,
-        newest_label: allPanos[allPanos.length - 1].label,
-        pano_count: allPanos.length
-      });
-    }
-
-    function loadSelectedLocation() {
-      const selectedSlug = document.getElementById('preloaded-location').value;
-      const location = preloadedLocations.find((entry) => entry.slug === selectedSlug);
-
-      return openPreloadedLocation(location, 'select');
-    }
-
-    function chooseRandomLocation(options = {}) {
-      if (!preloadedLocations.length) {
-        setStatus('No hay ubicaciones precargadas para elegir al azar.');
-        trackError('No hay ubicaciones precargadas para elegir al azar.', { reason: 'random_preloaded_selection_unavailable' });
-        return false;
-      }
-
-      const currentSlug = document.getElementById('preloaded-location').value;
-      let candidateLocations = preloadedLocations;
-
-      if (preloadedLocations.length > 1 && currentSlug) {
-        const differentLocations = preloadedLocations.filter((entry) => entry.slug !== currentSlug);
-        if (differentLocations.length) candidateLocations = differentLocations;
-      }
-
-      const randomIndex = Math.floor(Math.random() * candidateLocations.length);
-      return openPreloadedLocation(candidateLocations[randomIndex], 'random_button', { mode: options.mode || currentMode });
-    }
-
-    async function loadPreloadedLocations() {
-      try {
-        const response = await fetch(`data/manifest.json?v=${Date.now()}`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const manifest = await response.json();
-        preloadedLocations = Array.isArray(manifest.locations) ? manifest.locations : [];
-        populatePreloadedSelect();
-        trackEvent('preloaded_manifest_loaded', {
-          location_count: preloadedLocations.length,
-          generated_at: manifest.generatedAt || 'unknown'
-        });
-
-        if (!preloadedLocations.length) {
-          setPreloadedMeta('No hay ubicaciones generadas todavia. Ejecuta el workflow de GitHub Actions para poblar este selector.');
-          trackError('No hay ubicaciones generadas todavia.', { reason: 'empty_manifest' });
-          return;
-        }
-
-        const generatedLabel = manifest.generatedAt
-          ? new Date(manifest.generatedAt).toLocaleString('es-AR')
-          : 'fecha desconocida';
-        setPreloadedMeta(`${preloadedLocations.length} ubicacion(es) disponibles. Ultima generacion: ${generatedLabel}.`);
-
-        const fragmentState = parseUrlFragmentState();
-        const initialLocation = Number.isInteger(fragmentState.locationIndex)
-          ? preloadedLocations[fragmentState.locationIndex] || null
-          : null;
-        const initialMode = fragmentState.mode || currentMode;
-
-        if (initialLocation) {
-          openPreloadedLocation(initialLocation, 'fragment', { mode: initialMode });
-          return;
-        }
-
-        chooseRandomLocation({ mode: initialMode });
-      } catch (error) {
-        preloadedLocations = [];
-        populatePreloadedSelect();
-        setPreloadedMeta('No se pudo cargar data/manifest.json. Revisa que el workflow haya generado el manifiesto antes de publicar en GitHub Pages.');
-        trackError('No se pudo cargar data/manifest.json.', {
-          reason: 'manifest_load_failed',
-          detail: error instanceof Error ? error.message : String(error)
-        });
-      }
-    }
-
-    function staticURL(panoid, heading, pitch, key, w = 900, h = 600) {
-      return `https://maps.googleapis.com/maps/api/streetview?size=${w}x${h}&pano=${encodeURIComponent(panoid)}&heading=${heading}&pitch=${pitch}&key=${encodeURIComponent(key)}`;
     }
 
     function preloadImage(src) {
@@ -795,54 +606,47 @@
       if (cachedTimelineUrls.has(src)) return Promise.resolve('cached');
       if (pendingTimelinePreloads.has(src)) return pendingTimelinePreloads.get(src);
 
-      const image = new Image();
-      let resolvePreload;
-      const preloadPromise = new Promise((resolve) => {
-        resolvePreload = resolve;
+      const promise = new Promise((resolve) => {
+        const image = new Image();
+
+        function finish(result) {
+          pendingTimelinePreloads.delete(src);
+          if (result === 'loaded') cachedTimelineUrls.add(src);
+          resolve(result);
+        }
+
+        image.onload = () => finish('loaded');
+        image.onerror = () => finish('failed');
+        image.decoding = 'async';
+        image.src = src;
       });
-      pendingTimelinePreloads.set(src, preloadPromise);
 
-      const finalize = (loaded) => {
-        pendingTimelinePreloads.delete(src);
-        image.onload = null;
-        image.onerror = null;
-        if (loaded) cachedTimelineUrls.add(src);
-        resolvePreload(loaded ? 'loaded' : 'failed');
-      };
-
-      image.onload = () => finalize(true);
-      image.onerror = () => finalize(false);
-      image.decoding = 'async';
-      image.src = src;
-      return preloadPromise;
+      pendingTimelinePreloads.set(src, promise);
+      return promise;
     }
 
     function buildTimelinePreloadUrls(centerIndex = 0) {
-      const uniqueUrls = new Set();
-      const orderedEntries = [];
+      const urls = new Set();
 
       for (let distance = 0; distance < allPanos.length; distance += 1) {
         const leftIndex = centerIndex - distance;
         const rightIndex = centerIndex + distance;
 
-        if (leftIndex >= 0) orderedEntries.push(allPanos[leftIndex]);
-        if (distance !== 0 && rightIndex < allPanos.length) orderedEntries.push(allPanos[rightIndex]);
+        if (leftIndex >= 0) urls.add(getImageSrc(allPanos[leftIndex]));
+        if (distance > 0 && rightIndex < allPanos.length) {
+          urls.add(getImageSrc(allPanos[rightIndex]));
+        }
       }
 
-      orderedEntries.forEach((entry) => {
-        uniqueUrls.add(getImageSrc(entry));
-      });
-
-      return Array.from(uniqueUrls);
+      return [...urls];
     }
 
     function scheduleBackgroundPreload(task) {
       if ('requestIdleCallback' in window) {
         window.requestIdleCallback(task, { timeout: 500 });
-        return;
+      } else {
+        window.setTimeout(task, 80);
       }
-
-      window.setTimeout(task, 80);
     }
 
     async function preloadQueue(urls, sessionId, background = false) {
@@ -852,11 +656,8 @@
         const result = await preloadImage(src);
         if (sessionId !== preloadSessionId) return;
 
-        if (result === 'loaded' || result === 'cached') {
-          preloadState.loaded += 1;
-        } else if (result === 'failed') {
-          preloadState.failed += 1;
-        }
+        if (result === 'loaded' || result === 'cached') preloadState.loaded += 1;
+        else if (result === 'failed') preloadState.failed += 1;
 
         updateTimelinePreloadStatus();
 
@@ -872,20 +673,23 @@
       const urls = buildTimelinePreloadUrls(centerIndex);
       const readyCount = urls.filter((src) => cachedTimelineUrls.has(src)).length;
       const queuedUrls = urls.filter((src) => !cachedTimelineUrls.has(src));
-      const immediateCount = Math.min(3, queuedUrls.length);
-      const immediateUrls = queuedUrls.slice(0, immediateCount);
-      const backgroundUrls = queuedUrls.slice(immediateCount);
+      const immediateUrls = queuedUrls.slice(0, 3);
+      const backgroundUrls = queuedUrls.slice(3);
 
       preloadSessionId += 1;
       const sessionId = preloadSessionId;
-      preloadState.total = urls.length;
-      preloadState.loaded = readyCount;
-      preloadState.failed = 0;
-      preloadState.active = urls.length > 0;
+
+      Object.assign(preloadState, {
+        total: urls.length,
+        loaded: readyCount,
+        failed: 0,
+        active: urls.length > 0
+      });
+
       updateTimelinePreloadStatus();
 
       void preloadQueue(immediateUrls, sessionId).then(() => {
-        if (sessionId !== preloadSessionId || backgroundUrls.length === 0) {
+        if (sessionId !== preloadSessionId || !backgroundUrls.length) {
           updateTimelinePreloadStatus();
           return;
         }
@@ -896,6 +700,7 @@
       });
     }
 
+    // ── Fechas y escala temporal ──────────────────────────────────────────────
     function parseStreetViewDate(rawDate) {
       if (!rawDate) return null;
       if (/^\d{4}$/.test(rawDate)) return Date.UTC(Number(rawDate), 0, 1);
@@ -909,8 +714,11 @@
       return Number.isNaN(parsed) ? null : parsed;
     }
 
-    function formatDate(svTime) {
-      const rawDate = typeof svTime === 'string' ? svTime : svTime?.description || svTime?.date || '';
+    function formatDate(value) {
+      const rawDate = typeof value === 'string'
+        ? value
+        : value?.description || value?.date || '';
+
       if (!rawDate) return '?';
       if (/^\d{4}$/.test(rawDate)) return rawDate;
 
@@ -925,34 +733,40 @@
     }
 
     function rebuildTimelineScale() {
-      const slider = document.getElementById('timeline-slider');
-      const ticks = document.getElementById('tl-ticks');
-
       if (!allPanos.length) {
-        slider.min = '0';
-        slider.max = '1';
-        slider.value = '0';
+        els.timelineSlider.min = '0';
+        els.timelineSlider.max = '1';
+        els.timelineSlider.value = '0';
         timelineOffsets = [];
         timelineRangeMax = 1;
-        ticks.innerHTML = '';
+        els.timelineTicks.replaceChildren();
         return;
       }
 
-      const firstTimestamp = allPanos.find(entry => Number.isFinite(entry.timestamp))?.timestamp ?? 0;
+      const firstTimestamp = allPanos.find((entry) => Number.isFinite(entry.timestamp))?.timestamp ?? 0;
+      let previousOffset = 0;
+
       timelineOffsets = allPanos.map((entry, index) => {
-        if (Number.isFinite(entry.timestamp)) return entry.timestamp - firstTimestamp;
-        return index === 0 ? 0 : timelineOffsets[index - 1] + 1;
+        const offset = Number.isFinite(entry.timestamp)
+          ? entry.timestamp - firstTimestamp
+          : index === 0 ? 0 : previousOffset + 1;
+
+        previousOffset = offset;
+        return offset;
       });
-      timelineRangeMax = Math.max(timelineOffsets[timelineOffsets.length - 1] || 0, 1);
 
-      slider.min = '0';
-      slider.max = String(timelineRangeMax);
-      slider.step = '1';
-      slider.value = String(timelineOffsets[0] || 0);
+      timelineRangeMax = Math.max(timelineOffsets.at(-1) || 0, 1);
 
-      ticks.innerHTML = '';
+      Object.assign(els.timelineSlider, {
+        min: '0',
+        max: String(timelineRangeMax),
+        step: '1',
+        value: String(timelineOffsets[0] || 0)
+      });
+
       const total = allPanos.length;
       const labeledIndexes = new Set([0, total - 1]);
+
       if (total <= 8) {
         allPanos.forEach((_, index) => labeledIndexes.add(index));
       } else {
@@ -961,69 +775,216 @@
         }
       }
 
-      allPanos.forEach((entry, index) => {
+      const ticks = allPanos.map((entry, index) => {
         const tick = document.createElement('div');
         tick.className = 'timeline-tick';
-        const left = timelineRangeMax === 0 ? 0 : (timelineOffsets[index] / timelineRangeMax) * 100;
-        tick.style.left = `${left}%`;
+        tick.style.left = `${(timelineOffsets[index] / timelineRangeMax) * 100}%`;
 
-        if (!labeledIndexes.has(index)) {
-          tick.classList.add('compact');
-        } else if (index === 0) {
-          tick.classList.add('edge-left');
-        } else if (index === total - 1) {
-          tick.classList.add('edge-right');
-        }
+        if (!labeledIndexes.has(index)) tick.classList.add('compact');
+        else if (index === 0) tick.classList.add('edge-left');
+        else if (index === total - 1) tick.classList.add('edge-right');
 
         const label = document.createElement('span');
         label.textContent = entry.label;
         tick.appendChild(label);
-        ticks.appendChild(tick);
+        return tick;
       });
+
+      els.timelineTicks.replaceChildren(...ticks);
     }
 
-    function showComparison(oldDate, newDate, count, targetMode = currentMode) {
-      resetInteractionTracking();
+    // ── Ubicaciones ───────────────────────────────────────────────────────────
+    function syncPreloadedControls() {
+      const disabled = preloadedLocations.length === 0;
+      els.locationSelect.disabled = disabled;
+      els.randomButton.disabled = disabled;
+    }
 
-      // Labels
-      document.getElementById('lbl-old').textContent  = oldDate;
-      document.getElementById('lbl-new').textContent  = newDate;
-      document.getElementById('info-old').textContent = oldDate;
-      document.getElementById('info-new').textContent = newDate;
-      document.getElementById('info-count').textContent = count;
-      document.getElementById('op-lbl-old').textContent = oldDate;
-      document.getElementById('op-lbl-new').textContent = newDate;
-      rebuildTimelineScale();
+    function populatePreloadedSelect() {
+      if (!preloadedLocations.length) {
+        els.locationSelect.replaceChildren(
+          new Option('No hay ubicaciones precargadas todavía', '')
+        );
+        syncPreloadedControls();
+        return;
+      }
 
-      // Reset sliders
-      document.getElementById('opacity-slider').value  = 50;
+      els.locationSelect.replaceChildren(
+        ...preloadedLocations.map((location) => new Option(location.label, location.slug))
+      );
+
+      syncPreloadedControls();
+    }
+
+    function openPreloadedLocation(location, options = {}) {
+      if (!location) {
+        setStatus('Elegí una ubicación precargada.');
+        return false;
+      }
+
+      els.locationSelect.value = location.slug;
+      loadLocationFromManifest(location, options);
+      return true;
+    }
+
+    function loadLocationFromManifest(location, { mode = currentMode } = {}) {
+      stopAutoplay();
+      resetTimelinePreloadStatus();
+
+      allPanos = (location.panos || []).map((entry, sourceIndex) => ({
+        pano: entry.pano,
+        rawDate: entry.rawDate,
+        label: entry.label || formatDate(entry.rawDate || 'sin fecha'),
+        timestamp: Number.isFinite(entry.timestamp)
+          ? entry.timestamp
+          : parseStreetViewDate(entry.rawDate),
+        sourceIndex,
+        image: entry.image
+      }));
+
+      if (!allPanos.length) {
+        setStatus('La ubicación seleccionada no tiene imágenes precargadas.');
+        return;
+      }
+
+      currentHeading = location.heading || 0;
+      currentPitch = location.pitch || 0;
+      currentKey = '';
+      setStatus('', true);
+      showComparison(mode);
+    }
+
+    function loadSelectedLocation() {
+      return openPreloadedLocation(getCurrentSelectedLocation());
+    }
+
+    function chooseRandomLocation({ mode = currentMode } = {}) {
+      if (!preloadedLocations.length) {
+        setStatus('No hay ubicaciones precargadas para elegir al azar.');
+        return false;
+      }
+
+      const currentSlug = els.locationSelect.value;
+      const candidates = preloadedLocations.length > 1 && currentSlug
+        ? preloadedLocations.filter((entry) => entry.slug !== currentSlug)
+        : preloadedLocations;
+
+      const location = candidates[Math.floor(Math.random() * candidates.length)];
+      return openPreloadedLocation(location, { mode });
+    }
+
+    async function loadPreloadedLocations() {
+      try {
+        const response = await fetch(`data/manifest.json?v=${Date.now()}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const manifest = await response.json();
+        preloadedLocations = Array.isArray(manifest.locations) ? manifest.locations : [];
+        populatePreloadedSelect();
+
+        if (!preloadedLocations.length) {
+          setPreloadedMeta('No hay ubicaciones generadas todavía. Ejecutá el workflow de GitHub Actions para poblar este selector.');
+          return;
+        }
+
+        const generatedLabel = manifest.generatedAt
+          ? new Date(manifest.generatedAt).toLocaleString('es-AR')
+          : 'fecha desconocida';
+
+        setPreloadedMeta(
+          `${preloadedLocations.length} ubicación(es) disponibles. Última generación: ${generatedLabel}.`
+        );
+
+        const fragmentState = parseUrlFragmentState();
+        const initialLocation = Number.isInteger(fragmentState.locationIndex)
+          ? preloadedLocations[fragmentState.locationIndex] || null
+          : null;
+        const initialMode = fragmentState.mode || currentMode;
+
+        if (initialLocation) {
+          openPreloadedLocation(initialLocation, { mode: initialMode });
+        } else {
+          chooseRandomLocation({ mode: initialMode });
+        }
+      } catch (error) {
+        preloadedLocations = [];
+        populatePreloadedSelect();
+        setPreloadedMeta('No se pudo cargar data/manifest.json. Revisá que el workflow haya generado el manifiesto antes de publicar en GitHub Pages.');
+        console.error('No se pudo cargar data/manifest.json:', error);
+      }
+    }
+
+    // ── Inicio de una comparación ─────────────────────────────────────────────
+    function showComparison(targetMode = currentMode) {
+      const oldest = allPanos[0];
+      const newest = allPanos.at(-1);
+
+      setText({
+        'lbl-old': oldest.label,
+        'lbl-new': newest.label,
+        'info-old': oldest.label,
+        'info-new': newest.label,
+        'info-count': allPanos.length,
+        'op-lbl-old': oldest.label,
+        'op-lbl-new': newest.label,
+        'tl-current-label': oldest.label
+      });
+
+      els.opacitySlider.value = '50';
       currentTimelineIndex = 0;
 
-      // Imágenes iniciales (modo split)
-      document.getElementById('img-base').src    = getImageSrc(allPanos[allPanos.length - 1]);
-      document.getElementById('img-overlay').src = getImageSrc(allPanos[0]);
-      document.getElementById('img-overlay').style.clipPath = 'inset(0 50% 0 0)';
-      document.getElementById('img-overlay').style.opacity  = '1';
-      document.getElementById('divider').style.left = '50%';
-      document.getElementById('tl-current-label').textContent = allPanos[0].label;
+      rebuildTimelineScale();
       preloadTimelineImages();
       updateTimelineButtons();
       updatePlayButtons();
 
-      const resolvedMode = supportedModes.has(targetMode) ? targetMode : 'split';
-      setMode(resolvedMode, getTabButtonForMode(resolvedMode));
+      setMode(supportedModes.has(targetMode) ? targetMode : 'split');
+      els.comparatorWrap.classList.add('is-ready');
+    }
 
-      document.getElementById('comparator-wrap').classList.add('is-ready');
+    // ── Eventos ───────────────────────────────────────────────────────────────
+    function bindEvents() {
+      els.locationSelect.addEventListener('change', loadSelectedLocation);
+      els.randomButton.addEventListener('click', () => chooseRandomLocation());
+
+      document.querySelectorAll('.mode-tab').forEach((button) => {
+        button.addEventListener('click', () => {
+          setMode(button.dataset.mode, {
+            autoplay: button.dataset.autoplay === 'true'
+          });
+        });
+      });
+
+      els.opacitySlider.addEventListener('input', (event) => {
+        onOpacityInput(event.currentTarget.value);
+      });
+
+      els.timelineSlider.addEventListener('input', (event) => {
+        onTimelineInput(event.currentTarget.value);
+      });
+
+      els.opacityPlay.addEventListener('click', () => toggleAutoplay('opacity'));
+      els.timelinePlay.addEventListener('click', () => toggleAutoplay('timeline'));
+      els.timelinePrev.addEventListener('click', () => stepTimeline(-1));
+      els.timelineNext.addEventListener('click', () => stepTimeline(1));
+
+      els.base.addEventListener('dragstart', (event) => event.preventDefault());
+      els.overlay.addEventListener('dragstart', (event) => event.preventDefault());
+      els.comparator.addEventListener('pointerdown', startDragging);
+      els.comparator.addEventListener('pointermove', (event) => {
+        if (dragging) updateSplitSlider(event);
+      });
+      els.comparator.addEventListener('pointerup', stopDragging);
+      els.comparator.addEventListener('pointercancel', stopDragging);
+      els.comparator.addEventListener('lostpointercapture', () => {
+        dragging = false;
+      });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      cacheDom();
+      bindEvents();
       updatePlayButtons();
-
-      const preloadedSelect = document.getElementById('preloaded-location');
-      preloadedSelect.addEventListener('change', () => {
-        loadSelectedLocation();
-      });
-
       loadPreloadedLocations();
     });
   </script>
