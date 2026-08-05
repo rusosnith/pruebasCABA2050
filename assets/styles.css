@@ -106,21 +106,9 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 24px 16px 48px;
+  overflow-x: hidden;
 }
 
-body::before {
-  content: '';
-  position: absolute;
-  top: 16px;
-  bottom: 16px;
-  left: 50%;
-  width: min(980px, calc(100vw - 24px));
-  transform: translateX(-50%);
-  background: linear-gradient(180deg, rgba(255, 248, 236, 0.98) 0%, rgba(255, 244, 230, 0.94) 100%);
-  border: 1px solid rgba(201, 168, 122, 0.38);
-  border-radius: 20px;
-  z-index: -1;
-}
 
 body > * {
   position: relative;
@@ -655,16 +643,55 @@ button:disabled { background: var(--color-subtle-surface); border-color: var(--c
 }
 
 .page-footer {
-  /* Oculto temporalmente sin tocar el markup ni los hooks de JS. */
-  display: none;
   width: 100%;
-  max-width: 900px;
-  margin: 16px 0 0;
-  padding: 24px;
-  background: linear-gradient(135deg, rgba(255, 244, 230, 0.98), rgba(251, 234, 230, 0.96));
-  border: 1px solid var(--color-hairline);
-  border-top: 6px solid var(--color-secondary);
-  box-shadow: var(--shadow-md);
+  max-width: none;
+  margin: 24px 0 0;
+  padding: 24px 0;
+  background: linear-gradient(180deg, rgba(255, 248, 236, 0.94), rgba(255, 244, 230, 0.96));
+  border-top: 1px solid rgba(201, 168, 122, 0.45);
+  border-bottom: 1px solid rgba(201, 168, 122, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+  border-radius: 0;
+}
+
+.page-footer-inner {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 0 16px;
+  display: grid;
+  gap: 18px;
+}
+
+.footer-main {
+  display: grid;
+  gap: 10px;
+  color: var(--color-body);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer-main a {
+  color: var(--color-primary-strong);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(199, 93, 0, 0.35);
+}
+
+.footer-main a:hover {
+  color: var(--color-secondary);
+}
+
+.footer-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-copy-feedback {
+  color: var(--color-ink-soft);
+  font-size: 13px;
 }
 
 .footer-notices {
@@ -674,6 +701,7 @@ button:disabled { background: var(--color-subtle-surface); border-color: var(--c
   padding-top: 16px;
   border-top: 1px solid rgba(201, 168, 122, 0.65);
 }
+
 
 .footer-status {
   margin-top: 0;
@@ -743,9 +771,6 @@ textarea {
   body {
     padding: 0 0 24px;
     background: var(--color-canvas-soft);
-  }
-  body::before {
-    display: none;
   }
   .page-header,
   #comparator-wrap,

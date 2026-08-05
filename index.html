@@ -74,6 +74,15 @@
     <p class="subtitle">Elegí una ubicación para ver como cambió en la última década</p>
   </header>
 
+  <div id="manifest-status" style="display:none;">
+    <div id="preloaded-meta"></div>
+    <div id="status"></div>
+    <div id="tl-preload-status">
+      <div id="tl-preload-progress"></div>
+      <span id="tl-preload-text"></span>
+    </div>
+  </div>
+
   <div id="comparator-wrap">
     <div class="comparator-panel-header">
       <div class="comparator-panel-heading">
@@ -149,14 +158,14 @@
 
     
   <footer class="page-footer">
-   
-
-    <div class="footer-notices">
-      <div class="helper-text footer-status" id="preloaded-meta" aria-live="polite">Buscando manifiesto local...</div>
-      <p class="footer-status" id="status" aria-live="polite"></p>
-      <div class="footer-status timeline-preload" id="tl-preload-status" aria-live="polite">
-        <div class="timeline-preload-bar"><span id="tl-preload-progress"></span></div>
-        <span class="timeline-preload-text" id="tl-preload-text">Preparando caché…</span>
+    <div class="page-footer-inner">
+      <div class="footer-main">
+        <p>Proyecto experimental de <a href="https://terres.xyz" target="_blank" rel="noopener">Terres</a>. Compará imágenes históricas de Street View y explorá cambios en la ciudad.</p>
+        <p>Créditos: datos generados con imágenes de Street View y un manifiesto local para este viaje.</p>
+      </div>
+      <div class="footer-actions">
+        <button type="button" class="mini-button" id="copy-embed-button">Insertar en mi sitio</button>
+        <span class="footer-copy-feedback" id="copy-feedback" aria-live="polite"></span>
       </div>
     </div>
   </footer>
@@ -181,6 +190,8 @@
         randomButton: $('random-location-button'),
         preloadedMeta: $('preloaded-meta'),
         status: $('status'),
+        copyButton: $('copy-embed-button'),
+        copyFeedback: $('copy-feedback'),
 
         opacityControls: $('ctrl-opacity'),
         opacitySlider: $('opacity-slider'),
@@ -198,6 +209,42 @@
         preloadProgress: $('tl-preload-progress'),
         preloadText: $('tl-preload-text')
       });
+
+      if (!els.preloadedMeta || !els.status || !els.preloadStatus) {
+        const fallback = document.createElement('div');
+        fallback.style.display = 'none';
+
+        if (!els.preloadedMeta) {
+          const meta = document.createElement('div');
+          meta.id = 'preloaded-meta';
+          fallback.appendChild(meta);
+          els.preloadedMeta = meta;
+        }
+
+        if (!els.status) {
+          const status = document.createElement('div');
+          status.id = 'status';
+          fallback.appendChild(status);
+          els.status = status;
+        }
+
+        if (!els.preloadStatus) {
+          const preloadStatus = document.createElement('div');
+          preloadStatus.id = 'tl-preload-status';
+          const progress = document.createElement('div');
+          progress.id = 'tl-preload-progress';
+          const text = document.createElement('span');
+          text.id = 'tl-preload-text';
+          preloadStatus.appendChild(progress);
+          preloadStatus.appendChild(text);
+          fallback.appendChild(preloadStatus);
+          els.preloadStatus = preloadStatus;
+          els.preloadProgress = progress;
+          els.preloadText = text;
+        }
+
+        document.body.appendChild(fallback);
+      }
     }
 
     // ── Estado ────────────────────────────────────────────────────────────────
@@ -254,12 +301,53 @@
     }
 
     function setStatus(message, ok = false) {
+      if (!els.status) return;
       els.status.textContent = message;
       els.status.className = ok ? 'ok' : '';
     }
 
     function setPreloadedMeta(message) {
+      if (!els.preloadedMeta) return;
       els.preloadedMeta.textContent = message;
+    }
+
+    function getEmbedCode() {
+      const pageUrl = window.location.origin + window.location.pathname;
+      return `<iframe src="${pageUrl}" width="640" height="360" frameborder="0" allowfullscreen loading="lazy" title="Viaje en el tiempo porteño"></iframe>`;
+    }
+
+    async function copyTextToClipboard(text) {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        return navigator.clipboard.writeText(text);
+      }
+
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'absolute';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      if (!successful) throw new Error('No se pudo copiar en el portapapeles');
+    }
+
+    function showCopyFeedback(message) {
+      els.copyFeedback.textContent = message;
+      window.clearTimeout(els.copyFeedbackTimeout);
+      els.copyFeedbackTimeout = window.setTimeout(() => { els.copyFeedback.textContent = ''; }, 2800);
+    }
+
+    async function handleCopyEmbed() {
+      try {
+        const embed = getEmbedCode();
+        await copyTextToClipboard(embed);
+        showCopyFeedback('Código copiado al portapapeles');
+      } catch (error) {
+        showCopyFeedback('No se pudo copiar. Intentá manualmente.');
+      }
     }
 
     // ── Autoplay ──────────────────────────────────────────────────────────────
@@ -955,6 +1043,7 @@
         onTimelineInput(event.currentTarget.value);
       });
 
+      els.copyButton.addEventListener('click', handleCopyEmbed);
       els.opacityPlay.addEventListener('click', () => toggleAutoplay('opacity'));
       els.timelinePlay.addEventListener('click', () => toggleAutoplay('timeline'));
       els.timelinePrev.addEventListener('click', () => stepTimeline(-1));
