@@ -565,18 +565,11 @@
     }
 
     // ── Comparador split ───────────────────────────────────────────────────────
-    function getEventClientX(event) {
-      if (typeof event?.clientX === 'number') return event.clientX;
-      if (Array.isArray(event?.touches) && event.touches.length > 0) return event.touches[0].clientX;
-      if (Array.isArray(event?.changedTouches) && event.changedTouches.length > 0) return event.changedTouches[0].clientX;
-      return 0;
-    }
-
     function updateSplitSlider(event) {
       const rect = els.comparator.getBoundingClientRect();
       if (!rect.width) return;
 
-      const x = clamp(getEventClientX(event) - rect.left, 0, rect.width);
+      const x = clamp(event.clientX - rect.left, 0, rect.width);
       const percent = (x / rect.width) * 100;
 
       els.overlay.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
@@ -584,7 +577,7 @@
     }
 
     function startDragging(event) {
-      if (currentMode !== 'split') return;
+      if (dragging || currentMode !== 'split') return;
 
       stopAutoplay();
       event.preventDefault();
@@ -1085,18 +1078,6 @@
       els.comparator.addEventListener('lostpointercapture', () => {
         dragging = false;
       });
-
-      els.comparator.addEventListener('touchstart', (event) => {
-        if (currentMode === 'split') startDragging(event);
-      }, { passive: false });
-      els.comparator.addEventListener('touchmove', (event) => {
-        if (dragging) {
-          event.preventDefault();
-          updateSplitSlider(event);
-        }
-      }, { passive: false });
-      els.comparator.addEventListener('touchend', stopDragging, { passive: true });
-      els.comparator.addEventListener('touchcancel', stopDragging, { passive: true });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
