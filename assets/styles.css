@@ -402,6 +402,9 @@ button:disabled { background: var(--color-subtle-surface); border-color: var(--c
   aspect-ratio: 3/2;
   overflow: hidden;
   user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-touch-callout: none;
   background: #ead9bf;
   border-radius: var(--radius);
 }
